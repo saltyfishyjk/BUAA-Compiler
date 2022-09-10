@@ -1,0 +1,148 @@
+
+/* global constant values */
+
+const int con_dec_1 = 0;
+const int con_dec_2 = 1, con_dec_3 = 2;
+const int con_dec_4 = 3, con_dec_5 = 4, con_dec_6 = 5;
+
+const int con_dec_7[1] = {1};
+const int con_dec_8[2][2] = {{1, 2}, {3, 4}};
+
+/* global variable values */
+int var_dec_1;
+int var_dec_2 = 1;
+int var_dec_3 = 3, var_dec_4 = 4;
+int var_dec_5 = 5, var_dec_6 = 6, var_dec_7 = 7;
+int var_dec_8[1] = {1};
+int var_dec_9[1][1] = {{1}};
+int var_dec_10[1][1][1] = {{{1}}};
+
+
+/* self_define functions */
+
+void func1() {
+    int a;
+    return;
+}
+
+int func2() {
+    return 1;
+}
+
+int func3(int a) {
+    return a;
+}
+
+int func4(int a, int b) {
+    return a + b;
+}
+
+int func5(int a, int b, int c) {
+    return a + b + c;
+}
+
+int func6(int a[], int b[][1], int c[][1][2]) {
+    return 1;
+}
+
+
+
+int main() {
+    int a;
+    /* getint() */
+    a = getint();
+    /* if */
+    if (a > 10 ) {
+        a = 11;
+    }
+    if (a == 11) {
+        a = 12;
+    } else {
+        a = 13;
+    }
+    if (a >= 0) {
+        a = 0;
+    }
+    if (a < 0) {
+        a = 0;
+    }
+    if (a <= 0) {
+        a = 0;
+    }
+    if (a != 0) {
+        a = 0;
+    }
+    if (a == 0 && a >= 0) {
+        a = 0;
+    }
+    if (a == 1 || a == 2) {
+        a = 0;
+    }
+
+    a = 10;
+    /* while */
+    while (a < 10) {
+        a = a - 1;
+        if (a == 2) {
+            continue;
+        }
+        if (a == 3) {
+            break;
+        }
+    }
+
+    /* + - * / */
+    a = a + a;
+    a = a - a + 1;
+    a = a * 10;
+    a = a / 10;
+    a = a % 10;
+
+    /* call functions */
+    func1();
+    a = func2();
+    func3(1);
+    func4(1, 1);
+    func5(a, 1, a);
+    int arr1[1];
+    int arr2[1][1];
+    int arr3[1][1][2];
+    func6(arr1, arr2, arr3);
+    func6(arr2[0], arr2, arr3);
+
+    printf("20373673\n");
+
+    /* Block */
+    {
+        int a = 10;
+        a = 11;
+        a = +12;
+        a = -13;
+        // a = !1;
+        if (!a) {
+            a = 0;
+        }
+        a = (1 + 1);
+        ;
+        int b[1];
+        b[0] = 1;
+        int c[1][2];
+        c[0][1] = 2;
+    }
+
+    {
+
+    }
+
+
+    printf("%d\n", a);
+    printf("%d\n", a);
+    printf("%d\n", a);
+    printf("%d\n", a);
+    printf("%d\n", a);
+    printf("%d\n", a);
+    printf("%d\n", a);
+    printf("%d\n", a);
+    printf("%d\n", a);
+    return 0;
+}
