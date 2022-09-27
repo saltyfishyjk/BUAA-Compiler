@@ -2,9 +2,9 @@ package frontend.lexer;
 
 // 词语类，保存词语的相关信息
 public class Token {
-    private TokenType type;
-    private int lineNum; // which line the token belongs to
-    private String content; // real content
+    private TokenType type; // this.TokenType
+    private int lineNum; // this.lineNum
+    private String content; // this.content
 
     public Token(TokenType type, int lineNum, String content) {
         this.type = type;
