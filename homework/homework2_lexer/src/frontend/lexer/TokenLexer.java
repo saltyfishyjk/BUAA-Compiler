@@ -28,7 +28,9 @@ public class TokenLexer {
             // skip white spaces first
             skipWhiteSpace();
             // judge comments second
-            skipComment();
+            if (skipComment()) {
+                continue;
+            }
             // handle tokens
             addToken();
         }
@@ -38,9 +40,10 @@ public class TokenLexer {
         this.sourceFileLexer.skipWhiteSpace();
     }
 
-    private void skipComment() {
+    private boolean skipComment() {
         if (lineComment.equals(this.sourceFileLexer.peekSubStr(2))) {
             this.sourceFileLexer.nextLine();
+            return true;
         } else if (blockCommentSt.equals(this.sourceFileLexer.peekSubStr(2))) {
             sourceFileLexer.moveForward(this.blockCommentSt.length());
             while (!this.sourceFileLexer.endOfFile() &&
@@ -49,8 +52,10 @@ public class TokenLexer {
             }
             if (blockCommentEd.equals(this.sourceFileLexer.peekSubStr(2))) {
                 this.sourceFileLexer.moveForward(2);
+                return true;
             }
         }
+        return false;
     }
 
     /**
