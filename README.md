@@ -24,6 +24,8 @@
 
 整体上，`SourceFileLexer`提供对源文件的文法分析工具；`lexer`目录提供对输入文件的解析，最终生成一个`TokenList`对象并包含必要信息，为后续语法分析等工作做好准备，具体地，`TokenType`是一个枚举类，包括了所有的单词类别及对应正则表达式，`Token`设计了单词类，包括单词类别`TokenType`属性，`conotent`单词内容属性和所在行属性，`TokenList`事实上封装了一个`ArrayList<Token>`容器对象，`TokenLexer`类接收`SourceFileLexer`并解析出一系列`Token`，最终生成`TokenList`对象提供给外界调用。以下按照目录级别从浅到深依次具体介绍。
 
+### 编码实现
+
 #### `SourceFileLexer`源文件词法分析器
 
 ##### 设计思路
@@ -53,9 +55,9 @@
 - `hitSubStr`：尝试从光标处开始匹配给定正则表达式
 - `getLineNum`：获取当前光标所在行号，**从1开始**
 
-#### lexer
+#### `lexer`词法分析器package
 
-lexer是词法分析器的核心所在目录，其内部四个类相互配合，完成了对源文件的词法解析。以下介绍以低依赖向高依赖的顺序。
+`lexer`是词法分析器的核心所在目录，其内部四个类相互配合，完成了对源文件的词法解析。以下介绍以低依赖向高依赖的顺序。
 
 ##### `TokenType`单词类别枚举类
 
@@ -131,7 +133,21 @@ lexer是词法分析器的核心所在目录，其内部四个类相互配合，
 
 ## Part 4 语法分析设计
 
+### 编码前的设计
 
+在项目结构方面，语法分析属于前端内容，将其目录`parser`置于`src/frontend`下，为后续架构预留空间。在其下设计了四个package：`function`、`declaration`、`statement`和`expression`，分别对应文法定义说明文档中的函数、变量/常量声明、语句和表达式四个类别，完成了文法的初步解耦。
+
+### 编码实现
+
+#### `parser`语法分析器package
+
+##### `function`函数类别package
+
+##### `declaration`声明类别package
+
+##### `statement`语句类别package
+
+##### `expression`表达式声明类别package
 
 ## Part 5 错误处理设计
 

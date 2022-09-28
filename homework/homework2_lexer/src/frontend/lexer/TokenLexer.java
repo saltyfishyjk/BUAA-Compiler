@@ -13,9 +13,9 @@ import java.util.regex.Pattern;
 public class TokenLexer {
     private SourceFileLexer sourceFileLexer;
     private TokenList tokenList;
-    private String lineComment = "//";
-    private String blockCommentSt = "/*";
-    private String blockCommentEd = "*/";
+    private final String lineComment = "//";
+    private final String blockCommentSt = "/*";
+    private final String blockCommentEd = "*/";
 
     public TokenLexer(SourceFileLexer sourceFileLexer) {
         this.sourceFileLexer = sourceFileLexer;
@@ -82,6 +82,5 @@ public class TokenLexer {
     public TokenList getTokenList() {
         return tokenList;
     }
-
 
 }
