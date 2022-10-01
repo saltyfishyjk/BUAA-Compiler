@@ -1,6 +1,8 @@
 package frontend.lexer;
 
-// 词语类，保存词语的相关信息
+/**
+ * 词语类，保存词语的相关信息
+ */
 public class Token {
     private TokenType type; // this.TokenType
     private int lineNum; // this.lineNum
