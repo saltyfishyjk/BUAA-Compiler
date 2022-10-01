@@ -137,17 +137,19 @@
 
 在项目结构方面，语法分析属于前端内容，将其目录`parser`置于`src/frontend`下，为后续架构预留空间。在其下设计了四个package：`function`、`declaration`、`statement`和`expression`，分别对应文法定义说明文档中的函数、变量/常量声明、语句和表达式四个类别，完成了文法的初步解耦。
 
-### 编码实现
+### 编码实现——`parser`语法分析器package
 
-#### `parser`语法分析器package
+#### `function`函数类别package
 
-##### `function`函数类别package
 
-##### `declaration`声明类别package
 
-##### `statement`语句类别package
+#### `declaration`变量/常量声明类别package
 
-##### `expression`表达式声明类别package
+
+
+#### `statement`语句类别package
+
+#### `expression`表达式声明类别package
 
 ## Part 5 错误处理设计
 
