@@ -7,6 +7,7 @@ import java.util.ArrayList;
 /**
  * 二元表达式顶层抽象类
  * 由MulExp, AddExp, RelExp, EqExp, LAndExp, LOrExp继承
+ * 对于不同子类，T为其文法定义中的非终结符。具体地，MulExp->UnaryExp
  * 采用泛型对不同类别进行支持
  * 消除了左递归文法
  */

@@ -8,6 +8,7 @@ import frontend.lexer.Token;
  */
 public class UnaryOp {
     private Token token;
+    private final String name = "UnaryOp";
 
     public UnaryOp(Token token) {
         this.token = token;

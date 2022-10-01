@@ -43,6 +43,6 @@
 | `<RelExp>`      | `<AddExp> { ('<' | '>' | '<=' | '>=') <AddExp> }`            | 关系表达式   | <font color=red>消除左递归</font>      |
 | `<EqExp>`       | `<RelExp> | { ('==' | '!=') <RelExp> }`                      | 相等性表达式 | <font color=red>消除左递归</font>      |
 | `<LAndExp>`     | `<EqExp> { '&&' <EqExp> }`                                   | 逻辑与表达式 | <font color=red>消除左递归</font>      |
-| `<LOrExp>`      | `<LAdnExp> { '||' <LAndExp> }`                               | 逻辑或表达式 | <font color=red>消除左递归</font>      |
+| `<LOrExp>`      | `<LAndExp> { '||' <LAndExp> }`                               | 逻辑或表达式 | <font color=red>消除左递归</font>      |
 | `<ConstExp>`    | `<AddExp>`                                                   | 常量表达式   | 使用的`Ident`必须是常量                |
 
