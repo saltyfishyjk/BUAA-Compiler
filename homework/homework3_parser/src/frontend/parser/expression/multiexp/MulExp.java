@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class MulExp extends MultiExp<UnaryExp> {
     public MulExp(UnaryExp first, ArrayList<Token> operators,
-                  ArrayList<UnaryExp> operands, String name) {
-        super(first, operators, operands, name);
+                  ArrayList<UnaryExp> operands) {
+        super(first, operators, operands, "<MulExp>");
     }
 }

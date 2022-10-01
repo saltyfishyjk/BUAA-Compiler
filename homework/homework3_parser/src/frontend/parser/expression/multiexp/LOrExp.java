@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class LOrExp extends MultiExp<LAndExp> {
     public LOrExp(LAndExp first, ArrayList<Token> operators,
-                  ArrayList<LAndExp> operands, String name) {
-        super(first, operators, operands, name);
+                  ArrayList<LAndExp> operands) {
+        super(first, operators, operands, "<LOrExp>");
     }
 }

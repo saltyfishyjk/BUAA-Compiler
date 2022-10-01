@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class RelExp extends MultiExp<AddExp> {
     public RelExp(AddExp first, ArrayList<Token> operators,
-                  ArrayList<AddExp> operands, String name) {
-        super(first, operators, operands, name);
+                  ArrayList<AddExp> operands) {
+        super(first, operators, operands, "<RelExp>");
     }
 }

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class EqExp extends MultiExp<RelExp> {
     public EqExp(RelExp first, ArrayList<Token> operators,
-                 ArrayList<RelExp> operands, String name) {
-        super(first, operators, operands, name);
+                 ArrayList<RelExp> operands) {
+        super(first, operators, operands, "<EqExp>");
     }
 }
