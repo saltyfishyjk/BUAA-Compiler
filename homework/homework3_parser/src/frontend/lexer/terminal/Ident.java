@@ -4,7 +4,7 @@ import frontend.lexer.Token;
 import frontend.lexer.TokenType;
 
 /**
- * 标识符
+ * 标识符 Identifier
  */
 public class Ident {
     private Token token;
