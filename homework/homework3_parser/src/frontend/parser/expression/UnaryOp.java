@@ -1,17 +1,15 @@
 package frontend.parser.expression;
 
+import frontend.lexer.Token;
+
 /**
- * UnaryOp枚举类
+ * 非终结符UnaryOp
+ * 合法的类别只有+, -, !，且!仅能出现在条件表达式中
  */
-public enum UnaryOp {
-    ADD('+'),
-    SUB('-'),
-    NOT('!');
+public class UnaryOp {
+    private Token token;
 
-    private char symbol;
-
-    UnaryOp(char symbol) {
-        this.symbol = symbol;
+    public UnaryOp(Token token) {
+        this.token = token;
     }
-
 }
