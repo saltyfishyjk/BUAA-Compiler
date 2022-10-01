@@ -1,6 +1,7 @@
 package frontend.parser.expression.multiexp;
 
 import frontend.lexer.Token;
+import frontend.parser.SyntaxNode;
 
 import java.util.ArrayList;
 
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  * 采用泛型对不同类别进行支持
  * 消除了左递归文法
  */
-public class MultiExp<T> {
+public class MultiExp<T> implements SyntaxNode {
     private T first;
     private ArrayList<Token> operators; // 操作符
     private ArrayList<T> operands; // 操作数
@@ -24,4 +25,9 @@ public class MultiExp<T> {
         this.name = name;
     }
 
+    @Override
+    public String syntaxOutput() {
+        /* TODO */
+        return null;
+    }
 }
