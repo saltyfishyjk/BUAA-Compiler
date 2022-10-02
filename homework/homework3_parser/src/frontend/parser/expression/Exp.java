@@ -1,12 +1,12 @@
 package frontend.parser.expression;
 
-import frontend.parser.SyntaxNode;
+import frontend.parser.declaration.variable.initval.InitValEle;
 import frontend.parser.expression.multiexp.AddExp;
 
 /**
  * 表达式
  */
-public class Exp implements SyntaxNode {
+public class Exp implements InitValEle {
     private final String name = "<Exp>";
     private AddExp addExp;
 

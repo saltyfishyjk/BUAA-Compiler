@@ -1,9 +1,9 @@
 package frontend.parser.expression;
 
-import frontend.parser.SyntaxNode;
+import frontend.parser.declaration.constant.constinitval.ConstInitValEle;
 import frontend.parser.expression.multiexp.AddExp;
 
-public class ConstExp implements SyntaxNode {
+public class ConstExp implements ConstInitValEle {
     private final String name = "<ConstExp>";
     private AddExp addExp;
 

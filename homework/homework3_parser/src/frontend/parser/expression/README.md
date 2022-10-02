@@ -1,6 +1,6 @@
 # Parser-Expression
 
-该package主要实现对表达式的语法结构分析。
+该package主要实现对**表达式**的语法结构分析。
 
 ## 表达式类的设计
 
