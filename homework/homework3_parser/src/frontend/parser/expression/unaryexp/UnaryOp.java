@@ -1,4 +1,4 @@
-package frontend.parser.expression;
+package frontend.parser.expression.unaryexp;
 
 import frontend.lexer.Token;
 import frontend.parser.SyntaxNode;
@@ -18,7 +18,8 @@ public class UnaryOp implements SyntaxNode {
     @Override
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
-        /* TODO */
+        sb.append(token.syntaxOutput());
+        sb.append(this.name + "\n");
         return sb.toString();
     }
 }

@@ -1,7 +1,7 @@
 package frontend.parser.expression.multiexp;
 
 import frontend.lexer.Token;
-import frontend.parser.expression.UnaryExp;
+import frontend.parser.expression.unaryexp.UnaryExp;
 
 import java.util.ArrayList;
 

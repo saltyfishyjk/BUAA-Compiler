@@ -1,15 +1,16 @@
-package frontend.parser.expression;
+package frontend.parser.expression.primaryexp;
 
 import frontend.lexer.Token;
 import frontend.lexer.terminal.Ident;
-import frontend.parser.SyntaxNode;
+import frontend.parser.expression.Exp;
+import frontend.parser.expression.primaryexp.PrimaryExpEle;
 
 import java.util.ArrayList;
 
 /**
  * 左值表达式
  */
-public class LVal implements SyntaxNode {
+public class LVal implements PrimaryExpEle {
     private final String name = "<LVal>";
     private Ident ident;
     private ArrayList<Token> leftBrackets;

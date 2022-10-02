@@ -1,13 +1,13 @@
-package frontend.parser.expression;
+package frontend.parser.expression.primaryexp;
 
 import frontend.lexer.terminal.IntConst;
-import frontend.parser.SyntaxNode;
+import frontend.parser.expression.primaryexp.PrimaryExpEle;
 
 /**
  * Number 非终结符
  * Number -> IntConst
  */
-public class Number implements SyntaxNode {
+public class Number implements PrimaryExpEle {
     private final String name = "<Number>";
     private IntConst intConst;
 

@@ -23,7 +23,7 @@
 | `<LVal>`        | `<Ident>{ '[' <Exp> ']' }`                                   | 左值表达式   | 1.普通变量2.一维数组3.二维数组         |
 | `<PrimaryExp>`  | `'(' <Exp> ')' | <LVal> | <Number>`                          | 基本表达式   | 覆盖三种情况：表达式、左值表达式、数值 |
 | `<Number>`      | `<IntConst>`                                                 | 数值         | 存在即可                               |
-| `<UnaryExp>`    | `<PrimaryExp> | <Ident> '(' [<FuncParams>] ')' | <UnaryOp> <UnaryExp>` | 一元表达式   | 存在即可；                             |
+| `<UnaryExp>`    | `<PrimaryExp> | <Ident> '(' [<FuncRParams>] ')' | <UnaryOp> <UnaryExp>` | 一元表达式   | 存在即可；                             |
 | `<UnaryOp>`     | `'+' | '-' | '!'`                                            | 单目运算符   | `'!'`仅出现在条件表达式中              |
 | `<FuncRParams>` | `<Exp> {',' <Exp>}`                                          | 函数实参表   |                                        |
 | `<MulExp>`      | `<UnaryExp> | <MulExp> ('*' | '/' | '%') <UnaryExp>`         | 乘除模表达式 | <font color=red>须消除左递归</font>    |
@@ -43,7 +43,7 @@
 | `<LVal>`        | `<Ident> { '[' <Exp> ']' }`                                  | 左值表达式   | 1.普通变量2.一维数组3.二维数组         |
 | `<PrimaryExp>`  | `'(' <Exp> ')' | <LVal> | <Number>`                          | 基本表达式   | 覆盖三种情况：表达式、左值表达式、数值 |
 | `<Number>`      | `<IntConst>`                                                 | 数值         | 存在即可                               |
-| `<UnaryExp>`    | `<PrimaryExp> | <Ident> '(' [<FuncParams>] ')' | <UnaryOp> <UnaryExp>` | 一元表达式   | 存在即可；                             |
+| `<UnaryExp>`    | `<PrimaryExp> | <Ident> '(' [<FuncRParams>] ')' | <UnaryOp> <UnaryExp>` | 一元表达式   | 存在即可；                             |
 | `<UnaryOp>`     | `'+' | '-' | '!'`                                            | 单目运算符   | `'!'`仅出现在条件表达式中              |
 | `<FuncRParams>` | `<Exp> {',' <Exp>}`                                          | 函数实参表   |                                        |
 | `<MulExp>`      | `<UnaryExp> | { ('*' | '/' | '%') <UnaryExp> }`              | 乘除模表达式 | <font color=red>消除左递归</font>      |

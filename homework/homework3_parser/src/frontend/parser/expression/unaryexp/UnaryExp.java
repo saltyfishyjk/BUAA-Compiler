@@ -1,15 +1,17 @@
-package frontend.parser.expression;
+package frontend.parser.expression.unaryexp;
 
 import frontend.parser.SyntaxNode;
+import frontend.parser.expression.unaryexp.UnaryExpEle;
 
 public class UnaryExp implements SyntaxNode {
-    private final String name = "UnaryExp";
+    private final String name = "<UnaryExp>";
     private UnaryExpEle unaryExpEle;
 
     @Override
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
-        /* TODO */
+        sb.append(this.unaryExpEle.syntaxOutput());
+        sb.append(this.name + "\n");
         return sb.toString();
     }
 }

@@ -1,4 +1,4 @@
-package frontend.parser.expression;
+package frontend.parser.expression.unaryexp;
 
 import frontend.parser.SyntaxNode;
 
@@ -6,5 +6,4 @@ import frontend.parser.SyntaxNode;
  * UnaryExp文法基类接口
  */
 public interface UnaryExpEle extends SyntaxNode {
-    /* TODO */
 }
