@@ -2,11 +2,12 @@ package frontend.lexer.terminal;
 
 import frontend.lexer.Token;
 import frontend.lexer.TokenType;
+import frontend.parser.SyntaxNode;
 
 /**
  * 标识符 Identifier
  */
-public class Ident {
+public class Ident implements SyntaxNode {
     private Token token;
 
     public Ident(String name, int lineNum) {
@@ -19,5 +20,12 @@ public class Ident {
 
     public int getLineNum() {
         return this.token.getLineNum();
+    }
+
+    @Override
+    public String syntaxOutput() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(token.syntaxOutput());
+        return sb.toString();
     }
 }
