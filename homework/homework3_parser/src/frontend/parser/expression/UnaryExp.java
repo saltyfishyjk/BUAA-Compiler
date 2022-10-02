@@ -8,7 +8,8 @@ public class UnaryExp implements SyntaxNode {
 
     @Override
     public String syntaxOutput() {
+        StringBuilder sb = new StringBuilder();
         /* TODO */
-        return null;
+        return sb.toString();
     }
 }

@@ -23,7 +23,7 @@ public class Number implements SyntaxNode {
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
         sb.append(intConst.syntaxOutput());
-        sb.append(this.name);
+        sb.append(this.name + "\n");
         return sb.toString();
     }
 }

@@ -1,11 +1,12 @@
 package frontend.parser.expression;
 
+import frontend.parser.SyntaxNode;
 import frontend.parser.expression.multiexp.AddExp;
 
 /**
  * 表达式
  */
-public class Exp {
+public class Exp implements SyntaxNode {
     private final String name = "<Exp>";
     private AddExp addExp;
 
@@ -15,5 +16,13 @@ public class Exp {
 
     public AddExp getAddExp() {
         return addExp;
+    }
+
+    @Override
+    public String syntaxOutput() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(addExp.syntaxOutput());
+        sb.append(this.name + "\n");
+        return sb.toString();
     }
 }
