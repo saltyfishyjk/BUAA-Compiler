@@ -21,7 +21,9 @@ public class Number implements SyntaxNode {
 
     @Override
     public String syntaxOutput() {
-        /* TODO */
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append(intConst.syntaxOutput());
+        sb.append(this.name);
+        return sb.toString();
     }
 }

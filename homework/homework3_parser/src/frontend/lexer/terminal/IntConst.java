@@ -2,11 +2,12 @@ package frontend.lexer.terminal;
 
 import frontend.lexer.Token;
 import frontend.lexer.TokenType;
+import frontend.parser.SyntaxNode;
 
 /**
  * 数值常量 Integer-Const
  */
-public class IntConst {
+public class IntConst implements SyntaxNode {
     private Token token;
 
     public IntConst(String numStr, int lineNum) {
@@ -19,5 +20,12 @@ public class IntConst {
 
     public int getLineNum() {
         return this.token.getLineNum();
+    }
+
+    @Override
+    public String syntaxOutput() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(token.syntaxOutput());
+        return sb.toString();
     }
 }

@@ -27,7 +27,8 @@ public class MultiExp<T> implements SyntaxNode {
 
     @Override
     public String syntaxOutput() {
-        /* TODO */
-        return null;
+        StringBuilder sb = new StringBuilder();
+
+        return sb.toString();
     }
 }

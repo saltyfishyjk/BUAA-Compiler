@@ -1,9 +1,11 @@
 package frontend.lexer;
 
+import frontend.parser.SyntaxNode;
+
 /**
  * 词语类，保存词语的相关信息
  */
-public class Token {
+public class Token implements SyntaxNode {
     private TokenType type; // this.TokenType
     private int lineNum; // this.lineNum
     private String content; // this.content
@@ -36,5 +38,12 @@ public class Token {
 
     public void setLineNum(int lineNum) {
         this.lineNum = lineNum;
+    }
+
+    @Override
+    public String syntaxOutput() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getType() + " " + this.getContent() + "\n");
+        return sb.toString();
     }
 }

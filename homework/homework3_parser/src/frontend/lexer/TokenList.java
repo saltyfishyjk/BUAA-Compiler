@@ -17,7 +17,8 @@ public class TokenList {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (Token token : tokens) {
-            sb.append(token.getType() + " " + token.getContent() + "\n");
+            sb.append(token.syntaxOutput());
+            //sb.append(token.getType() + " " + token.getContent() + "\n");
         }
         return sb.toString();
     }
