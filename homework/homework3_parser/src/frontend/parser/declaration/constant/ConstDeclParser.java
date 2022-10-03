@@ -1,13 +1,14 @@
 package frontend.parser.declaration.constant;
 
 import frontend.lexer.Token;
+import frontend.lexer.TokenListIterator;
 
 import java.util.ListIterator;
 
 public class ConstDeclParser {
-    private ListIterator<Token> iterator;
+    private TokenListIterator iterator;
 
-    public ConstDeclParser(ListIterator<Token> iterator) {
+    public ConstDeclParser(TokenListIterator iterator) {
         this.iterator =  iterator;
     }
 

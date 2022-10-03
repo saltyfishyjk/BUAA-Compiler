@@ -1,13 +1,14 @@
 package frontend.parser.function;
 
 import frontend.lexer.Token;
+import frontend.lexer.TokenListIterator;
 
 import java.util.ListIterator;
 
 public class FuncDefParser {
-    private ListIterator<Token> iterator;
+    private TokenListIterator iterator;
 
-    public FuncDefParser(ListIterator iterator) {
+    public FuncDefParser(TokenListIterator iterator) {
         this.iterator = iterator;
     }
 

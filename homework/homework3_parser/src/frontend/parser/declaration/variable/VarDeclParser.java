@@ -1,13 +1,14 @@
 package frontend.parser.declaration.variable;
 
 import frontend.lexer.Token;
+import frontend.lexer.TokenListIterator;
 
 import java.util.ListIterator;
 
 public class VarDeclParser {
-    private ListIterator<Token> iterator;
+    private TokenListIterator iterator;
 
-    public VarDeclParser(ListIterator iterator) {
+    public VarDeclParser(TokenListIterator iterator) {
         this.iterator = iterator;
     }
 

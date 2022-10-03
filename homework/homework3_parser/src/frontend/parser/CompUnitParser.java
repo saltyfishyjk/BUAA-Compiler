@@ -2,6 +2,7 @@ package frontend.parser;
 
 import frontend.lexer.Token;
 import frontend.lexer.TokenList;
+import frontend.lexer.TokenListIterator;
 import frontend.lexer.TokenType;
 import frontend.parser.declaration.Decl;
 import frontend.parser.declaration.DeclParser;
@@ -18,7 +19,7 @@ import java.util.ListIterator;
  */
 public class CompUnitParser {
     private TokenList tokens;
-    private ListIterator<Token> iterator;
+    private TokenListIterator iterator;
     /* CompUnit params */
     private ArrayList<Decl> decls;
     private ArrayList<FuncDef> funcDefs;
@@ -26,7 +27,8 @@ public class CompUnitParser {
 
     /* init CompUnitParser obj */
     private void initCompUnitParser() {
-        this.iterator = tokens.getTokens().listIterator();
+        //this.iterator = tokens.getTokens().listIterator();
+        this.iterator = new TokenListIterator(this.tokens);
     }
 
     public CompUnitParser(TokenList tokens) {
@@ -37,11 +39,11 @@ public class CompUnitParser {
         this.mainFuncDef = null;
     }
 
-    private Token readNextToken() {
+    /*private Token readNextToken() {
         return iterator.next();
-    }
+    }*/
 
-    private void unReadToken(int k) {
+    /*private void unReadToken(int k) {
         int cnt = k;
         while (cnt > 0) {
             cnt--;
@@ -51,7 +53,7 @@ public class CompUnitParser {
                 break;
             }
         }
-    }
+    }*/
 
     public CompUnit parseCompUnit() {
         /* parse decls */
@@ -66,8 +68,8 @@ public class CompUnitParser {
     }
 
     private void parseDecls() {
-        Token first = readNextToken();
-        Token second = readNextToken();
+        Token first = this.iterator.readNextToken();
+        Token second = this.iterator.readNextToken();
         while (this.iterator.hasNext()) {
             if ((first.getType().equals(TokenType.CONSTTK) &&
                     second.getType().equals(TokenType.INTTK)) ||
@@ -75,33 +77,35 @@ public class CompUnitParser {
                             second.getType().equals(TokenType.IDENFR))) {
                 /* first -> const && second -> int */
                 /* first -> int && second -> IDENFR */
-                unReadToken(2);
+                this.iterator.unReadToken(2);
                 DeclParser declParser = new DeclParser(this.iterator);
                 this.decls.add(declParser.parseDecl());
             } else {
+                this.iterator.unReadToken(2);
                 break;
             }
-            first = readNextToken();
-            second = readNextToken();
+            first = this.iterator.readNextToken();
+            second = this.iterator.readNextToken();
         }
     }
 
     private void parseFuncDefs() {
-        Token first = readNextToken();
-        Token second = readNextToken();
+        Token first = this.iterator.readNextToken();
+        Token second = this.iterator.readNextToken();
         while (this.iterator.hasNext()) {
             if ((first.getType().equals(TokenType.INTTK) ||
                     first.getType().equals(TokenType.VOIDTK)) &&
                 second.getType().equals(TokenType.IDENFR)) {
                 /* first -> int/void && second -> IDENFR */
-                unReadToken(2);
+                this.iterator.unReadToken(2);
                 FuncDefParser funcDefParser = new FuncDefParser(this.iterator);
                 this.funcDefs.add(funcDefParser.parseFuncDef());
             } else {
+                this.iterator.unReadToken(2);
                 break;
             }
-            first = readNextToken();
-            second = readNextToken();
+            first = this.iterator.readNextToken();
+            second = this.iterator.readNextToken();
         }
     }
 
