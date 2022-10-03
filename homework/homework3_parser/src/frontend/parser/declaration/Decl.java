@@ -1,8 +1,8 @@
 package frontend.parser.declaration;
 
-import frontend.parser.SyntaxNode;
+import frontend.parser.statement.blockitem.BlockItemEle;
 
-public class Decl implements SyntaxNode {
+public class Decl implements BlockItemEle {
     private final String name = "<Decl>";
     private DeclEle declEle;
 
