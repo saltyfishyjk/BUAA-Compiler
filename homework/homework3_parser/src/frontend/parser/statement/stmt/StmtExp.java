@@ -2,23 +2,16 @@ package frontend.parser.statement.stmt;
 
 import frontend.lexer.Token;
 import frontend.parser.expression.Exp;
-import frontend.parser.expression.primaryexp.LVal;
 
 /**
- * Stmt -> <LVal> '=' <Exp> ';'
+ * 注意，这里Exp一定存在，将不存在的情况单独拆分为StmtNull
+ * Stmt -> <Exp> ';'
  */
-public class StmtAssign implements StmtEle {
-    private LVal lval;
-    private Token eq; // '='
+public class StmtExp implements StmtEle {
     private Exp exp;
     private Token semicn; // ';'
 
-    public StmtAssign(LVal lval,
-                      Token eq,
-                      Exp exp,
-                      Token semicn) {
-        this.lval = lval;
-        this.eq = eq;
+    public StmtExp(Exp exp, Token semicn) {
         this.exp = exp;
         this.semicn = semicn;
     }
@@ -26,8 +19,6 @@ public class StmtAssign implements StmtEle {
     @Override
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
-        sb.append(this.lval.syntaxOutput());
-        sb.append(this.eq.syntaxOutput());
         sb.append(this.exp.syntaxOutput());
         sb.append(this.semicn.syntaxOutput());
         return sb.toString();
