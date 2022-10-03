@@ -1,5 +1,7 @@
 import frontend.SourceFileLexer;
 import frontend.lexer.TokenLexer;
+import frontend.parser.CompUnit;
+import frontend.parser.CompUnitParser;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,6 +21,8 @@ public class Compiler {
         }
         SourceFileLexer sourceFileLexer = new SourceFileLexer(inputFileStream);
         TokenLexer tokenLexer = new TokenLexer(sourceFileLexer);
+        CompUnitParser compUnitParser = new CompUnitParser(tokenLexer.getTokenList());
+        CompUnit compUnit = compUnitParser.parseCompUnit();
         String outputFileName = "output.txt";
         try {
             OutputStream outputStream = new FileOutputStream(outputFileName);

@@ -27,6 +27,19 @@ public class CompUnit implements SyntaxNode {
     @Override
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
+        if (this.decls != null) {
+            int len = this.decls.size();
+            for (int i = 0; i < len; i++) {
+                sb.append(this.decls.get(i).syntaxOutput());
+            }
+        }
+        if (this.funcDefs != null) {
+            int len = this.funcDefs.size();
+            for (int i = 0; i < len; i++) {
+                sb.append(this.funcDefs.get(i).syntaxOutput());
+            }
+        }
+        sb.append(this.mainFuncDef.syntaxOutput());
         sb.append(this.name + "\n");
         return sb.toString();
     }
