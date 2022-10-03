@@ -2,8 +2,9 @@ package frontend.parser.declaration;
 
 import frontend.lexer.Token;
 import frontend.lexer.TokenListIterator;
-
-import java.util.ListIterator;
+import frontend.lexer.TokenType;
+import frontend.parser.declaration.constant.ConstDeclParser;
+import frontend.parser.declaration.variable.VarDeclParser;
 
 public class DeclParser {
     private TokenListIterator iterator;
@@ -13,7 +14,19 @@ public class DeclParser {
     }
 
     public Decl parseDecl() {
-        /* TODO */
-        return null;
+        Token first = this.iterator.readNextToken();
+        DeclEle declEle = null;
+        if (first.getType().equals(TokenType.CONSTTK)) {
+            ConstDeclParser constDeclParser = new ConstDeclParser(this.iterator);
+            declEle = constDeclParser.parseConstDecl();
+        } else if (first.getType().equals(TokenType.INTTK)) {
+            VarDeclParser varDeclParser = new VarDeclParser(this.iterator);
+            declEle = varDeclParser.parseVarDecl();
+        } else {
+            /* ERROR */
+            System.out.println("READ UNEXPECTED TOKEN ");
+        }
+        Decl decl = new Decl(declEle);
+        return decl;
     }
 }
