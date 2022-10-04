@@ -1,4 +1,4 @@
-package frontend.parser.expression;
+package frontend.parser.expression.multiexp;
 
 import frontend.lexer.Token;
 import frontend.lexer.TokenListIterator;
@@ -36,7 +36,7 @@ public class MulExpParser {
             token = this.iterator.readNextToken();
         }
         this.iterator.unReadToken(1);
-        MulExp mulExp = new MulExp(first, operators, operands);
+        MulExp mulExp = new MulExp(this.first, this.operators, this.operands);
         return mulExp;
     }
 }

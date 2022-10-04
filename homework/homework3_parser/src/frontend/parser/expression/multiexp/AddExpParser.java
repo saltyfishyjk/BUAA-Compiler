@@ -3,7 +3,6 @@ package frontend.parser.expression.multiexp;
 import frontend.lexer.Token;
 import frontend.lexer.TokenListIterator;
 import frontend.lexer.TokenType;
-import frontend.parser.expression.MulExpParser;
 
 import java.util.ArrayList;
 
@@ -32,7 +31,7 @@ public class AddExpParser {
             token = this.iterator.readNextToken();
         }
         this.iterator.unReadToken(1);
-        AddExp addExp = new AddExp(first, operators, operands);
+        AddExp addExp = new AddExp(this.first, this.operators, this.operands);
         return addExp;
     }
 }
