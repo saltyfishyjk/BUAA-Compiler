@@ -1,6 +1,8 @@
 package frontend.parser.expression.primaryexp;
 
 import frontend.lexer.TokenListIterator;
+import frontend.parser.terminal.IntConst;
+import frontend.parser.terminal.IntConstParser;
 
 public class NumberParser {
     private TokenListIterator iterator;
@@ -10,7 +12,9 @@ public class NumberParser {
     }
 
     public Number parseNumber() {
-        /* TODO */
-        return null;
+        IntConstParser intConstParser = new IntConstParser(this.iterator);
+        IntConst intConst = intConstParser.parseIntConst();
+        Number number = new Number(intConst);
+        return number;
     }
 }
