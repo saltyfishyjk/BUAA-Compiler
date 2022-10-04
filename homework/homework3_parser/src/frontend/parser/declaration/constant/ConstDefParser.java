@@ -30,7 +30,7 @@ public class ConstDefParser {
         IdentParser identParser = new IdentParser(this.iterator);
         ident = identParser.parseIdent();
         Token token = iterator.readNextToken();
-        while (token.getType().equals(TokenType.LBRACK)) {
+        while (token.getType().equals(TokenType.LBRACKET)) {
             /* '[' */
             this.leftBrackets.add(token);
             /* ConstExp */
@@ -39,8 +39,8 @@ public class ConstDefParser {
             this.constExps.add(constExp);
             token = this.iterator.readNextToken();
             /* ']' */
-            if (!token.getType().equals(TokenType.RBRACK)) {
-                System.out.println("EXPECT RBRACK HERE");
+            if (!token.getType().equals(TokenType.RBRACKET)) {
+                System.out.println("EXPECT RBRACKET HERE");
             }
             this.rightBrackets.add(token);
         }
