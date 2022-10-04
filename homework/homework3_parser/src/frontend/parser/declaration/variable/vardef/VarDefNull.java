@@ -1,7 +1,7 @@
 package frontend.parser.declaration.variable.vardef;
 
 import frontend.lexer.Token;
-import frontend.parser.terminal.ident.Ident;
+import frontend.parser.terminal.Ident;
 import frontend.parser.expression.ConstExp;
 
 import java.util.ArrayList;

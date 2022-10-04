@@ -13,21 +13,25 @@ public class ConstDecl implements DeclEle {
     private ConstDef first;
     private ArrayList<Token> commas; // commas
     private ArrayList<ConstDef> constDefs; // constDefs
+    private Token semicn; // ';'
 
     public ConstDecl(Token constTk,
                      BType btype,
-                     ConstDef first) {
+                     ConstDef first,
+                     Token semicn) {
         this.constTk = constTk;
         this.btype = btype;
         this.first = first;
+        this.semicn = semicn;
     }
 
     public ConstDecl(Token constTk,
                      BType btype,
                      ConstDef first,
                      ArrayList<Token> commas,
-                     ArrayList<ConstDef> constDefs) {
-        this(constTk, btype, first);
+                     ArrayList<ConstDef> constDefs,
+                     Token semicn) {
+        this(constTk, btype, first, semicn);
         this.commas = commas;
         this.constDefs = constDefs;
     }

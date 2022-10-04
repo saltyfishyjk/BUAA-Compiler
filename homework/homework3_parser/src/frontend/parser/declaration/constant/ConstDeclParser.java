@@ -11,11 +11,12 @@ import java.util.ArrayList;
 public class ConstDeclParser {
     private TokenListIterator iterator;
     /* ConstDecl Attributes */
-    private Token constTk = null;
+    private Token constTk = null; // 'const'
     private BType btype = null;
     private ConstDef first = null;
     private ArrayList<Token> commas = new ArrayList<>();
     private ArrayList<ConstDef> constDefs = new ArrayList<>();
+    private Token semicn = null; // ';'
 
     public ConstDeclParser(TokenListIterator iterator) {
         this.iterator =  iterator;
@@ -31,7 +32,19 @@ public class ConstDeclParser {
         }
         BTypeParser btypeParser = new BTypeParser(this.iterator);
         btype = btypeParser.parseBtype();
-        return null;
+        ConstDefParser constDefParser = new ConstDefParser(this.iterator);
+        first = constDefParser.parseConstDef();
+        token = this.iterator.readNextToken();
+        while (token.getType().equals(TokenType.COMMA)) {
+            /* is ',' */
+            this.commas.add(token);
+            this.constDefs.add(constDefParser.parseConstDef());
+        }
+        /* token SHOULD be ';' */
+        this.semicn = token;
+        ConstDecl constDecl = new ConstDecl(this.constTk, this.btype,
+                this.first, this.commas, this.constDefs, this.semicn);
+        return constDecl;
     }
 
 }

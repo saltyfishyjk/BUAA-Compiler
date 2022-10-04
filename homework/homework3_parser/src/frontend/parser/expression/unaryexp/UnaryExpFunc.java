@@ -1,7 +1,7 @@
 package frontend.parser.expression.unaryexp;
 
 import frontend.lexer.Token;
-import frontend.parser.terminal.ident.Ident;
+import frontend.parser.terminal.Ident;
 import frontend.parser.expression.FuncRParams;
 
 /**

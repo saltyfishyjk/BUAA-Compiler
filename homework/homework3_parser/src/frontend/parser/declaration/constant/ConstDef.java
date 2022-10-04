@@ -1,7 +1,7 @@
 package frontend.parser.declaration.constant;
 
 import frontend.lexer.Token;
-import frontend.parser.terminal.ident.Ident;
+import frontend.parser.terminal.Ident;
 import frontend.parser.SyntaxNode;
 import frontend.parser.declaration.constant.constinitval.ConstInitVal;
 import frontend.parser.expression.ConstExp;

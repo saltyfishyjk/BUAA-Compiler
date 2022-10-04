@@ -3,12 +3,12 @@ package frontend.parser.declaration.constant;
 import frontend.lexer.Token;
 import frontend.lexer.TokenListIterator;
 import frontend.lexer.TokenType;
-import frontend.parser.terminal.ident.Ident;
+import frontend.parser.terminal.Ident;
 import frontend.parser.declaration.constant.constinitval.ConstInitVal;
 import frontend.parser.declaration.constant.constinitval.ConstInitValParser;
 import frontend.parser.expression.ConstExp;
 import frontend.parser.expression.ConstExpParser;
-import frontend.parser.terminal.ident.IdentParser;
+import frontend.parser.terminal.IdentParser;
 
 import java.util.ArrayList;
 
@@ -22,7 +22,7 @@ public class ConstDefParser {
     private Token eq; // =
     private ConstInitVal constInitVal;
 
-    private ConstDefParser(TokenListIterator iterator) {
+    public ConstDefParser(TokenListIterator iterator) {
         this.iterator = iterator;
     }
 
@@ -33,10 +33,12 @@ public class ConstDefParser {
         while (token.getType().equals(TokenType.LBRACK)) {
             /* '[' */
             this.leftBrackets.add(token);
+            /* ConstExp */
             ConstExpParser constExpParser = new ConstExpParser();
             ConstExp constExp = constExpParser.parseConstExp();
             this.constExps.add(constExp);
             token = this.iterator.readNextToken();
+            /* ']' */
             if (!token.getType().equals(TokenType.RBRACK)) {
                 System.out.println("EXPECT RBRACK HERE");
             }
