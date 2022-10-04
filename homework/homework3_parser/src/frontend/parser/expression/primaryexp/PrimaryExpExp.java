@@ -2,28 +2,27 @@ package frontend.parser.expression.primaryexp;
 
 import frontend.lexer.Token;
 import frontend.parser.expression.Exp;
-import frontend.parser.expression.primaryexp.PrimaryExpEle;
 
 /**
  * '(' <Exp> ')'
  */
 public class PrimaryExpExp implements PrimaryExpEle {
-    private Token leftBracket; // must be '('
+    private Token leftParent; // must be '('
     private Exp exp;
-    private Token rightBracket; // must be ')'
+    private Token rightParent; // must be ')'
 
-    public PrimaryExpExp(Token leftBracket, Exp exp, Token rightBracket) {
-        this.leftBracket = leftBracket;
+    public PrimaryExpExp(Token leftBracket, Exp exp, Token rightParent) {
+        this.leftParent = leftBracket;
         this.exp = exp;
-        this.rightBracket = rightBracket;
+        this.rightParent = rightParent;
     }
 
     @Override
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
-        sb.append(leftBracket.syntaxOutput());
+        sb.append(leftParent.syntaxOutput());
         sb.append(exp.syntaxOutput());
-        sb.append(rightBracket.syntaxOutput());
+        sb.append(rightParent.syntaxOutput());
         return sb.toString();
     }
 }
