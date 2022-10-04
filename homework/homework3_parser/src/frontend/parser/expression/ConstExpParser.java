@@ -7,12 +7,12 @@ import frontend.parser.expression.multiexp.AddExpParser;
 public class ConstExpParser {
     private TokenListIterator iterator;
     /* ConstExp Attributes */
-
+    private AddExp addExp = null;
 
     public ConstExp parseConstExp() {
         AddExpParser addExpParser = new AddExpParser(this.iterator);
-        AddExp addExp = addExpParser.parseAddExp();
-        ConstExp constExp = new ConstExp(addExp);
+        this.addExp = addExpParser.parseAddExp();
+        ConstExp constExp = new ConstExp(this.addExp);
         return constExp;
     }
 }

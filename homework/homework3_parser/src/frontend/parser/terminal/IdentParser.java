@@ -8,7 +8,7 @@ import frontend.parser.terminal.Ident;
 public class IdentParser {
     private TokenListIterator iterator;
     /* Ident Attribute */
-    Token token; // ident
+    private Token token; // ident
 
     public IdentParser(TokenListIterator iterator) {
         this.iterator = iterator;

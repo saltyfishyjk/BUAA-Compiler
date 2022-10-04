@@ -5,11 +5,11 @@ import frontend.lexer.Token;
 import java.util.ArrayList;
 
 public class ConstInitValMulti implements ConstInitValEle {
-    private Token leftBrace;
+    private Token leftBrace; // '{'
     private ConstInitVal constInitVal; // may exist or not
     private ArrayList<Token> commas;
     private ArrayList<ConstInitVal> constInitVals;
-    private Token rightBrace;
+    private Token rightBrace; // '}'
 
     public ConstInitValMulti(Token leftBrace,
                              ConstInitVal constInitval,

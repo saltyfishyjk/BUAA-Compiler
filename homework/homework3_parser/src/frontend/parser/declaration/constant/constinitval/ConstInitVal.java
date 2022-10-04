@@ -3,7 +3,7 @@ package frontend.parser.declaration.constant.constinitval;
 import frontend.parser.SyntaxNode;
 
 public class ConstInitVal implements SyntaxNode {
-    private final String name = "<constinitval>";
+    private final String name = "<ConstInitVal>";
     private ConstInitValEle constInitValEle;
 
     @Override

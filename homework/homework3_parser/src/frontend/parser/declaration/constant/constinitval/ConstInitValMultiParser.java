@@ -2,16 +2,15 @@ package frontend.parser.declaration.constant.constinitval;
 
 import frontend.lexer.TokenListIterator;
 
-public class ConstInitValParser {
+public class ConstInitValMultiParser {
     private TokenListIterator iterator;
-    /* ConstInitVal Attribute */
-    private ConstInitValEle constInitValEle;
+    /* ConstInitMulti Attributes */
 
-    public ConstInitValParser(TokenListIterator iterator) {
+    public ConstInitValMultiParser(TokenListIterator iterator) {
         this.iterator = iterator;
     }
 
-    public ConstInitVal parseConstInitVal() {
+    public ConstInitValMulti parseConstInitValMulti() {
         /* TODO */
         return null;
     }
