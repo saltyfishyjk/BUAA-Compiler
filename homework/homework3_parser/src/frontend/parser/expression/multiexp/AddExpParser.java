@@ -14,7 +14,7 @@ public class AddExpParser {
     /* AddExp Attributes */
     private MulExp first = null;
     private ArrayList<Token> operators = new ArrayList<>(); // '+' '-'
-    private ArrayList<MulExp> operands;
+    private ArrayList<MulExp> operands = new ArrayList<>();
 
     public AddExpParser(TokenListIterator iterator) {
         this.iterator = iterator;
@@ -22,7 +22,7 @@ public class AddExpParser {
 
     public AddExp parseAddExp() {
         MulExpParser mulExpParser = new MulExpParser(this.iterator);
-        first = mulExpParser.parseMulExp();
+        this.first = mulExpParser.parseMulExp();
         Token token = this.iterator.readNextToken();
         while (token.getType().equals(TokenType.PLUS) ||
                 token.getType().equals(TokenType.MINU)) {
