@@ -10,6 +10,10 @@ import frontend.parser.SyntaxNode;
 public class IntConst implements SyntaxNode {
     private Token token;
 
+    public IntConst(Token token) {
+        this.token = token;
+    }
+
     public IntConst(String numStr, int lineNum) {
         this.token = new Token(TokenType.INTCON, lineNum, numStr);
     }
