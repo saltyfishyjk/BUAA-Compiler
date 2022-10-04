@@ -1,7 +1,7 @@
 package frontend.parser.declaration.constant;
 
 import frontend.lexer.Token;
-import frontend.lexer.terminal.Ident;
+import frontend.parser.terminal.ident.Ident;
 import frontend.parser.SyntaxNode;
 import frontend.parser.declaration.constant.constinitval.ConstInitVal;
 import frontend.parser.expression.ConstExp;
@@ -33,6 +33,20 @@ public class ConstDef implements SyntaxNode {
 
     @Override
     public String syntaxOutput() {
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.ident.syntaxOutput());
+        if (this.leftBracks != null && this.rightBrackets != null && this.constExps != null &&
+            this.leftBracks.size() == this.constExps.size() &&
+            this.constExps.size() == this.rightBrackets.size()) {
+            int len = leftBracks.size();
+            for (int i = 0; i < len; i++) {
+                sb.append(this.leftBracks.get(i).syntaxOutput());
+                sb.append(this.constExps.get(i).syntaxOutput());
+                sb.append(this.rightBrackets.get(i).syntaxOutput());
+            }
+        }
+        sb.append(this.eq.syntaxOutput());
+        sb.append(this.constInitval.syntaxOutput());
+        return sb.toString();
     }
 }

@@ -1,9 +1,8 @@
 package frontend.parser.expression.primaryexp;
 
 import frontend.lexer.Token;
-import frontend.lexer.terminal.Ident;
+import frontend.parser.terminal.ident.Ident;
 import frontend.parser.expression.Exp;
-import frontend.parser.expression.primaryexp.PrimaryExpEle;
 
 import java.util.ArrayList;
 

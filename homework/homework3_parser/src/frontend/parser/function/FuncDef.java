@@ -1,7 +1,7 @@
 package frontend.parser.function;
 
 import frontend.lexer.Token;
-import frontend.lexer.terminal.Ident;
+import frontend.parser.terminal.ident.Ident;
 import frontend.parser.SyntaxNode;
 import frontend.parser.function.functype.FuncType;
 import frontend.parser.statement.Block;

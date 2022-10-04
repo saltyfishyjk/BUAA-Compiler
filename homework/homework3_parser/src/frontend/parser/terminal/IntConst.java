@@ -1,4 +1,4 @@
-package frontend.lexer.terminal;
+package frontend.parser.terminal;
 
 import frontend.lexer.Token;
 import frontend.lexer.TokenType;

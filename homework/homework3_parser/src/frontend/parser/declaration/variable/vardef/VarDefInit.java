@@ -1,7 +1,7 @@
 package frontend.parser.declaration.variable.vardef;
 
 import frontend.lexer.Token;
-import frontend.lexer.terminal.Ident;
+import frontend.parser.terminal.ident.Ident;
 import frontend.parser.declaration.variable.initval.InitVal;
 import frontend.parser.expression.ConstExp;
 

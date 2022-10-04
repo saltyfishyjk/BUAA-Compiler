@@ -1,7 +1,6 @@
 package frontend.parser.expression.primaryexp;
 
-import frontend.lexer.terminal.IntConst;
-import frontend.parser.expression.primaryexp.PrimaryExpEle;
+import frontend.parser.terminal.IntConst;
 
 /**
  * Number 非终结符

@@ -1,7 +1,7 @@
 package frontend.parser.statement.stmt;
 
 import frontend.lexer.Token;
-import frontend.lexer.terminal.FormatString;
+import frontend.parser.terminal.FormatString;
 import frontend.parser.expression.Exp;
 
 import java.util.ArrayList;

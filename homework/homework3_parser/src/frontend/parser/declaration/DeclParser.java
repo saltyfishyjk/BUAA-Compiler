@@ -15,6 +15,7 @@ public class DeclParser {
 
     public Decl parseDecl() {
         Token first = this.iterator.readNextToken();
+        this.iterator.unReadToken(1);
         DeclEle declEle = null;
         if (first.getType().equals(TokenType.CONSTTK)) {
             ConstDeclParser constDeclParser = new ConstDeclParser(this.iterator);
