@@ -7,6 +7,10 @@ public class UnaryExp implements SyntaxNode {
     private final String name = "<UnaryExp>";
     private UnaryExpEle unaryExpEle;
 
+    public UnaryExp(UnaryExpEle unaryExpEle) {
+        this.unaryExpEle = unaryExpEle;
+    }
+
     @Override
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
