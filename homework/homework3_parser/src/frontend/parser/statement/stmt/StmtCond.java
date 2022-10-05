@@ -16,14 +16,22 @@ public class StmtCond implements StmtEle {
                     Token leftParent,
                     Cond cond,
                     Token rightParent,
-                    Stmt ifStmt,
-                    Token elseTk,
-                    Stmt elseStmt) {
+                    Stmt ifStmt) {
         this.ifTk = ifTk;
         this.ifStmt = ifStmt;
         this.leftParent = leftParent;
         this.cond = cond;
         this.rightParent = rightParent;
+    }
+
+    public StmtCond(Token ifTk,
+                    Token leftParent,
+                    Cond cond,
+                    Token rightParent,
+                    Stmt ifStmt,
+                    Token elseTk,
+                    Stmt elseStmt) {
+        this(ifTk, leftParent, cond, rightParent, ifStmt);
         this.elseTk = elseTk;
         this.elseStmt = elseStmt;
     }
