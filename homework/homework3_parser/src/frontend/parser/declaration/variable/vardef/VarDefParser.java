@@ -48,6 +48,8 @@ public class VarDefParser {
             this.varDefEle = new VarDefInit(this.ident, this.leftBrackets,
                     this.constExps, this.rightBrackets, this.eq, this.initVal);
         } else {
+            // token now is ';', need to backspace
+            this.iterator.unReadToken(1);
             this.varDefEle = new VarDefNull(this.ident, this.leftBrackets,
                     this.constExps, this.rightBrackets);
         }

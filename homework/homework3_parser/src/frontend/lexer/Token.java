@@ -46,4 +46,9 @@ public class Token implements SyntaxNode {
         sb.append(this.getType() + " " + this.getContent() + "\n");
         return sb.toString();
     }
+
+    @Override
+    public String toString() {
+        return this.getContent();
+    }
 }

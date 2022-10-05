@@ -5,6 +5,7 @@ import java.util.ListIterator;
 public class TokenListIterator {
     private TokenList tokenList;
     private ListIterator<Token> iterator;
+    private Token last;
 
     public TokenListIterator(TokenList tokenList) {
         this.tokenList = tokenList;
@@ -16,7 +17,7 @@ public class TokenListIterator {
     }
 
     public Token readNextToken() {
-        return this.iterator.next();
+        return last = this.iterator.next();
     }
 
     public boolean hasNext() {
@@ -28,10 +29,15 @@ public class TokenListIterator {
         while (cnt > 0) {
             cnt--;
             if (this.iterator.hasPrevious()) {
-                this.iterator.previous();
+                last = this.iterator.previous();
             } else {
                 break;
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return last.toString();
     }
 }

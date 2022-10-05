@@ -27,7 +27,8 @@ public class Compiler {
         try {
             OutputStream outputStream = new FileOutputStream(outputFileName);
             try {
-                outputStream.write(tokenLexer.getTokenList().toString().getBytes());
+                outputStream.write(compUnit.syntaxOutput().getBytes());
+                //outputStream.write(tokenLexer.getTokenList().toString().getBytes());
             } catch (IOException e) {
                 System.err.println("Can not write " + outputFileName);
             }

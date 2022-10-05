@@ -32,6 +32,7 @@ public class VarDeclParser {
         while (token.getType().equals(TokenType.COMMA)) { // ','
             this.commas.add(token);
             this.varDefs.add(varDefParser.parseVarDef());
+            token = this.iterator.readNextToken();
         }
         this.semicn = token;
         VarDecl varDecl = new VarDecl(this.btype, this.first,

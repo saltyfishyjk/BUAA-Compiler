@@ -8,7 +8,7 @@ import frontend.parser.declaration.variable.vardef.VarDef;
 import java.util.ArrayList;
 
 public class VarDecl implements DeclEle {
-    private final String name = "VarDecl";
+    private final String name = "<VarDecl>";
     private BType btype;
     private VarDef first;
     private ArrayList<Token> commas; // ','
