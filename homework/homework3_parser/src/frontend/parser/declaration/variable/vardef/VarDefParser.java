@@ -3,7 +3,6 @@ package frontend.parser.declaration.variable.vardef;
 import frontend.lexer.Token;
 import frontend.lexer.TokenListIterator;
 import frontend.lexer.TokenType;
-import frontend.parser.declaration.variable.VarDecl;
 import frontend.parser.declaration.variable.initval.InitVal;
 import frontend.parser.declaration.variable.initval.InitValParser;
 import frontend.parser.expression.ConstExp;
@@ -49,7 +48,8 @@ public class VarDefParser {
             this.varDefEle = new VarDefInit(this.ident, this.leftBrackets,
                     this.constExps, this.rightBrackets, this.eq, this.initVal);
         } else {
-            this.varDefEle = new VarDefNull(this.ident, this.leftBrackets, this.constExps, this.rightBrackets);
+            this.varDefEle = new VarDefNull(this.ident, this.leftBrackets,
+                    this.constExps, this.rightBrackets);
         }
         VarDef varDef = new VarDef(this.varDefEle);
         return varDef;
