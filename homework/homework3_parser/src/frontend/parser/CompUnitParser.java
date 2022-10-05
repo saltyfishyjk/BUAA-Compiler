@@ -70,6 +70,11 @@ public class CompUnitParser {
         Token first = this.iterator.readNextToken();
         Token second = this.iterator.readNextToken();
         while (this.iterator.hasNext()) {
+            Token third = this.iterator.readNextToken();
+            if (third.getType().equals(TokenType.LPARENT)) {
+                this.iterator.unReadToken(3);
+                return;
+            }
             if ((first.getType().equals(TokenType.CONSTTK) &&
                     second.getType().equals(TokenType.INTTK)) ||
                     (first.getType().equals(TokenType.INTTK) &&
