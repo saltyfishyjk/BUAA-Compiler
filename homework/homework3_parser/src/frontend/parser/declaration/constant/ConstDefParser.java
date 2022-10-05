@@ -34,7 +34,7 @@ public class ConstDefParser {
             /* '[' */
             this.leftBrackets.add(token);
             /* ConstExp */
-            ConstExpParser constExpParser = new ConstExpParser();
+            ConstExpParser constExpParser = new ConstExpParser(this.iterator);
             ConstExp constExp = constExpParser.parseConstExp();
             this.constExps.add(constExp);
             token = this.iterator.readNextToken();

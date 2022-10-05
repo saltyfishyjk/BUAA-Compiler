@@ -39,6 +39,7 @@ public class ConstDeclParser {
             /* is ',' */
             this.commas.add(token);
             this.constDefs.add(constDefParser.parseConstDef());
+            token = this.iterator.readNextToken();
         }
         /* token SHOULD be ';' */
         this.semicn = token;
