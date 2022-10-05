@@ -18,7 +18,8 @@ public class ConstInitValParser {
         Token token = this.iterator.readNextToken();
         if (token.getType().equals(TokenType.LBRACE)) { // '{'
             this.iterator.unReadToken(1);
-            ConstInitValMultiParser constInitValMultiParser = new ConstInitValMultiParser(this.iterator);
+            ConstInitValMultiParser constInitValMultiParser =
+                    new ConstInitValMultiParser(this.iterator);
             this.constInitValEle = constInitValMultiParser.parseConstInitValMulti();
         } else {
             this.iterator.unReadToken(1);
