@@ -47,6 +47,7 @@ public class ConstDef implements SyntaxNode {
         }
         sb.append(this.eq.syntaxOutput());
         sb.append(this.constInitval.syntaxOutput());
+        sb.append(this.name + "\n");
         return sb.toString();
     }
 }

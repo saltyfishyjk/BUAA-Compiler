@@ -33,7 +33,7 @@ public class VarDefParser {
         IdentParser identParser = new IdentParser(this.iterator);
         this.ident = identParser.parseIdent();
         Token token = this.iterator.readNextToken();
-        while (token.getType().equals(TokenType.LBRACKET)) {
+        while (token.getType().equals(TokenType.LBRACK)) {
             this.leftBrackets.add(token);
             ConstExpParser expParser = new ConstExpParser(this.iterator);
             this.constExps.add(expParser.parseConstExp());

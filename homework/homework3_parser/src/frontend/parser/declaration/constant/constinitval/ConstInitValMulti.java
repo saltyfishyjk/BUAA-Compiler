@@ -42,7 +42,7 @@ public class ConstInitValMulti implements ConstInitValEle {
         StringBuilder sb = new StringBuilder();
         sb.append(this.leftBrace.syntaxOutput());
         if (this.first != null) {
-            sb.append(this.first);
+            sb.append(this.first.syntaxOutput());
             if (this.commas != null && this.constInitVals != null
                     && this.commas.size() == this.constInitVals.size()) {
                 int len = this.commas.size();

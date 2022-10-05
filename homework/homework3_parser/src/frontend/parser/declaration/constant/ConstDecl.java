@@ -39,9 +39,9 @@ public class ConstDecl implements DeclEle {
     @Override
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
-        sb.append(constTk);
-        sb.append(btype);
-        sb.append(first);
+        sb.append(constTk.syntaxOutput());
+        sb.append(btype.syntaxOutput());
+        sb.append(first.syntaxOutput());
         if (commas != null && constDefs != null && commas.size() == constDefs.size()) {
             int len = commas.size();
             for (int i = 0; i < len; i++) {
@@ -49,6 +49,8 @@ public class ConstDecl implements DeclEle {
                 sb.append(this.constDefs.get(i).syntaxOutput());
             }
         }
+        sb.append(this.semicn.syntaxOutput());
+        sb.append(this.name + "\n");
         return sb.toString();
     }
 }

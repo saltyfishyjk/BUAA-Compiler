@@ -26,7 +26,7 @@ public class LValParser {
         IdentParser identParser = new IdentParser(this.iterator);
         this.ident = identParser.parseIdent();
         Token token = this.iterator.readNextToken();
-        while (token.getType().equals(TokenType.LBRACKET)) { // '['
+        while (token.getType().equals(TokenType.LBRACK)) { // '['
             this.leftBrackets.add(token);
             ExpParser expParser = new ExpParser(this.iterator);
             this.exps.add(expParser.parseExp());

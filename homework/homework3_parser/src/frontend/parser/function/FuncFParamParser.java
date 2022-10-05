@@ -34,10 +34,10 @@ public class FuncFParamParser {
         IdentParser identParser = new IdentParser(this.iterator);
         this.ident = identParser.parseIdent();
         this.leftBracketFirst = this.iterator.readNextToken();
-        if (this.leftBracketFirst.getType().equals(TokenType.LBRACKET)) {
+        if (this.leftBracketFirst.getType().equals(TokenType.LBRACK)) {
             this.rightBracketFirst = this.iterator.readNextToken();
             Token token = this.iterator.readNextToken();
-            while (token.getType().equals(TokenType.LBRACKET)) {
+            while (token.getType().equals(TokenType.LBRACK)) {
                 this.leftBrackets.add(token);
                 ConstExpParser constExpParser = new ConstExpParser(this.iterator);
                 this.constExps.add(constExpParser.parseConstExp());

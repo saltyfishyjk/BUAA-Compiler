@@ -53,8 +53,8 @@ public enum TokenType {
     /* ---------- brackets begin ---------- */
     LPARENT(false, "\\("),
     RPARENT(false, "\\)"),
-    LBRACKET(false, "\\["),
-    RBRACKET(false, "]"),
+    LBRACK(false, "\\["),
+    RBRACK(false, "]"),
     LBRACE(false, "\\{"),
     RBRACE(false, "}");
     /* ---------- brackets end ---------- */

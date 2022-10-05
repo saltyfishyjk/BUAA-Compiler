@@ -40,7 +40,7 @@ public class StmtCondParser {
         StmtParser stmtParser = new StmtParser(this.iterator);
         this.ifStmt = stmtParser.parseStmt();
         this.elseTk = this.iterator.readNextToken();
-        if (this.elseTk.equals(TokenType.ELSETK)) {
+        if (this.elseTk.getType().equals(TokenType.ELSETK)) {
             this.elseStmt = stmtParser.parseStmt();
             this.stmtCond = new StmtCond(this.ifTK, this.leftParent,
                     this.cond, this.rightParent, this.ifStmt, this.elseTk, this.elseStmt);
