@@ -28,6 +28,7 @@ public class StmtReturnParser {
         if (!this.semicn.getType().equals(TokenType.SEMICN)) {
             this.iterator.unReadToken(1);
             this.exp = expParser.parseExp();
+            this.semicn = this.iterator.readNextToken();
             stmtReturn = new StmtReturn(this.returnTk, this.exp, this.semicn);
         } else {
             stmtReturn = new StmtReturn(this.returnTk, this.semicn);

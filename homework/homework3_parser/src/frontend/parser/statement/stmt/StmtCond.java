@@ -43,6 +43,7 @@ public class StmtCond implements StmtEle {
         sb.append(this.leftParent.syntaxOutput());
         sb.append(this.cond.syntaxOutput());
         sb.append(this.rightParent.syntaxOutput());
+        sb.append(this.ifStmt.syntaxOutput());
         if (elseTk != null) {
             sb.append(this.elseTk.syntaxOutput());
             sb.append(this.elseStmt.syntaxOutput());
