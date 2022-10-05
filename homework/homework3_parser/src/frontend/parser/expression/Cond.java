@@ -17,7 +17,7 @@ public class Cond implements SyntaxNode {
     @Override
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
-        sb.append(lorExp);
+        sb.append(lorExp.syntaxOutput());
         sb.append(this.name + "\n");
         return sb.toString();
     }

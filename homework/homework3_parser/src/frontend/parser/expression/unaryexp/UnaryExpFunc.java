@@ -37,7 +37,7 @@ public class UnaryExpFunc implements UnaryExpEle {
         if (funcRParams != null) {
             sb.append(this.funcRParams.syntaxOutput());
         }
-        sb.append(rightParent);
+        sb.append(rightParent.syntaxOutput());
         return sb.toString();
     }
 }
