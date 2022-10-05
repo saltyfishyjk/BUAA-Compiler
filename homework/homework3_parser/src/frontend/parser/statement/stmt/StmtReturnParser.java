@@ -12,7 +12,7 @@ public class StmtReturnParser {
     private Token returnTk; // 'return'
     private Exp exp;
     private Token semicn; // ';'
-    StmtReturn stmtReturn = null;
+    private StmtReturn stmtReturn = null;
 
     public StmtReturnParser(TokenListIterator iterator) {
         this.iterator = iterator;

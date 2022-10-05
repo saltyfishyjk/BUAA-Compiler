@@ -3,7 +3,6 @@ package frontend.parser.statement.stmt;
 import frontend.lexer.Token;
 import frontend.lexer.TokenListIterator;
 import frontend.lexer.TokenType;
-import frontend.parser.statement.Block;
 import frontend.parser.statement.BlockParser;
 
 public class StmtParser {

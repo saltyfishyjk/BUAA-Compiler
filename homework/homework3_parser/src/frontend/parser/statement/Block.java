@@ -1,7 +1,6 @@
 package frontend.parser.statement;
 
 import frontend.lexer.Token;
-import frontend.parser.SyntaxNode;
 import frontend.parser.statement.blockitem.BlockItem;
 import frontend.parser.statement.stmt.StmtEle;
 
