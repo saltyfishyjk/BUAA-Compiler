@@ -31,6 +31,7 @@ public class Block implements SyntaxNode {
             }
         }
         sb.append(this.rightBrace.syntaxOutput());
+        sb.append(this.name + "\n");
         return sb.toString();
     }
 }
