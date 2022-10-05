@@ -9,6 +9,10 @@ public class ConstExpParser {
     /* ConstExp Attributes */
     private AddExp addExp = null;
 
+    public ConstExpParser(TokenListIterator iterator) {
+        this.iterator = iterator;
+    }
+
     public ConstExp parseConstExp() {
         AddExpParser addExpParser = new AddExpParser(this.iterator);
         this.addExp = addExpParser.parseAddExp();

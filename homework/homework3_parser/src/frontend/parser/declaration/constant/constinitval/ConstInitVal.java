@@ -6,6 +6,10 @@ public class ConstInitVal implements SyntaxNode {
     private final String name = "<ConstInitVal>";
     private ConstInitValEle constInitValEle;
 
+    public ConstInitVal(ConstInitValEle constInitValEle) {
+        this.constInitValEle = constInitValEle;
+    }
+
     @Override
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
