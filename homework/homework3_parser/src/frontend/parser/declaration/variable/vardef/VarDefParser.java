@@ -30,6 +30,9 @@ public class VarDefParser {
     }
 
     public VarDef parseVarDef() {
+        this.leftBrackets = new ArrayList<>();
+        this.constExps = new ArrayList<>();
+        this.rightBrackets = new ArrayList<>();
         IdentParser identParser = new IdentParser(this.iterator);
         this.ident = identParser.parseIdent();
         Token token = this.iterator.readNextToken();

@@ -38,23 +38,9 @@ public class CompUnitParser {
         this.mainFuncDef = null;
     }
 
-    /*private Token readNextToken() {
-        return iterator.next();
-    }*/
-
-    /*private void unReadToken(int k) {
-        int cnt = k;
-        while (cnt > 0) {
-            cnt--;
-            if (iterator.hasPrevious()) {
-                iterator.previous();
-            } else {
-                break;
-            }
-        }
-    }*/
-
     public CompUnit parseCompUnit() {
+        this.decls = new ArrayList<>();
+        this.funcDefs = new ArrayList<>();
         /* parse decls */
         parseDecls();
         /* parse FuncDefs */

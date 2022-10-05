@@ -25,4 +25,9 @@ public class Number implements PrimaryExpEle {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(this.intConst.getNum());
+    }
 }

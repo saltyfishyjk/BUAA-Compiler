@@ -21,6 +21,8 @@ public class LOrExpParser {
     }
 
     public LOrExp parseLOrExp() {
+        this.operands = new ArrayList<>();
+        this.operators = new ArrayList<>();
         LAndExpParser landExpParser = new LAndExpParser(this.iterator);
         this.first = landExpParser.parseLAndExp();
         Token token = this.iterator.readNextToken();

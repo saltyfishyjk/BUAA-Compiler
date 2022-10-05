@@ -18,6 +18,8 @@ public class FuncRParamsParser {
     }
 
     public FuncRParams parseFuncRParams() {
+        this.commas = new ArrayList<>();
+        this.exps = new ArrayList<>();
         ExpParser expParser = new ExpParser(this.iterator);
         first = expParser.parseExp();
         Token token = this.iterator.readNextToken();

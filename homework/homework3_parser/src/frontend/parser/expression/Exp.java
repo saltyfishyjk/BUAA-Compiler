@@ -21,7 +21,7 @@ public class Exp implements InitValEle {
     @Override
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
-        sb.append(addExp.syntaxOutput());
+        sb.append(this.addExp.syntaxOutput());
         sb.append(this.name + "\n");
         return sb.toString();
     }

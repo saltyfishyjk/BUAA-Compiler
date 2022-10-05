@@ -29,6 +29,9 @@ public class FuncFParamParser {
     }
 
     public FuncFParam parseFuncFParam() {
+        this.leftBrackets = new ArrayList<>();
+        this.constExps = new ArrayList<>();
+        this.rightBrackets = new ArrayList<>();
         BTypeParser btypeParser = new BTypeParser(this.iterator);
         this.btype = btypeParser.parseBtype();
         IdentParser identParser = new IdentParser(this.iterator);

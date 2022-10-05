@@ -23,6 +23,8 @@ public class ConstDeclParser {
     }
 
     public ConstDecl parseConstDecl() {
+        this.commas = new ArrayList<>();
+        this.constDefs = new ArrayList<>();
         Token token = this.iterator.readNextToken(); // SHOULD be CONST
         /* MAY need handle error */
         if (token.getType().equals(TokenType.CONSTTK)) {

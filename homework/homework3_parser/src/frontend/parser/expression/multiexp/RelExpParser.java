@@ -21,6 +21,8 @@ public class RelExpParser {
     }
 
     public RelExp parseRelExp() {
+        this.operands = new ArrayList<>();
+        this.operators = new ArrayList<>();
         AddExpParser addExpParser = new AddExpParser(this.iterator);
         first = addExpParser.parseAddExp();
         Token token = this.iterator.readNextToken();

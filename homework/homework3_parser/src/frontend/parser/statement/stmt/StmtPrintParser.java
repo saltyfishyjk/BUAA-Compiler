@@ -25,6 +25,8 @@ public class StmtPrintParser {
     }
 
     public StmtPrint parseStmtPrint() {
+        this.commmas = new ArrayList<>();
+        this.exps = new ArrayList<>();
         this.printf = this.iterator.readNextToken();
         if (!this.printf.getType().equals(TokenType.PRINTFTK)) {
             System.out.println("EXPEXT PRINTF IN STMTPRINTFPARSER");

@@ -24,6 +24,8 @@ public class VarDeclParser {
     }
 
     public VarDecl parseVarDecl() {
+        this.commas = new ArrayList<>();
+        this.varDefs = new ArrayList<>();
         BTypeParser btypeparser = new BTypeParser(this.iterator);
         this.btype = btypeparser.parseBtype();
         VarDefParser varDefParser = new VarDefParser(this.iterator);

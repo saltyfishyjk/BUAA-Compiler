@@ -21,6 +21,8 @@ public class FuncFParamsParser {
     }
 
     public FuncFParams parseFuncFParams() {
+        this.commas = new ArrayList<>();
+        this.funcFParams = new ArrayList<>();
         FuncFParamParser funcFParamParser = new FuncFParamParser(this.iterator);
         this.first = funcFParamParser.parseFuncFParam();
         Token token = this.iterator.readNextToken();

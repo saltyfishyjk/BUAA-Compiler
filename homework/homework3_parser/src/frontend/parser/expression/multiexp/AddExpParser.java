@@ -21,6 +21,8 @@ public class AddExpParser {
     }
 
     public AddExp parseAddExp() {
+        this.operands = new ArrayList<>();
+        this.operators = new ArrayList<>();
         MulExpParser mulExpParser = new MulExpParser(this.iterator);
         this.first = mulExpParser.parseMulExp();
         Token token = this.iterator.readNextToken();

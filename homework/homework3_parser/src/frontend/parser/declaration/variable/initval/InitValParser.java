@@ -22,6 +22,8 @@ public class InitValParser {
     }
 
     public InitVal parseInitVal() {
+        this.commas = new ArrayList<>();
+        this.initVals = new ArrayList<>();
         this.leftBrace = this.iterator.readNextToken();
         if (!this.leftBrace.getType().equals(TokenType.LBRACE)) {
             this.iterator.unReadToken(1);

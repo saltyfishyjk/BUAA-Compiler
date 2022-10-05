@@ -27,6 +27,9 @@ public class ConstDefParser {
     }
 
     public ConstDef parseConstDef() {
+        this.leftBrackets = new ArrayList<>();
+        this.constExps = new ArrayList<>();
+        this.rightBrackets = new ArrayList<>();
         IdentParser identParser = new IdentParser(this.iterator);
         ident = identParser.parseIdent();
         Token token = iterator.readNextToken();

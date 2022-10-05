@@ -23,6 +23,9 @@ public class LValParser {
     }
 
     public LVal parseLVal() {
+        this.leftBrackets = new ArrayList<>();
+        this.exps = new ArrayList<>();
+        this.rightBrackets = new ArrayList<>();
         IdentParser identParser = new IdentParser(this.iterator);
         this.ident = identParser.parseIdent();
         Token token = this.iterator.readNextToken();

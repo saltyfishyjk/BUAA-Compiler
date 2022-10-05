@@ -18,6 +18,8 @@ public class EqExpParser {
     }
 
     public EqExp parseEqExp() {
+        this.operands = new ArrayList<>();
+        this.operators = new ArrayList<>();
         RelExpParser relExpParser = new RelExpParser(this.iterator);
         this.first = relExpParser.parseRelExp();
         Token token = this.iterator.readNextToken();

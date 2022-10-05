@@ -20,6 +20,8 @@ public class ConstInitValMultiParser {
     }
 
     public ConstInitValMulti parseConstInitValMulti() {
+        this.commas = new ArrayList<>();
+        this.constInitVals = new ArrayList<>();
         this.leftBrace = this.iterator.readNextToken();
         if (!this.leftBrace.getType().equals(TokenType.LBRACE)) {
             System.out.println("EXPECT LBRACE HERE");

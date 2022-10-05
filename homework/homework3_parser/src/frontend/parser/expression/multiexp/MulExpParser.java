@@ -6,6 +6,7 @@ import frontend.lexer.TokenType;
 import frontend.parser.expression.multiexp.MulExp;
 import frontend.parser.expression.unaryexp.UnaryExp;
 import frontend.parser.expression.unaryexp.UnaryExpParser;
+import sun.swing.BakedArrayList;
 
 import java.util.ArrayList;
 
@@ -24,8 +25,10 @@ public class MulExpParser {
     }
 
     public MulExp parseMulExp() {
+        this.operators = new ArrayList<>();
+        this.operands = new ArrayList<>();
         UnaryExpParser unaryExpParser = new UnaryExpParser(this.iterator);
-        first = unaryExpParser.parseUnaryExp();
+        this.first = unaryExpParser.parseUnaryExp();
         Token token = this.iterator.readNextToken();
         while (token.getType().equals(TokenType.MULT) ||
                 token.getType().equals(TokenType.DIV) ||
