@@ -57,10 +57,11 @@ public class StmtParser {
             case IDENFR:
                 caseIdenfr(first);
                 break;
-            case LBRACE:
+            case LBRACE: // '{'
                 this.iterator.unReadToken(1);
                 BlockParser blockParser = new BlockParser(this.iterator);
                 this.stmtEle = blockParser.parseBlock();
+                break;
             default:
                 System.out.println("ARRIVE UNEXPECTED DEFAULT BRANCH");
         }

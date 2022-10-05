@@ -12,6 +12,7 @@ public class StmtReturnParser {
     private Token returnTk; // 'return'
     private Exp exp;
     private Token semicn; // ';'
+    StmtReturn stmtReturn = null;
 
     public StmtReturnParser(TokenListIterator iterator) {
         this.iterator = iterator;
@@ -23,9 +24,14 @@ public class StmtReturnParser {
             System.out.println("EXPECT RETURNTK IN STMTRETURNPARSER");
         }
         ExpParser expParser = new ExpParser(this.iterator);
-        this.exp = expParser.parseExp();
         this.semicn = this.iterator.readNextToken();
-        StmtReturn stmtReturn = new StmtReturn(this.returnTk, this.exp, this.semicn);
+        if (!this.semicn.getType().equals(TokenType.SEMICN)) {
+            this.iterator.unReadToken(1);
+            this.exp = expParser.parseExp();
+            stmtReturn = new StmtReturn(this.returnTk, this.exp, this.semicn);
+        } else {
+            stmtReturn = new StmtReturn(this.returnTk, this.semicn);
+        }
         return stmtReturn;
     }
 }

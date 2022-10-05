@@ -9,11 +9,16 @@ public class StmtReturn implements StmtEle {
     private Token semicn; // ';'
 
     public StmtReturn(Token returnTk,
-                      Exp exp,
                       Token semicn) {
         this.returnTk = returnTk;
-        this.exp = exp;
         this.semicn = semicn;
+    }
+
+    public StmtReturn(Token returnTk,
+                      Exp exp,
+                      Token semicn) {
+        this(returnTk, semicn);
+        this.exp = exp;
     }
 
     @Override

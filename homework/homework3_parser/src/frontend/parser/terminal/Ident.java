@@ -32,4 +32,9 @@ public class Ident implements SyntaxNode {
         sb.append(token.syntaxOutput());
         return sb.toString();
     }
+
+    @Override
+    public String toString() {
+        return this.token.getContent();
+    }
 }
