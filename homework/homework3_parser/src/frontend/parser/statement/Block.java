@@ -3,10 +3,11 @@ package frontend.parser.statement;
 import frontend.lexer.Token;
 import frontend.parser.SyntaxNode;
 import frontend.parser.statement.blockitem.BlockItem;
+import frontend.parser.statement.stmt.StmtEle;
 
 import java.util.ArrayList;
 
-public class Block implements SyntaxNode {
+public class Block implements StmtEle {
     private final String name = "<Block>";
     private Token leftBrace; // '{'
     private ArrayList<BlockItem> blockItems;

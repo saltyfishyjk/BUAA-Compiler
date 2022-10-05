@@ -3,6 +3,8 @@ package frontend.parser.statement.stmt;
 import frontend.lexer.Token;
 import frontend.lexer.TokenListIterator;
 import frontend.lexer.TokenType;
+import frontend.parser.statement.Block;
+import frontend.parser.statement.BlockParser;
 
 public class StmtParser {
     private TokenListIterator iterator;
@@ -55,6 +57,10 @@ public class StmtParser {
             case IDENFR:
                 caseIdenfr(first);
                 break;
+            case LBRACE:
+                this.iterator.unReadToken(1);
+                BlockParser blockParser = new BlockParser(this.iterator);
+                this.stmtEle = blockParser.parseBlock();
             default:
                 System.out.println("ARRIVE UNEXPECTED DEFAULT BRANCH");
         }
