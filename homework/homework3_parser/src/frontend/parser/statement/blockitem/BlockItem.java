@@ -18,7 +18,7 @@ public class BlockItem implements SyntaxNode {
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.blockItemEle.syntaxOutput());
-        sb.append(this.name + "\n");
+        //sb.append(this.name + "\n");
         return sb.toString();
     }
 }
