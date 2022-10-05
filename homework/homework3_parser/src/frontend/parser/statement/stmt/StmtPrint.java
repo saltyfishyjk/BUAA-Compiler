@@ -35,6 +35,7 @@ public class StmtPrint implements StmtEle {
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.printf.syntaxOutput());
+        sb.append(this.leftParent.syntaxOutput());
         sb.append(this.formatString.syntaxOutput());
         if (this.commmas != null && this.exps != null &&
             this.commmas.size() == this.exps.size()) {
@@ -44,6 +45,7 @@ public class StmtPrint implements StmtEle {
                 sb.append(this.exps.get(i).syntaxOutput());
             }
         }
+        sb.append(this.rightParent.syntaxOutput());
         sb.append(this.semicn.syntaxOutput());
         return sb.toString();
     }
