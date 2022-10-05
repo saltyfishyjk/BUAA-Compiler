@@ -38,6 +38,7 @@ public class InitVals implements InitValEle {
                 }
             }
         }
+        sb.append(this.rightBrace.syntaxOutput());
         return sb.toString();
     }
 }
