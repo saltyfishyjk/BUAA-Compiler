@@ -12,11 +12,11 @@ public class FuncFParam implements SyntaxNode {
     private final String name = "<FuncFParam>";
     private BType btype;
     private Ident ident;
-    private Token leftBrackFirst = null; // '[' MAY exist
-    private Token rightBrackFirst = null; // ']' MAY exist
-    private ArrayList<Token> leftBracks = null; // '[' MAY exist
+    private Token leftBracketFirst = null; // '[' MAY exist
+    private Token rightBracketFirst = null; // ']' MAY exist
+    private ArrayList<Token> leftBrackets = null; // '[' MAY exist
     private ArrayList<ConstExp> constExps = null; // MAY exist
-    private ArrayList<Token> rightBracks = null; // ']' MAY exist
+    private ArrayList<Token> rightBrackets = null; // ']' MAY exist
 
     public FuncFParam(BType btype,
                       Ident ident) {
@@ -26,24 +26,24 @@ public class FuncFParam implements SyntaxNode {
 
     public FuncFParam(BType btype,
                       Ident ident,
-                      Token leftBrackFirst,
+                      Token leftBracketFirst,
                       Token rightBrackFirst) {
         this(btype, ident);
-        this.leftBrackFirst = leftBrackFirst;
-        this.rightBrackFirst = rightBrackFirst;
+        this.leftBracketFirst = leftBracketFirst;
+        this.rightBracketFirst = rightBrackFirst;
     }
 
     public FuncFParam(BType btype,
                       Ident ident,
-                      Token leftBrackFirst,
+                      Token leftBracketFirst,
                       Token rightBrackFirst,
-                      ArrayList<Token> leftBracks,
+                      ArrayList<Token> leftBrackets,
                       ArrayList<ConstExp> constExps,
-                      ArrayList<Token> rightBracks) {
-        this(btype, ident, leftBrackFirst, rightBrackFirst);
-        this.leftBracks = leftBracks;
+                      ArrayList<Token> rightBrackets) {
+        this(btype, ident, leftBracketFirst, rightBrackFirst);
+        this.leftBrackets = leftBrackets;
         this.constExps = constExps;
-        this.rightBracks = rightBracks;
+        this.rightBrackets = rightBrackets;
     }
 
     @Override
@@ -51,17 +51,17 @@ public class FuncFParam implements SyntaxNode {
         StringBuilder sb = new StringBuilder();
         sb.append(this.btype.syntaxOutput());
         sb.append(this.ident.syntaxOutput());
-        if (this.leftBrackFirst != null && this.rightBrackFirst != null) {
-            sb.append(this.leftBrackFirst.syntaxOutput());
-            sb.append(this.rightBrackFirst.syntaxOutput());
-            if (this.leftBracks != null && this.constExps != null && this.rightBracks != null &&
-                this.leftBracks.size() == this.constExps.size() &&
-                this.constExps.size() == this.rightBracks.size()) {
-                int len = this.leftBracks.size();
+        if (this.leftBracketFirst != null && this.rightBracketFirst != null) {
+            sb.append(this.leftBracketFirst.syntaxOutput());
+            sb.append(this.rightBracketFirst.syntaxOutput());
+            if (this.leftBrackets != null && this.constExps != null && this.rightBrackets != null &&
+                this.leftBrackets.size() == this.constExps.size() &&
+                this.constExps.size() == this.rightBrackets.size()) {
+                int len = this.leftBrackets.size();
                 for (int i = 0; i < len; i++) {
-                    sb.append(this.leftBracks.get(i).syntaxOutput());
+                    sb.append(this.leftBrackets.get(i).syntaxOutput());
                     sb.append(this.constExps.get(i).syntaxOutput());
-                    sb.append(this.rightBracks.get(i).syntaxOutput());
+                    sb.append(this.rightBrackets.get(i).syntaxOutput());
                 }
             }
         }
