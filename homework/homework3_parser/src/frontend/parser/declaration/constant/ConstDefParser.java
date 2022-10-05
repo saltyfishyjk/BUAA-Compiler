@@ -43,6 +43,7 @@ public class ConstDefParser {
                 System.out.println("EXPECT RBRACKET HERE");
             }
             this.rightBrackets.add(token);
+            token = this.iterator.readNextToken();
         }
         if (!token.getType().equals(TokenType.ASSIGN)) {
             System.out.println("EXPECT ASSIGN HERE");

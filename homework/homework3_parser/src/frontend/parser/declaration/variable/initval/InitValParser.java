@@ -30,12 +30,14 @@ public class InitValParser {
         } else {
             Token token = this.iterator.readNextToken();
             if (!token.getType().equals(TokenType.RBRACE)) {
+                this.iterator.unReadToken(1);
                 InitValParser initValParser = new InitValParser(this.iterator);
                 this.first = initValParser.parseInitVal();
                 token = this.iterator.readNextToken();
                 while (token.getType().equals(TokenType.COMMA)) {
                     this.commas.add(token);
                     this.initVals.add(initValParser.parseInitVal());
+                    token = this.iterator.readNextToken();
                 }
             }
             this.rightBrace = token;
