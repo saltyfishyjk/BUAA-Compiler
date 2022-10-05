@@ -27,6 +27,7 @@ public class FuncFParamsParser {
         while (token.getType().equals(TokenType.COMMA)) {
             this.commas.add(token);
             this.funcFParams.add(funcFParamParser.parseFuncFParam());
+            token = this.iterator.readNextToken();
         }
         this.iterator.unReadToken(1);
         return new FuncFParams(this.first, this.commas, this.funcFParams);

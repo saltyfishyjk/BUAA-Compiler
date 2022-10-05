@@ -39,6 +39,7 @@ public class FuncDefParser {
             this.funcFParams = funcFParamsParser.parseFuncFParams();
             this.rightParent = this.iterator.readNextToken();
             BlockParser blockParser = new BlockParser(this.iterator);
+            this.block = blockParser.parseBlock();
             this.funcDef = new FuncDef(this.funcType, this.ident, this.leftParent,
                     this.funcFParams, this.rightParent, this.block);
         } else {
