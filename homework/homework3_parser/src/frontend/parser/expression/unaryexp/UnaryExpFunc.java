@@ -9,18 +9,24 @@ import frontend.parser.expression.FuncRParams;
  */
 public class UnaryExpFunc implements UnaryExpEle {
     private Ident ident;
-    private FuncRParams funcRParams = null;
+    private FuncRParams funcRParams = null; // MAY exist
     private Token leftParent;
     private Token rightParent;
+
+    public UnaryExpFunc(Ident ident,
+                        Token leftParent,
+                        Token rightParent) {
+        this.ident = ident;
+        this.leftParent = leftParent;
+        this.rightParent = rightParent;
+    }
 
     public UnaryExpFunc(Ident ident,
                         FuncRParams funcRParams,
                         Token leftParent,
                         Token rightBracker) {
-        this.ident = ident;
+        this(ident, leftParent, rightBracker);
         this.funcRParams = funcRParams;
-        this.leftParent = leftParent;
-        this.rightParent = rightBracker;
     }
 
     @Override

@@ -24,7 +24,7 @@ public class StmtCondParser {
 
     public StmtCond parseStmtCond() {
         this.ifTK = this.iterator.readNextToken();
-        if (!this.ifTK.equals(TokenType.IFTK)) {
+        if (!this.ifTK.getType().equals(TokenType.IFTK)) {
             System.out.println("EXPECT IFTK IN STMTCONDPARSER");
         }
         this.leftParent = this.iterator.readNextToken();

@@ -61,6 +61,11 @@ public class StmtParser {
                 BlockParser blockParser = new BlockParser(this.iterator);
                 this.stmtEle = blockParser.parseBlock();
                 break;
+            case LPARENT: case INTCON:
+                this.iterator.unReadToken(1);
+                StmtExpParser stmtExpParser = new StmtExpParser(this.iterator);
+                this.stmtEle = stmtExpParser.parseStmtExp();
+                break;
             default:
                 System.out.println("ARRIVE UNEXPECTED DEFAULT BRANCH");
         }

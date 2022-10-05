@@ -47,6 +47,7 @@ public class UnaryExpParser {
 
     private boolean isUnaryFirst(Token first) {
         return first.getType().equals(TokenType.PLUS) ||
-                first.getType().equals(TokenType.MINU);
+                first.getType().equals(TokenType.MINU) ||
+                first.getType().equals(TokenType.NOT);
     }
 }
