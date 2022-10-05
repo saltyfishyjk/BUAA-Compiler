@@ -4,31 +4,45 @@ import frontend.lexer.Token;
 
 import java.util.ArrayList;
 
+/**
+ * ConstInitVal -> '{' [ <ConstInitVal> { ',' <ConstInitVal> } ] '}'
+ */
 public class ConstInitValMulti implements ConstInitValEle {
     private Token leftBrace; // '{'
-    private ConstInitVal constInitVal; // may exist or not
-    private ArrayList<Token> commas;
-    private ArrayList<ConstInitVal> constInitVals;
+    private ConstInitVal first; // MAY exist
+    private ArrayList<Token> commas; // MAY exist
+    private ArrayList<ConstInitVal> constInitVals; // MAY exist
     private Token rightBrace; // '}'
 
     public ConstInitValMulti(Token leftBrace,
-                             ConstInitVal constInitval,
+                             Token rightBrace) {
+        this.leftBrace = leftBrace;
+        this.rightBrace = rightBrace;
+    }
+
+    public ConstInitValMulti(Token leftBrace,
+                             Token rightBrace,
+                             ConstInitVal first) {
+        this(leftBrace, rightBrace);
+        this.first = first;
+    }
+
+    public ConstInitValMulti(Token leftBrace,
+                             ConstInitVal first,
                              ArrayList<Token> commas,
                              ArrayList<ConstInitVal> constInitVals,
                              Token rightBrace) {
-        this.leftBrace = leftBrace;
-        this.constInitVal = constInitval;
+        this(leftBrace, rightBrace, first);
         this.commas = commas;
         this.constInitVals = constInitVals;
-        this.rightBrace = rightBrace;
     }
 
     @Override
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.leftBrace.syntaxOutput());
-        if (this.constInitVal != null) {
-            sb.append(this.constInitVal);
+        if (this.first != null) {
+            sb.append(this.first);
             if (this.commas != null && this.constInitVals != null
                     && this.commas.size() == this.constInitVals.size()) {
                 int len = this.commas.size();
