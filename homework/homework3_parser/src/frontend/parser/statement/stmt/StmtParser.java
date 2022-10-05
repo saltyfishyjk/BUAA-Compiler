@@ -2,6 +2,7 @@ package frontend.parser.statement.stmt;
 
 import frontend.lexer.Token;
 import frontend.lexer.TokenListIterator;
+import frontend.lexer.TokenType;
 
 public class StmtParser {
     private TokenListIterator iterator;
@@ -51,8 +52,46 @@ public class StmtParser {
                 this.stmtEle = stmtNullParser.pasreStmtNull();
                 break;
                 /* TODO : handle exp and lval*/
+            case IDENFR:
+                caseIdenfr(first);
+                break;
+            default:
+                System.out.println("ARRIVE UNEXPECTED DEFAULT BRANCH");
         }
         Stmt stmt = new Stmt(this.stmtEle);
         return stmt;
+    }
+
+    private void caseIdenfr(Token first) {
+        /* need to distinguish LVal = Exp, LVal = getint and [Exp] */
+        int cnt = 1;
+        int mode = 0; // 0:assign 1:input
+        boolean flag = false; // LVal = Exp; || LVal = getint();
+        Token token = first;
+        while (!token.getType().equals(TokenType.SEMICN)) {
+            token = this.iterator.readNextToken();
+            cnt += 1;
+            if (token.getType().equals(TokenType.ASSIGN)) {
+                flag = true;
+            }
+            if (token.getType().equals(TokenType.GETINTTK)) {
+                mode = 1;
+            }
+        }
+        this.iterator.unReadToken(cnt);
+        if (flag) {
+            if (mode == 0) {
+                StmtAssignParser stmtAssignParser = new StmtAssignParser(this.iterator);
+                this.stmtEle = stmtAssignParser.parseStmtAssign();
+            } else if (mode == 1) {
+                StmtGetIntParser stmtGetIntParser = new StmtGetIntParser(this.iterator);
+                this.stmtEle = stmtGetIntParser.parseStmtGetInt();
+            } else {
+                System.out.println("REACHED UNEXPECTED BRANCH");
+            }
+        } else {
+            StmtExpParser stmtExpParser = new StmtExpParser(this.iterator);
+            this.stmtEle = stmtExpParser.parseStmtExp();
+        }
     }
 }
