@@ -60,6 +60,8 @@ public class CompUnitParser {
             if (third.getType().equals(TokenType.LPARENT)) {
                 this.iterator.unReadToken(3);
                 return;
+            } else {
+                this.iterator.unReadToken(1);
             }
             if ((first.getType().equals(TokenType.CONSTTK) &&
                     second.getType().equals(TokenType.INTTK)) ||
