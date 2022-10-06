@@ -38,6 +38,8 @@ public class ConstInitValMultiParser {
                 token = this.iterator.readNextToken();
             }
             this.iterator.unReadToken(1);
+        } else {
+            this.iterator.unReadToken(1);
         }
         this.rightBrace = this.iterator.readNextToken();
         ConstInitValMulti constInitValMulti = new ConstInitValMulti(this.leftBrace,
