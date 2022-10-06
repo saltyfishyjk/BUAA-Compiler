@@ -15,7 +15,7 @@ public class UnaryExpFuncParser {
     private FuncRParams funcRParams = null;
     private Token leftParent; // '('
     private Token rightParent; // ')'
-    UnaryExpFunc unaryExpFunc = null;
+    private UnaryExpFunc unaryExpFunc = null;
 
     public UnaryExpFuncParser(TokenListIterator iterator) {
         this.iterator = iterator;
