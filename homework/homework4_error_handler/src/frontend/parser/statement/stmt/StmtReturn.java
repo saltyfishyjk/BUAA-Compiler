@@ -3,6 +3,9 @@ package frontend.parser.statement.stmt;
 import frontend.lexer.Token;
 import frontend.parser.expression.Exp;
 
+/**
+ * <stmt> -> 'return' [<Exp>] ';'
+ */
 public class StmtReturn implements StmtEle {
     private Token returnTk; // 'return'
     private Exp exp; // MAY exist

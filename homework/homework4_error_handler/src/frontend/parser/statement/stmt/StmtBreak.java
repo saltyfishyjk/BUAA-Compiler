@@ -2,6 +2,9 @@ package frontend.parser.statement.stmt;
 
 import frontend.lexer.Token;
 
+/**
+ * <stmt> -> 'break' ';'
+ */
 public class StmtBreak implements StmtEle {
     private Token breakTk; // 'break'
     private Token semicn; // ';'

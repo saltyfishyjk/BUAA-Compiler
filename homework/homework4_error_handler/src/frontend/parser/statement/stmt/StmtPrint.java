@@ -6,6 +6,9 @@ import frontend.parser.expression.Exp;
 
 import java.util.ArrayList;
 
+/**
+ * <stmt> -> 'prinft' '(' <FormatString> {',' <Exp>} ')' ';'
+ */
 public class StmtPrint implements StmtEle {
     private Token printf; // 'printf'
     private Token leftParent; // '('

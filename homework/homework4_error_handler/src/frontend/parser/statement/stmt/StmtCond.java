@@ -3,6 +3,9 @@ package frontend.parser.statement.stmt;
 import frontend.lexer.Token;
 import frontend.parser.expression.Cond;
 
+/**
+ * <stmt> -> 'if' '(' <Cond> ')' <Stmt> [ 'else' <Stmt> ]
+ */
 public class StmtCond implements StmtEle {
     private Token ifTk; // 'if'
     private Token leftParent; // '('

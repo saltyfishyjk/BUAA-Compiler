@@ -2,6 +2,9 @@ package frontend.parser.statement.stmt;
 
 import frontend.lexer.Token;
 
+/**
+ * <stmt> -> 'continue' ';'
+ */
 public class StmtContinue implements StmtEle {
     private Token continueTk; // 'continue'
     private Token semicn; // ';'

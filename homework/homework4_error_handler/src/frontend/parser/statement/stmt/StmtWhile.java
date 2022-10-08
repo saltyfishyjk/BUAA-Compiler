@@ -3,6 +3,9 @@ package frontend.parser.statement.stmt;
 import frontend.lexer.Token;
 import frontend.parser.expression.Cond;
 
+/**
+ * <stmt> -> 'while' '(' <Cond> ')' <Stmt>
+ */
 public class StmtWhile implements StmtEle {
     private Token whileTk; // 'while'
     private Token leftParent; // '('

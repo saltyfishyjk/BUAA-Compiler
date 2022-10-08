@@ -3,6 +3,9 @@ package frontend.parser.statement.stmt;
 import frontend.lexer.Token;
 import frontend.parser.expression.primaryexp.LVal;
 
+/**
+ * Stmt -> <LVal> '=' 'getint' '(' ')' ';'
+ */
 public class StmtGetint implements StmtEle {
     private LVal lval;
     private Token eq; // '='

@@ -2,6 +2,9 @@ package frontend.parser.statement.stmt;
 
 import frontend.parser.statement.Block;
 
+/**
+ * <stmt> -> <Block>
+ */
 public class StmtBlock implements StmtEle {
     private Block block;
 
