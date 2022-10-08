@@ -9,6 +9,12 @@ public class Symbol {
     private SymbolType symbolType = null;
     private int dimension; // 维数
 
+    public Symbol(int lineNum, String name, SymbolType symbolType) {
+        this.lineNum = lineNum;
+        this.name = name;
+        this.symbolType = symbolType;
+    }
+
     public String getName() {
         return name;
     }
@@ -17,12 +23,11 @@ public class Symbol {
         return lineNum;
     }
 
-    public Symbol(int lineNum, String name) {
-        this.lineNum = lineNum;
-        this.name = name;
-    }
-
     public SymbolType getSymbolType() {
         return symbolType;
+    }
+
+    public void setDimension(int dimension) {
+        this.dimension = dimension;
     }
 }
