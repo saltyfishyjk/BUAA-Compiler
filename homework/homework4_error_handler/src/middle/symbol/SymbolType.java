@@ -6,5 +6,7 @@ package middle.symbol;
  * 后续可能有所迭代，插个眼先
  */
 public enum SymbolType {
-    VAR, FUNC, ARRAY
+    VAR, VAR1, VAR2,
+    CON, CON1, CON2,
+    FUNC
 }
