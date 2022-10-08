@@ -3,7 +3,7 @@ package middle.error;
 /**
  * 错误类
  */
-public class Error implements Comparable<Error>{
+public class Error implements Comparable<Error> {
     private ErrorType type; // 所属错误类别
     private int lineNum; // 从1开始
 
