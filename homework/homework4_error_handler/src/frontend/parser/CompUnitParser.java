@@ -10,6 +10,7 @@ import frontend.parser.function.FuncDef;
 import frontend.parser.function.FuncDefParser;
 import frontend.parser.function.MainFuncDef;
 import frontend.parser.function.MainFuncDefParser;
+import middle.symbol.SymbolTable;
 
 import java.util.ArrayList;
 
@@ -23,6 +24,7 @@ public class CompUnitParser {
     private ArrayList<Decl> decls;
     private ArrayList<FuncDef> funcDefs;
     private MainFuncDef mainFuncDef;
+    private SymbolTable curSymbolTable;
 
     /* init CompUnitParser obj */
     private void initCompUnitParser() {
@@ -36,6 +38,7 @@ public class CompUnitParser {
         this.decls = new ArrayList<>();
         this.funcDefs = new ArrayList<>();
         this.mainFuncDef = null;
+        this.curSymbolTable = new SymbolTable();
     }
 
     public CompUnit parseCompUnit() {
@@ -70,7 +73,8 @@ public class CompUnitParser {
                 /* first -> const && second -> int */
                 /* first -> int && second -> IDENFR */
                 this.iterator.unReadToken(2);
-                DeclParser declParser = new DeclParser(this.iterator);
+                //DeclParser declParser = new DeclParser(this.iterator);
+                DeclParser declParser = new DeclParser(this.iterator, this.curSymbolTable);
                 this.decls.add(declParser.parseDecl());
             } else {
                 this.iterator.unReadToken(2);

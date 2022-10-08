@@ -7,6 +7,7 @@ import frontend.parser.declaration.BType;
 import frontend.parser.declaration.BTypeParser;
 import frontend.parser.declaration.variable.vardef.VarDef;
 import frontend.parser.declaration.variable.vardef.VarDefParser;
+import middle.symbol.SymbolTable;
 
 import java.util.ArrayList;
 
@@ -18,9 +19,15 @@ public class VarDeclParser {
     private ArrayList<Token> commas = new ArrayList<>(); // ','
     private ArrayList<VarDef> varDefs = new ArrayList<>();
     private Token semicn; // ';'
+    private SymbolTable curSymbolTable;
 
     public VarDeclParser(TokenListIterator iterator) {
         this.iterator = iterator;
+    }
+
+    public VarDeclParser(TokenListIterator iterator, SymbolTable curSymbolTable) {
+        this.iterator = iterator;
+        this.curSymbolTable = curSymbolTable;
     }
 
     public VarDecl parseVarDecl() {
