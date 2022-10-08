@@ -3,7 +3,7 @@ package middle.error;
 /**
  * 错误类
  */
-public class Error {
+public class Error implements Comparable<Error>{
     private ErrorType type; // 所属错误类别
     private int lineNum; // 从1开始
 
@@ -22,5 +22,10 @@ public class Error {
 
     public String getErrorTypeCode() {
         return this.type.getCode();
+    }
+
+    @Override
+    public int compareTo(Error o) {
+        return Integer.compare(this.lineNum, o.getLineNum());
     }
 }
