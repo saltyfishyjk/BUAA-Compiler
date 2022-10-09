@@ -2,6 +2,7 @@ import frontend.SourceFileLexer;
 import frontend.lexer.TokenLexer;
 import frontend.parser.CompUnit;
 import frontend.parser.CompUnitParser;
+import middle.error.ErrorTable;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,16 +25,21 @@ public class Compiler {
         CompUnitParser compUnitParser = new CompUnitParser(tokenLexer.getTokenList());
         CompUnit compUnit = compUnitParser.parseCompUnit();
         String outputFileName = "output.txt";
+        String errorFileName = "error.txt";
         try {
-            OutputStream outputStream = new FileOutputStream(outputFileName);
+            // OutputStream outputStream = new FileOutputStream(outputFileName);
+            OutputStream outputStream = new FileOutputStream(errorFileName);
             try {
-                outputStream.write(compUnit.syntaxOutput().getBytes());
+                outputStream.write(ErrorTable.output().getBytes());
+                // outputStream.write(compUnit.syntaxOutput().getBytes());
                 //outputStream.write(tokenLexer.getTokenList().toString().getBytes());
             } catch (IOException e) {
-                System.err.println("Can not write " + outputFileName);
+                // System.err.println("Can not write " + outputFileName);
+                System.err.println("Can not write " + errorFileName);
             }
         } catch (FileNotFoundException e) {
-            System.err.println("Can not open " + outputFileName);
+            // System.err.println("Can not open " + outputFileName);
+            System.err.println("Can not open " + errorFileName);
         }
         //System.out.println(tokenLexer.getTokenList());
     }

@@ -2,8 +2,12 @@ package frontend.parser.statement.stmt;
 
 import frontend.lexer.Token;
 import frontend.lexer.TokenListIterator;
+import frontend.lexer.TokenType;
 import frontend.parser.expression.primaryexp.LVal;
 import frontend.parser.expression.primaryexp.LValParser;
+import middle.error.Error;
+import middle.error.ErrorTable;
+import middle.error.ErrorType;
 import middle.symbol.SymbolTable;
 
 public class StmtGetIntParser {
@@ -35,8 +39,20 @@ public class StmtGetIntParser {
         this.leftParent = this.iterator.readNextToken();
         this.rightParent = this.iterator.readNextToken();
         this.semicn = this.iterator.readNextToken();
+        /* 处理i类错误：缺失; */
+        handleIError(this.semicn);
         StmtGetint stmtGetint = new StmtGetint(this.lval, this.eq, this.getint,
                 this.leftParent, this.rightParent, this.semicn);
         return stmtGetint;
+    }
+
+    private void handleIError(Token token) {
+        this.semicn = token;
+        if (!this.semicn.getType().equals(TokenType.SEMICN)) {
+            this.iterator.unReadToken(2); // 后退两格以方便确定分号上一个非终结符位置
+            Error error = new Error(this.iterator.readNextToken().getLineNum(),
+                    ErrorType.MISSING_SEMICN);
+            ErrorTable.addError(error);
+        }
     }
 }

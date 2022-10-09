@@ -28,4 +28,9 @@ public class Error implements Comparable<Error> {
     public int compareTo(Error o) {
         return Integer.compare(this.lineNum, o.getLineNum());
     }
+
+    public String output() {
+        String s = new String(this.lineNum + " " + this.type.getCode() + "\n");
+        return s;
+    }
 }

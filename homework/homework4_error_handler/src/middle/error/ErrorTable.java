@@ -14,4 +14,12 @@ public class ErrorTable {
     public static TreeSet<Error> getErrors() {
         return errors;
     }
+
+    public static String output() {
+        StringBuilder sb = new StringBuilder();
+        for (Error error : errors) {
+            sb.append(error.output());
+        }
+        return sb.toString();
+    }
 }

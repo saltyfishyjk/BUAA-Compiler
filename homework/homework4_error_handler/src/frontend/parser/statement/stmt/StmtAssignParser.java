@@ -7,6 +7,9 @@ import frontend.parser.expression.Exp;
 import frontend.parser.expression.ExpParser;
 import frontend.parser.expression.primaryexp.LVal;
 import frontend.parser.expression.primaryexp.LValParser;
+import middle.error.Error;
+import middle.error.ErrorTable;
+import middle.error.ErrorType;
 import middle.symbol.SymbolTable;
 
 public class StmtAssignParser {
@@ -39,7 +42,19 @@ public class StmtAssignParser {
         ExpParser expParser = new ExpParser(this.iterator, this.curSymbolTable);
         this.exp = expParser.parseExp();
         this.semicn = this.iterator.readNextToken();
+        /* 处理i类错误：缺失; */
+        handleIError(this.semicn);
         StmtAssign stmtAssign = new StmtAssign(this.lval, this.eq, this.exp, this.semicn);
         return stmtAssign;
+    }
+
+    private void handleIError(Token token) {
+        this.semicn = token;
+        if (!this.semicn.getType().equals(TokenType.SEMICN)) {
+            this.iterator.unReadToken(2); // 后退两格以方便确定分号上一个非终结符位置
+            Error error = new Error(this.iterator.readNextToken().getLineNum(),
+                    ErrorType.MISSING_SEMICN);
+            ErrorTable.addError(error);
+        }
     }
 }
