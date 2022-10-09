@@ -46,6 +46,7 @@ public class VarDeclParser {
             this.varDefs.add(varDefParser.parseVarDef());
             token = this.iterator.readNextToken();
         }
+        /* 处理i类错误：缺失;*/
         this.semicn = token;
         if (!this.semicn.getType().equals(TokenType.SEMICN)) {
             this.iterator.unReadToken(2);

@@ -54,7 +54,7 @@ public class ConstDeclParser {
             this.constDefs.add(constDefParser.parseConstDef());
             token = this.iterator.readNextToken();
         }
-        /* token SHOULD be ';' */
+        /* 处理i类错误：缺失; */
         this.semicn = token;
         if (!this.semicn.getType().equals(TokenType.SEMICN)) {
             this.iterator.unReadToken(2); // 后退两格以方便确定分号上一个非终结符位置

@@ -55,12 +55,12 @@ public class ConstDefParser {
             this.constExps.add(constExp);
             token = this.iterator.readNextToken();
             /* ']' */
+            /* 处理k类错误：缺失 ] */
             if (!token.getType().equals(TokenType.RBRACK)) {
                 this.iterator.unReadToken(2);
                 Token lastToken = this.iterator.readNextToken();
                 Error error = new Error(lastToken.getLineNum(), ErrorType.MISSING_R_BACKET);
                 ErrorTable.addError(error);
-                //System.out.println("EXPECT RBRACK HERE");
             }
             this.rightBrackets.add(token);
             token = this.iterator.readNextToken();
@@ -90,7 +90,7 @@ public class ConstDefParser {
         Symbol symbol = new SymbolCon(this.ident.getLineNum(), this.ident.getName(),
                 symbolType, dimension);
         /* TODO : ADD CONST INIT */
-        /* 检查b类错误：是否有重定义行为 */
+        /* 处理b类错误：名字重定义行为 */
         if (this.curSymbolTable.checkBTypeError(symbol)) {
             Error error = new Error(symbol.getLineNum(), ErrorType.DUPLICATED_IDENT);
             ErrorTable.addError(error);
