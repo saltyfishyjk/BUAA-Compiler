@@ -13,6 +13,7 @@ import middle.error.Error;
 import middle.error.ErrorTable;
 import middle.error.ErrorType;
 import middle.symbol.Symbol;
+import middle.symbol.SymbolCon;
 import middle.symbol.SymbolTable;
 import middle.symbol.SymbolType;
 
@@ -74,17 +75,24 @@ public class ConstDefParser {
                 this.rightBrackets, this.eq, this.constInitVal);
         /* 创建新符号 */
         SymbolType symbolType;
+        int dimension = 0;
         if (this.leftBrackets.size() == 0) {
             symbolType = SymbolType.CON;
+            dimension = 0;
         } else if (this.leftBrackets.size() == 1) {
             symbolType = SymbolType.CON1;
+            dimension = 1;
         } else if (this.leftBrackets.size() == 2) {
             symbolType = SymbolType.CON2;
+            dimension = 2;
         } else {
             symbolType = null;
+            dimension = -1;
             System.out.println("ERROR in ConstDefParser!");
         }
-        Symbol symbol = new Symbol(this.ident.getLineNum(), this.ident.getName(), symbolType);
+        Symbol symbol = new SymbolCon(this.ident.getLineNum(), this.ident.getName(),
+                symbolType, dimension);
+        /* TODO : ADD CONST INIT */
         /* 检查b类错误：是否有重定义行为 */
         if (this.curSymbolTable.checkBTypeError(symbol)) {
             Error error = new Error(symbol.getLineNum(), ErrorType.DUPLICATED_IDENT);
