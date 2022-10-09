@@ -10,4 +10,9 @@ public class MulExp extends MultiExp<UnaryExp> {
                   ArrayList<UnaryExp> operands) {
         super(first, operators, operands, "<MulExp>");
     }
+
+    public int getDimension() {
+        return this.getFirst().getDimension();
+    }
+
 }

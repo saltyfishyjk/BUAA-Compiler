@@ -42,4 +42,9 @@ public class LVal implements PrimaryExpEle {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    @Override
+    public int getDimension() {
+        return leftBrackets.size();
+    }
 }

@@ -16,4 +16,9 @@ public class UnaryExpOp implements UnaryExpEle {
         sb.append(this.unaryExp.syntaxOutput());
         return sb.toString();
     }
+
+    @Override
+    public int getDimension() {
+        return this.unaryExp.getDimension();
+    }
 }

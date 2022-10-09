@@ -66,4 +66,15 @@ public class SymbolTable {
             return true;
         }
     }
+
+    /* 获取指定名字对应的参数对象，如果没有则返回null */
+    public Symbol getSymbol(String name) {
+        if (this.symbols.containsKey(name)) {
+            return this.symbols.get(name);
+        }
+        if (this.hasParent()) {
+            return this.parent.getSymbol(name);
+        }
+        return null;
+    }
 }

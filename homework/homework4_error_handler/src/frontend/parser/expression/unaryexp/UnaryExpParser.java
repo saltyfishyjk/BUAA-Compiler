@@ -26,7 +26,9 @@ public class UnaryExpParser {
         Token second = this.iterator.readNextToken();
         if (isIdentFirst(first, second)) {
             this.iterator.unReadToken(2);
-            UnaryExpFuncParser unaryExpFuncParser = new UnaryExpFuncParser(this.iterator);
+            // UnaryExpFuncParser unaryExpFuncParser = new UnaryExpFuncParser(this.iterator);
+            UnaryExpFuncParser unaryExpFuncParser = new UnaryExpFuncParser(this.iterator,
+                    this.curSymbolTable);
             this.unaryExpEle = unaryExpFuncParser.parseUnaryFuncExp();
         } else if (isPrimaryExpFirst(first)) {
             this.iterator.unReadToken(2);

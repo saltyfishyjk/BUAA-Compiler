@@ -40,4 +40,9 @@ public class UnaryExpFunc implements UnaryExpEle {
         sb.append(rightParent.syntaxOutput());
         return sb.toString();
     }
+
+    @Override
+    public int getDimension() {
+        return 0;
+    }
 }

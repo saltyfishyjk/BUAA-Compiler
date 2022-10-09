@@ -25,4 +25,9 @@ public class PrimaryExpExp implements PrimaryExpEle {
         sb.append(rightParent.syntaxOutput());
         return sb.toString();
     }
+
+    @Override
+    public int getDimension() {
+        return this.exp.getDimension();
+    }
 }

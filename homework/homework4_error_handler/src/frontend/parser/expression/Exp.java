@@ -25,4 +25,8 @@ public class Exp implements InitValEle {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    public int getDimension() {
+        return addExp.getDimension();
+    }
 }

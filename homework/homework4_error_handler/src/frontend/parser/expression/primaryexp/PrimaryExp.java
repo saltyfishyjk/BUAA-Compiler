@@ -18,4 +18,9 @@ public class PrimaryExp implements UnaryExpEle {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    @Override
+    public int getDimension() {
+        return this.primaryExpEle.getDimension();
+    }
 }

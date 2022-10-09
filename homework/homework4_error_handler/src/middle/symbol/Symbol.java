@@ -30,4 +30,8 @@ public class Symbol {
     public void setDimension(int dimension) {
         this.dimension = dimension;
     }
+
+    public int getDimension() {
+        return dimension;
+    }
 }

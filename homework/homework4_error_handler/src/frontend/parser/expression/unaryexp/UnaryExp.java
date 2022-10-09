@@ -18,4 +18,9 @@ public class UnaryExp implements SyntaxNode {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    public int getDimension() {
+        return this.unaryExpEle.getDimension();
+    }
+
 }

@@ -40,4 +40,8 @@ public class MultiExp<T extends SyntaxNode> implements SyntaxNode {
         }
         return sb.toString();
     }
+
+    public T getFirst() {
+        return first;
+    }
 }

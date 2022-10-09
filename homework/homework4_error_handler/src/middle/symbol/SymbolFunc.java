@@ -17,4 +17,8 @@ public class SymbolFunc extends Symbol {
     public void addSymbol(Symbol symbol) {
         this.symbols.add(symbol);
     }
+
+    public ArrayList<Symbol> getSymbols() {
+        return symbols;
+    }
 }

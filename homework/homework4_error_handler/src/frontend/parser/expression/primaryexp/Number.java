@@ -30,4 +30,9 @@ public class Number implements PrimaryExpEle {
     public String toString() {
         return String.valueOf(this.intConst.getNum());
     }
+
+    @Override
+    public int getDimension() {
+        return 0;
+    }
 }
