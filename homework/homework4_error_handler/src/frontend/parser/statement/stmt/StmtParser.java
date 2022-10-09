@@ -4,6 +4,9 @@ import frontend.lexer.Token;
 import frontend.lexer.TokenListIterator;
 import frontend.lexer.TokenType;
 import frontend.parser.statement.BlockParser;
+import middle.error.Error;
+import middle.error.ErrorTable;
+import middle.error.ErrorType;
 
 public class StmtParser {
     private TokenListIterator iterator;
@@ -66,8 +69,9 @@ public class StmtParser {
                 StmtExpParser stmtExpParser = new StmtExpParser(this.iterator);
                 this.stmtEle = stmtExpParser.parseStmtExp();
                 break;
-            default:
-                System.out.println("ARRIVE UNEXPECTED DEFAULT BRANCH");
+            default: // SHOULD at least have a SEMICN ';'
+                handleIError(first);
+                // System.out.println("ARRIVE UNEXPECTED DEFAULT BRANCH");
         }
         Stmt stmt = new Stmt(this.stmtEle);
         return stmt;
@@ -103,6 +107,15 @@ public class StmtParser {
         } else {
             StmtExpParser stmtExpParser = new StmtExpParser(this.iterator);
             this.stmtEle = stmtExpParser.parseStmtExp();
+        }
+    }
+
+    private void handleIError(Token token) {
+        if (token.getType().equals(TokenType.SEMICN)) {
+            this.iterator.unReadToken(2); // 后退两格以方便确定分号上一个非终结符位置
+            Error error = new Error(this.iterator.readNextToken().getLineNum(),
+                    ErrorType.MISSING_SEMICN);
+            ErrorTable.addError(error);
         }
     }
 }
