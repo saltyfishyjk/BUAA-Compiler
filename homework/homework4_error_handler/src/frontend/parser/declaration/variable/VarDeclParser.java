@@ -38,7 +38,8 @@ public class VarDeclParser {
         this.varDefs = new ArrayList<>();
         BTypeParser btypeparser = new BTypeParser(this.iterator);
         this.btype = btypeparser.parseBtype();
-        VarDefParser varDefParser = new VarDefParser(this.iterator);
+        // VarDefParser varDefParser = new VarDefParser(this.iterator);
+        VarDefParser varDefParser = new VarDefParser(this.iterator, this.curSymbolTable);
         this.first = varDefParser.parseVarDef();
         Token token = this.iterator.readNextToken();
         while (token.getType().equals(TokenType.COMMA)) { // ','
@@ -47,6 +48,13 @@ public class VarDeclParser {
             token = this.iterator.readNextToken();
         }
         /* 处理i类错误：缺失;*/
+        handleIError(token);
+        VarDecl varDecl = new VarDecl(this.btype, this.first,
+                this.commas, this.varDefs, this.semicn);
+        return varDecl;
+    }
+
+    private void handleIError(Token token) {
         this.semicn = token;
         if (!this.semicn.getType().equals(TokenType.SEMICN)) {
             this.iterator.unReadToken(2);
@@ -55,8 +63,5 @@ public class VarDeclParser {
             ErrorTable.addError(error);
 
         }
-        VarDecl varDecl = new VarDecl(this.btype, this.first,
-                this.commas, this.varDefs, this.semicn);
-        return varDecl;
     }
 }

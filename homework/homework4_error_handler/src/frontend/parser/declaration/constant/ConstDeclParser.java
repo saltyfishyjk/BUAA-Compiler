@@ -55,6 +55,13 @@ public class ConstDeclParser {
             token = this.iterator.readNextToken();
         }
         /* 处理i类错误：缺失; */
+        handleIError(token);
+        ConstDecl constDecl = new ConstDecl(this.constTk, this.btype,
+                this.first, this.commas, this.constDefs, this.semicn);
+        return constDecl;
+    }
+
+    private void handleIError(Token token) {
         this.semicn = token;
         if (!this.semicn.getType().equals(TokenType.SEMICN)) {
             this.iterator.unReadToken(2); // 后退两格以方便确定分号上一个非终结符位置
@@ -62,9 +69,6 @@ public class ConstDeclParser {
                     ErrorType.MISSING_SEMICN);
             ErrorTable.addError(error);
         }
-        ConstDecl constDecl = new ConstDecl(this.constTk, this.btype,
-                this.first, this.commas, this.constDefs, this.semicn);
-        return constDecl;
     }
 
 }

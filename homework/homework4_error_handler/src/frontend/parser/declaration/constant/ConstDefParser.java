@@ -56,12 +56,7 @@ public class ConstDefParser {
             token = this.iterator.readNextToken();
             /* ']' */
             /* 处理k类错误：缺失 ] */
-            if (!token.getType().equals(TokenType.RBRACK)) {
-                this.iterator.unReadToken(2);
-                Token lastToken = this.iterator.readNextToken();
-                Error error = new Error(lastToken.getLineNum(), ErrorType.MISSING_R_BACKET);
-                ErrorTable.addError(error);
-            }
+            handleKError(token);
             this.rightBrackets.add(token);
             token = this.iterator.readNextToken();
         }
@@ -70,7 +65,21 @@ public class ConstDefParser {
         this.constInitVal = constInitValParser.parseConstInitVal();
         ConstDef constDef = new ConstDef(this.ident, this.leftBrackets, this.constExps,
                 this.rightBrackets, this.eq, this.constInitVal);
-        /* 创建新符号 */
+        /* 添加新符号 & 处理b类错误：名字重定义 */
+        addSymbol();
+        return constDef;
+    }
+
+    private void handleKError(Token token) {
+        if (!token.getType().equals(TokenType.RBRACK)) {
+            this.iterator.unReadToken(2);
+            Token lastToken = this.iterator.readNextToken();
+            Error error = new Error(lastToken.getLineNum(), ErrorType.MISSING_R_BACKET);
+            ErrorTable.addError(error);
+        }
+    }
+
+    private void addSymbol() {
         SymbolType symbolType;
         int dimension = 0;
         if (this.leftBrackets.size() == 0) {
@@ -97,6 +106,5 @@ public class ConstDefParser {
         } else {
             this.curSymbolTable.addSymol(symbol);
         }
-        return constDef;
     }
 }
