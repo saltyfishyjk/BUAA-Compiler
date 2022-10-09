@@ -17,4 +17,9 @@ public class Decl implements BlockItemEle {
         sb.append(this.declEle.syntaxOutput());
         return sb.toString();
     }
+
+    @Override
+    public int checkReturn() {
+        return 0;
+    }
 }

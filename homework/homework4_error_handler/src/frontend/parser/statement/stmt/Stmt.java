@@ -21,4 +21,14 @@ public class Stmt implements BlockItemEle {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    @Override
+    public int checkReturn() {
+        if (this.stmtEle instanceof StmtReturn) {
+            StmtReturn stmtReturn = (StmtReturn) stmtEle;
+            return stmtReturn.checkReturn();
+        } else {
+            return 0;
+        }
+    }
 }

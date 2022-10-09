@@ -34,4 +34,16 @@ public class StmtReturn implements StmtEle {
         sb.append(this.semicn.syntaxOutput());
         return sb.toString();
     }
+
+    public int checkReturn() {
+        if (this.exp != null) {
+            return 2;
+        } else {
+            return 1;
+        }
+    }
+
+    public int getReturnLineNum() {
+        return this.returnTk.getLineNum();
+    }
 }

@@ -35,7 +35,7 @@ public class StmtCondParser {
         this.cond = condParser.parseCond();
         this.rightParent = this.iterator.readNextToken();
         if (!this.rightParent.getType().equals(TokenType.RPARENT)) {
-            System.out.println("EXPECT RPARENT IN STMTCONDPARSER");
+            //System.out.println("EXPECT RPARENT IN STMTCONDPARSER");
         }
         StmtParser stmtParser = new StmtParser(this.iterator);
         this.ifStmt = stmtParser.parseStmt();
@@ -51,4 +51,5 @@ public class StmtCondParser {
         }
         return this.stmtCond;
     }
+
 }

@@ -21,4 +21,16 @@ public class BlockItem implements SyntaxNode {
         //sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    /* 返回当前BlockItem与return的关系*/
+    /* 返回0说明不是return语句 */
+    /* 返回1说明是return; */
+    /* 返回2说明是return xxx;*/
+    public int checkReturn() {
+        return this.blockItemEle.checkReturn();
+    }
+
+    public BlockItemEle getBlockItemEle() {
+        return blockItemEle;
+    }
 }

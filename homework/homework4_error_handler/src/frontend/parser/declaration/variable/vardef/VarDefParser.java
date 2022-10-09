@@ -74,6 +74,7 @@ public class VarDefParser {
                     this.constExps, this.rightBrackets);
         }
         /* 添加新符号 & 处理b类错误：名字重定义 */
+        addSymbol();
         VarDef varDef = new VarDef(this.varDefEle);
         return varDef;
     }

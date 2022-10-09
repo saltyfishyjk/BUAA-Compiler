@@ -5,6 +5,7 @@ import frontend.lexer.TokenListIterator;
 import frontend.lexer.TokenType;
 import frontend.parser.statement.blockitem.BlockItem;
 import frontend.parser.statement.blockitem.BlockItemParser;
+import middle.symbol.SymbolTable;
 
 import java.util.ArrayList;
 
@@ -14,9 +15,19 @@ public class BlockParser {
     private Token leftBrace = null;// '{'
     private ArrayList<BlockItem> blockItems = new ArrayList<>();
     private Token rightBrace = null; // '}'
+    private SymbolTable curSymbolTable;
+    private int checkReturn; // 0不关心return，1需要无返回值的return，2需要有int返回值的return
 
     public BlockParser(TokenListIterator iterator) {
         this.iterator = iterator;
+    }
+
+    public BlockParser(TokenListIterator iterator,
+                       SymbolTable curSymbolTable,
+                       int checkReturn) {
+        this.iterator = iterator;
+        this.curSymbolTable = curSymbolTable;
+        this.checkReturn = checkReturn;
     }
 
     public Block parseBlock() {
@@ -31,5 +42,19 @@ public class BlockParser {
         this.rightBrace = token;
         Block block = new Block(this.leftBrace, this.blockItems, this.rightBrace);
         return block;
+    }
+
+    public int checkReturn() {
+        int len = this.blockItems.size();
+        return this.blockItems.get(len - 1).checkReturn();
+    }
+
+    public int getRightBraceLineNum() {
+        return this.rightBrace.getLineNum();
+    }
+
+    public BlockItem getLastBlockItem() {
+        int len = this.blockItems.size();
+        return this.blockItems.get(len - 1);
     }
 }

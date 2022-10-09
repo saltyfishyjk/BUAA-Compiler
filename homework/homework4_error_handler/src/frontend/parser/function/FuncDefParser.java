@@ -8,6 +8,8 @@ import frontend.parser.function.functype.FuncType;
 import frontend.parser.function.functype.FuncTypeParser;
 import frontend.parser.statement.Block;
 import frontend.parser.statement.BlockParser;
+import frontend.parser.statement.blockitem.BlockItemEle;
+import frontend.parser.statement.stmt.StmtReturn;
 import frontend.parser.terminal.Ident;
 import frontend.parser.terminal.IdentParser;
 import middle.error.Error;
@@ -32,6 +34,7 @@ public class FuncDefParser {
     private FuncDef funcDef = null;
     private SymbolTable curSymbolTable;
     private SymbolFunc symbolFunc;
+    private BlockParser blockParser;
 
     public FuncDefParser(TokenListIterator iterator) {
         this.iterator = iterator;
@@ -54,8 +57,8 @@ public class FuncDefParser {
         addFuncSymbol();
         /* '{' */
         if (this.rightParent.getType().equals(TokenType.LBRACE)) {
-            /* 处理无参数时g类错误：缺失 ) */
-            handleGError(this.rightParent);
+            /* 处理无参数时j类错误：缺失 ) */
+            handleJError(this.rightParent);
             /* 补全右括号，使可以按照原有正确逻辑继续处理 */
             this.rightParent = new Token(TokenType.RPARENT, this.leftParent.getLineNum(), ")");
         }
@@ -67,16 +70,22 @@ public class FuncDefParser {
             this.funcFParams = funcFParamsParser.parseFuncFParams();
             /* ')' */
             this.rightParent = this.iterator.readNextToken();
-            /* 处理有参数时g类错误：缺失 ) */
-            handleGError(this.rightParent);
-            BlockParser blockParser = new BlockParser(this.iterator);
-            this.block = blockParser.parseBlock();
+            /* 处理有参数时j类错误：缺失 ) */
+            handleJError(this.rightParent);
+            setBlockParser();
+            // BlockParser blockParser = new BlockParser(this.iterator);
+            this.block = this.blockParser.parseBlock();
+            /* 处理f和g类错误：*/
+            handleFandGError();
             this.funcDef = new FuncDef(this.funcType, this.ident, this.leftParent,
                     this.funcFParams, this.rightParent, this.block);
             addFuncParamsSymbol(funcFParamsParser.getSymbols());
         } else {
-            BlockParser blockParser = new BlockParser(this.iterator);
-            this.block = blockParser.parseBlock();
+            setBlockParser();
+            // BlockParser blockParser = new BlockParser(this.iterator);
+            this.block = this.blockParser.parseBlock();
+            /* 处理f和g类错误 */
+            handleFandGError();
             this.funcDef = new FuncDef(this.funcType, this.ident, this.leftParent,
                     this.rightParent, this.block);
         }
@@ -84,7 +93,7 @@ public class FuncDefParser {
         return funcDef;
     }
 
-    private void handleGError(Token token) {
+    private void handleJError(Token token) {
         if (!token.getType().equals(TokenType.RPARENT)) {
             this.iterator.unReadToken(2);
             Error error = new Error(this.iterator.readNextToken().getLineNum(),
@@ -110,6 +119,34 @@ public class FuncDefParser {
     private void addFuncParamsSymbol(ArrayList<Symbol> symbols) {
         for (Symbol symbol : symbols) {
             this.symbolFunc.addSymbol(symbol);
+        }
+    }
+
+    private void setBlockParser() {
+        if (this.funcType.getType().equals(TokenType.VOIDTK)) {
+            blockParser = new BlockParser(this.iterator, this.curSymbolTable, 1);
+        } else {
+            blockParser = new BlockParser(this.iterator, this.curSymbolTable, 2);
+        }
+    }
+
+    private void handleFandGError() {
+        if (this.funcType.getType().equals(TokenType.VOIDTK)) {
+            /* f error */
+            if (this.blockParser.checkReturn() == 2) {
+                BlockItemEle blockItemEle = this.blockParser.getLastBlockItem().getBlockItemEle();
+                StmtReturn stmtReturn = (StmtReturn)blockItemEle; // MUST BE RETURN STMT
+                int lineNum = stmtReturn.getReturnLineNum();
+                Error error = new Error(lineNum, ErrorType.RETURN_VALUE_VOID);
+                ErrorTable.addError(error);
+            }
+        } else {
+            /* g error */
+            if (this.blockParser.checkReturn() != 2) {
+                Error error = new Error(this.blockParser.getRightBraceLineNum(),
+                        ErrorType.MISSING_RETURN);
+                ErrorTable.addError(error);
+            }
         }
     }
 }
