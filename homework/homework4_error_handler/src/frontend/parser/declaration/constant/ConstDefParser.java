@@ -50,7 +50,8 @@ public class ConstDefParser {
             /* '[' */
             this.leftBrackets.add(token);
             /* ConstExp */
-            ConstExpParser constExpParser = new ConstExpParser(this.iterator);
+            // ConstExpParser constExpParser = new ConstExpParser(this.iterator);
+            ConstExpParser constExpParser = new ConstExpParser(this.iterator, this.curSymbolTable);
             ConstExp constExp = constExpParser.parseConstExp();
             this.constExps.add(constExp);
             token = this.iterator.readNextToken();
@@ -61,7 +62,8 @@ public class ConstDefParser {
             token = this.iterator.readNextToken();
         }
         this.eq = token;
-        ConstInitValParser constInitValParser = new ConstInitValParser(this.iterator);
+        // ConstInitValParser constInitValParser = new ConstInitValParser(this.iterator);
+        ConstInitValParser constInitValParser = new ConstInitValParser(this.iterator, this.curSymbolTable);
         this.constInitVal = constInitValParser.parseConstInitVal();
         ConstDef constDef = new ConstDef(this.ident, this.leftBrackets, this.constExps,
                 this.rightBrackets, this.eq, this.constInitVal);

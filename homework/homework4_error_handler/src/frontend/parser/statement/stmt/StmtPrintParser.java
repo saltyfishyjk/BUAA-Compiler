@@ -46,6 +46,8 @@ public class StmtPrintParser {
             System.out.println("EXPECT LPARENT IN STMTPRINTFPARSER");
         }
         this.formatString = new FormatString(this.iterator.readNextToken());
+        /* 处理a类错误：FormatString中非法字符 */
+        handleAError(this.formatString);
         Token token = this.iterator.readNextToken();
         while (token.getType().equals(TokenType.COMMA)) {
             this.commmas.add(token);
@@ -65,6 +67,36 @@ public class StmtPrintParser {
         StmtPrint stmtPrint = new StmtPrint(this.printf, this.leftParent,
                 this.formatString, this.commmas, this.exps, this.rightParent, this.semicn);
         return stmtPrint;
+    }
+
+    private void handleAError(FormatString formatString) {
+        String s = formatString.getContent();
+        int len = s.length();
+        boolean flag = true;
+        for (int i = 0; i < len; i++) {
+            char c = s.charAt(i);
+            if (c != 32 && c != 33 && !(c >= 40 && c <= 126)) {
+                if (c == '%') {
+                    if (i < len - 1 && s.charAt(i + 1) == 'd') {
+                        continue;
+                    } else {
+                        flag = false;
+                        break;
+                    }
+                }
+                flag = false;
+                break;
+            }
+            if (c == 92 && (i >= len - 1 || s.charAt(i + 1) != 'n')) {
+                flag = false;
+                break;
+            }
+        }
+        if (!flag) {
+            Error error = new Error(this.formatString.getLineNum(),
+                    ErrorType.ILLEGAL_CHAR);
+            ErrorTable.addError(error);
+        }
     }
 
     private void handleIError(Token token) {

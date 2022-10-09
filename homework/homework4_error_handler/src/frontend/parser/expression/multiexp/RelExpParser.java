@@ -3,6 +3,7 @@ package frontend.parser.expression.multiexp;
 import frontend.lexer.Token;
 import frontend.lexer.TokenListIterator;
 import frontend.lexer.TokenType;
+import middle.symbol.SymbolTable;
 
 import java.util.ArrayList;
 
@@ -15,15 +16,22 @@ public class RelExpParser {
     private AddExp first = null;
     private ArrayList<Token> operators = new ArrayList<>();
     private ArrayList<AddExp> operands = new ArrayList<>();
+    private SymbolTable curSymbolTable;
 
     public RelExpParser(TokenListIterator iterator) {
         this.iterator = iterator;
     }
 
+    public RelExpParser(TokenListIterator iterator, SymbolTable curSymbolTable) {
+        this.iterator = iterator;
+        this.curSymbolTable = curSymbolTable;
+    }
+
     public RelExp parseRelExp() {
         this.operands = new ArrayList<>();
         this.operators = new ArrayList<>();
-        AddExpParser addExpParser = new AddExpParser(this.iterator);
+        // AddExpParser addExpParser = new AddExpParser(this.iterator);
+        AddExpParser addExpParser = new AddExpParser(this.iterator, this.curSymbolTable);
         first = addExpParser.parseAddExp();
         Token token = this.iterator.readNextToken();
         while (token.getType().equals(TokenType.LSS) || // <

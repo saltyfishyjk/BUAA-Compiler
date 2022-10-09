@@ -28,13 +28,15 @@ public class StmtAssignParser {
     }
 
     public StmtAssign parseStmtAssign() {
-        LValParser lvalParser = new LValParser(this.iterator);
+        // LValParser lvalParser = new LValParser(this.iterator);
+        LValParser lvalParser = new LValParser(this.iterator, this.curSymbolTable);
         this.lval = lvalParser.parseLVal();
         this.eq = this.iterator.readNextToken();
         if (!this.eq.getType().equals(TokenType.ASSIGN)) {
             System.out.println("EXPECT = HERE");
         }
-        ExpParser expParser = new ExpParser(this.iterator);
+        // ExpParser expParser = new ExpParser(this.iterator);
+        ExpParser expParser = new ExpParser(this.iterator, this.curSymbolTable);
         this.exp = expParser.parseExp();
         this.semicn = this.iterator.readNextToken();
         StmtAssign stmtAssign = new StmtAssign(this.lval, this.eq, this.exp, this.semicn);

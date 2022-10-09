@@ -23,7 +23,8 @@ public class StmtExpParser {
     }
 
     public StmtExp parseStmtExp() {
-        ExpParser expParser = new ExpParser(this.iterator);
+        // ExpParser expParser = new ExpParser(this.iterator);
+        ExpParser expParser = new ExpParser(this.iterator, this.curSymbolTable);
         this.exp = expParser.parseExp();
         this.semicn = this.iterator.readNextToken();
         StmtExp stmtExp = new StmtExp(this.exp, this.semicn);

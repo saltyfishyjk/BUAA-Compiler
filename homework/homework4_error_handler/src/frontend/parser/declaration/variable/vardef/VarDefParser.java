@@ -52,7 +52,8 @@ public class VarDefParser {
         /* '[' */
         while (token.getType().equals(TokenType.LBRACK)) {
             this.leftBrackets.add(token);
-            ConstExpParser expParser = new ConstExpParser(this.iterator);
+            // ConstExpParser expParser = new ConstExpParser(this.iterator);
+            ConstExpParser expParser = new ConstExpParser(this.iterator, this.curSymbolTable);
             this.constExps.add(expParser.parseConstExp());
             token = this.iterator.readNextToken();
             /* ']' */
@@ -63,7 +64,8 @@ public class VarDefParser {
         }
         if (token.getType().equals(TokenType.ASSIGN)) { // '='
             this.eq = token;
-            InitValParser initValParser = new InitValParser(this.iterator);
+            // InitValParser initValParser = new InitValParser(this.iterator);
+            InitValParser initValParser = new InitValParser(this.iterator, this.curSymbolTable);
             this.initVal = initValParser.parseInitVal();
             this.varDefEle = new VarDefInit(this.ident, this.leftBrackets,
                     this.constExps, this.rightBrackets, this.eq, this.initVal);

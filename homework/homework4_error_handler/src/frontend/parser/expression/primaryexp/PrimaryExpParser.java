@@ -24,11 +24,14 @@ public class PrimaryExpParser {
         Token token = this.iterator.readNextToken();
         if (token.getType().equals(TokenType.LPARENT)) { // '('
             this.iterator.unReadToken(1);
-            PrimaryExpExpParser primaryExpExpParser = new PrimaryExpExpParser(this.iterator);
+            // PrimaryExpExpParser primaryExpExpParser = new PrimaryExpExpParser(this.iterator);
+            PrimaryExpExpParser primaryExpExpParser = new PrimaryExpExpParser(this.iterator,
+                    this.curSymbolTable);
             this.primaryExpEle = primaryExpExpParser.parsePrimaryExpExp();
         } else if (token.getType().equals(TokenType.IDENFR)) { // IDENFR
             this.iterator.unReadToken(1);
-            LValParser lvalParser = new LValParser(this.iterator);
+            // LValParser lvalParser = new LValParser(this.iterator);
+            LValParser lvalParser = new LValParser(this.iterator, this.curSymbolTable);
             this.primaryExpEle = lvalParser.parseLVal();
         } else if (token.getType().equals(TokenType.INTCON)) { // INT
             this.iterator.unReadToken(1);

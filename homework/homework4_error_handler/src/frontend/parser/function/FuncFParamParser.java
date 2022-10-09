@@ -61,7 +61,8 @@ public class FuncFParamParser {
             Token token = this.iterator.readNextToken();
             while (token.getType().equals(TokenType.LBRACK)) {
                 this.leftBrackets.add(token);
-                ConstExpParser constExpParser = new ConstExpParser(this.iterator);
+                // ConstExpParser constExpParser = new ConstExpParser(this.iterator);
+                ConstExpParser constExpParser = new ConstExpParser(this.iterator, this.curSymbolTable);
                 this.constExps.add(constExpParser.parseConstExp());
                 this.rightBrackets.add(this.iterator.readNextToken());
                 /* 处理k类错误：缺失 ] */

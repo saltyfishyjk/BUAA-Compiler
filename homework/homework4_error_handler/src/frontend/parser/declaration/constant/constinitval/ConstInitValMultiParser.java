@@ -3,6 +3,7 @@ package frontend.parser.declaration.constant.constinitval;
 import frontend.lexer.Token;
 import frontend.lexer.TokenListIterator;
 import frontend.lexer.TokenType;
+import middle.symbol.SymbolTable;
 
 import java.util.ArrayList;
 
@@ -14,9 +15,15 @@ public class ConstInitValMultiParser {
     private ArrayList<Token> commas = new ArrayList<>(); // MAY exist
     private ArrayList<ConstInitVal> constInitVals = new ArrayList<>(); // MAY exist
     private Token rightBrace = null; // '}'
+    private SymbolTable curSymbolTable;
 
     public ConstInitValMultiParser(TokenListIterator iterator) {
         this.iterator = iterator;
+    }
+
+    public ConstInitValMultiParser(TokenListIterator iterator, SymbolTable curSymbolTable) {
+        this.iterator = iterator;
+        this.curSymbolTable = curSymbolTable;
     }
 
     public ConstInitValMulti parseConstInitValMulti() {
@@ -29,7 +36,9 @@ public class ConstInitValMultiParser {
         Token token = this.iterator.readNextToken();
         if (!token.getType().equals(TokenType.RBRACE)) {
             this.iterator.unReadToken(1);
-            ConstInitValParser constInitValParser = new ConstInitValParser(this.iterator);
+            // ConstInitValParser constInitValParser = new ConstInitValParser(this.iterator);
+            ConstInitValParser constInitValParser = new ConstInitValParser(this.iterator,
+                    this.curSymbolTable);
             this.first = constInitValParser.parseConstInitVal();
             token = this.iterator.readNextToken();
             while (token.getType().equals(TokenType.COMMA)) { // ','

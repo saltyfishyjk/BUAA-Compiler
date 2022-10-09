@@ -27,7 +27,8 @@ public class StmtGetIntParser {
     }
 
     public StmtGetint parseStmtGetInt() {
-        LValParser lvalParser = new LValParser(this.iterator);
+        // LValParser lvalParser = new LValParser(this.iterator);
+        LValParser lvalParser = new LValParser(this.iterator, this.curSymbolTable);
         this.lval = lvalParser.parseLVal();
         this.eq = this.iterator.readNextToken();
         this.getint = this.iterator.readNextToken();

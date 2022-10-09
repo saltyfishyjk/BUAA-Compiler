@@ -20,7 +20,8 @@ public class CondParser {
     }
 
     public Cond parseCond() {
-        LOrExpParser lorExpParser = new LOrExpParser(this.iterator);
+        // LOrExpParser lorExpParser = new LOrExpParser(this.iterator);
+        LOrExpParser lorExpParser = new LOrExpParser(this.iterator, this.curSymbolTable);
         LOrExp lorExp = lorExpParser.parseLOrExp();
         Cond cond = new Cond(lorExp);
         return cond;

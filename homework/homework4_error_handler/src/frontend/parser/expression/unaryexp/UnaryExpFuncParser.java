@@ -47,7 +47,9 @@ public class UnaryExpFuncParser {
         handleJError(this.rightParent);
         if (!this.rightParent.getType().equals(TokenType.RPARENT)) {
             this.iterator.unReadToken(1);
-            FuncRParamsParser funcRParamsParser = new FuncRParamsParser(this.iterator);
+            // FuncRParamsParser funcRParamsParser = new FuncRParamsParser(this.iterator);
+            FuncRParamsParser funcRParamsParser = new FuncRParamsParser(this.iterator,
+                    this.curSymbolTable);
             this.funcRParams = funcRParamsParser.parseFuncRParams();
             this.rightParent = this.iterator.readNextToken();
             unaryExpFunc = new UnaryExpFunc(this.ident, this.funcRParams,
