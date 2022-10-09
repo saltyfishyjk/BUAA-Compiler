@@ -73,6 +73,7 @@ public class UnaryExpFuncParser {
 
     private void handleJError(Token token) {
         if (!token.getType().equals(TokenType.RPARENT)) {
+            this.rightParent = new Token(TokenType.RPARENT, this.leftParent.getLineNum(), ")");
             this.iterator.unReadToken(2);
             Error error = new Error(this.iterator.readNextToken().getLineNum(),
                     ErrorType.MISSING_R_PARENT);
@@ -87,6 +88,10 @@ public class UnaryExpFuncParser {
             return;
         }
         SymbolFunc symbolFunc = (SymbolFunc) symbol;
+        /* 处理没有参数的正确情况 */
+        if (funcRParams == null && symbolFunc.getSymbols().size() == 0) {
+            return;
+        }
         if ((funcRParams == null && symbolFunc.getSymbols().size() != 0)
                 || (symbolFunc.getSymbols().size() != funcRParams.getNum())) {
             Error error = new Error(this.ident.getLineNum(), ErrorType.MISMATCH_PARAM_NUM);
@@ -103,10 +108,16 @@ public class UnaryExpFuncParser {
         }
         SymbolFunc symbolFunc = (SymbolFunc) symbol;
         ArrayList<Symbol> symbols = symbolFunc.getSymbols();
-        /* 参数列表长度不匹配，说明已经被作为d类错误处理过 */
-        if (this.funcRParams.getExps().size() != symbols.size()) {
+        /* 无参数说明为正确情况，不应当处理 */
+        if (this.funcRParams == null && symbols.size() == 0) {
             return;
         }
+        /* 参数列表长度不匹配，说明已经被作为d类错误处理过 */
+        if ((this.funcRParams == null && symbols.size() != 0) ||
+                this.funcRParams.getExps().size() != symbols.size()) {
+            return;
+        }
+
         ArrayList<Exp> exps = this.funcRParams.getExps();
         int len = symbols.size();
         for (int i = 0; i < len; i++) {
