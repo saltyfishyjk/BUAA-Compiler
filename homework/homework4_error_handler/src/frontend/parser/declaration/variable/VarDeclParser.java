@@ -7,7 +7,10 @@ import frontend.parser.declaration.BType;
 import frontend.parser.declaration.BTypeParser;
 import frontend.parser.declaration.variable.vardef.VarDef;
 import frontend.parser.declaration.variable.vardef.VarDefParser;
+import middle.error.ErrorTable;
+import middle.error.ErrorType;
 import middle.symbol.SymbolTable;
+import middle.error.Error;
 
 import java.util.ArrayList;
 
@@ -44,6 +47,13 @@ public class VarDeclParser {
             token = this.iterator.readNextToken();
         }
         this.semicn = token;
+        if (!this.semicn.getType().equals(TokenType.SEMICN)) {
+            this.iterator.unReadToken(2);
+            Error error = new Error(this.iterator.readNextToken().getLineNum(),
+                    ErrorType.MISSING_SEMICN);
+            ErrorTable.addError(error);
+
+        }
         VarDecl varDecl = new VarDecl(this.btype, this.first,
                 this.commas, this.varDefs, this.semicn);
         return varDecl;

@@ -58,7 +58,8 @@ public class ConstDeclParser {
         this.semicn = token;
         if (!this.semicn.getType().equals(TokenType.SEMICN)) {
             this.iterator.unReadToken(2); // 后退两格以方便确定分号上一个非终结符位置
-            Error error = new Error(this.iterator.readNextToken().getLineNum(), ErrorType.MISSING_SEMICN);
+            Error error = new Error(this.iterator.readNextToken().getLineNum(),
+                    ErrorType.MISSING_SEMICN);
             ErrorTable.addError(error);
         }
         ConstDecl constDecl = new ConstDecl(this.constTk, this.btype,

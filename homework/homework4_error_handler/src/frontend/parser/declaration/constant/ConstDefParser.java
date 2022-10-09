@@ -65,9 +65,6 @@ public class ConstDefParser {
             this.rightBrackets.add(token);
             token = this.iterator.readNextToken();
         }
-        /*if (!token.getType().equals(TokenType.ASSIGN)) {
-            System.out.println("EXPECT ASSIGN HERE");
-        }*/ // NO NEED TO HANDLE '='
         this.eq = token;
         ConstInitValParser constInitValParser = new ConstInitValParser(this.iterator);
         this.constInitVal = constInitValParser.parseConstInitVal();
