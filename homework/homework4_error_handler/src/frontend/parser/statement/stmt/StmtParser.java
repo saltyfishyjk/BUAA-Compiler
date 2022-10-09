@@ -37,7 +37,9 @@ public class StmtParser {
                 break;
             case WHILETK: // 'while'
                 this.iterator.unReadToken(1);
-                StmtWhileParser stmtWhileParser = new StmtWhileParser(this.iterator);
+                //StmtWhileParser stmtWhileParser = new StmtWhileParser(this.iterator);
+                StmtWhileParser stmtWhileParser = new StmtWhileParser(this.iterator,
+                        this.curSymbolTable);
                 this.stmtEle = stmtWhileParser.parseStmtWhile();
                 break;
             case BREAKTK: // 'break'

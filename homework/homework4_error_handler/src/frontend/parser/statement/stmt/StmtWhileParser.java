@@ -5,6 +5,10 @@ import frontend.lexer.TokenListIterator;
 import frontend.lexer.TokenType;
 import frontend.parser.expression.Cond;
 import frontend.parser.expression.CondParser;
+import middle.error.Error;
+import middle.error.ErrorTable;
+import middle.error.ErrorType;
+import middle.symbol.SymbolTable;
 
 public class StmtWhileParser {
     private TokenListIterator iterator;
@@ -14,9 +18,16 @@ public class StmtWhileParser {
     private Cond cond;
     private Token rightParent; // ')'
     private Stmt stmt;
+    private SymbolTable curSymbolTable;
 
     public StmtWhileParser(TokenListIterator iterator) {
         this.iterator = iterator;
+    }
+
+    public StmtWhileParser(TokenListIterator iterator,
+                           SymbolTable curSymbolTable) {
+        this.iterator = iterator;
+        this.curSymbolTable = curSymbolTable;
     }
 
     public StmtWhile parseStmtWhile() {
@@ -31,13 +42,23 @@ public class StmtWhileParser {
         CondParser condParser = new CondParser(this.iterator);
         this.cond = condParser.parseCond();
         this.rightParent = this.iterator.readNextToken();
-        if (!this.rightParent.getType().equals(TokenType.RPARENT)) {
-            System.out.println("EXPECT RPARENT IN STMTWHILEPARSER");
-        }
-        StmtParser stmtParser = new StmtParser(this.iterator);
+        /* 处理j类错误：缺失 ) */
+        handleJError(this.rightParent);
+        // StmtParser stmtParser = new StmtParser(this.iterator);
+        StmtParser stmtParser = new StmtParser(this.iterator, this.curSymbolTable);
         this.stmt = stmtParser.parseStmt();
         StmtWhile stmtWhile = new StmtWhile(this.whileTk, this.leftParent,
                 this.cond, this.rightParent, this.stmt);
         return stmtWhile;
     }
+
+    private void handleJError(Token token) {
+        if (!token.getType().equals(TokenType.RPARENT)) {
+            this.iterator.unReadToken(2);
+            Error error = new Error(this.iterator.readNextToken().getLineNum(),
+                    ErrorType.MISSING_R_PARENT);
+            ErrorTable.addError(error);
+        }
+    }
+
 }
