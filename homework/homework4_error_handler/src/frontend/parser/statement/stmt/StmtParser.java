@@ -56,7 +56,8 @@ public class StmtParser {
                 break;
             case RETURNTK: // 'return'
                 this.iterator.unReadToken(1);
-                StmtReturnParser stmtReturnParser = new StmtReturnParser(this.iterator);
+                // StmtReturnParser stmtReturnParser = new StmtReturnParser(this.iterator);
+                StmtReturnParser stmtReturnParser = new StmtReturnParser(this.iterator, this.curSymbolTable);
                 this.stmtEle = stmtReturnParser.parseStmtReturn();
                 break;
             case PRINTFTK: // 'printf'
