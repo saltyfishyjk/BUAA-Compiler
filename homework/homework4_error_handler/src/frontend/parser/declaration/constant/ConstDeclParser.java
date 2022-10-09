@@ -44,7 +44,8 @@ public class ConstDeclParser {
         }
         BTypeParser btypeParser = new BTypeParser(this.iterator);
         btype = btypeParser.parseBtype();
-        ConstDefParser constDefParser = new ConstDefParser(this.iterator);
+        //ConstDefParser constDefParser = new ConstDefParser(this.iterator);
+        ConstDefParser constDefParser = new ConstDefParser(this.iterator, this.curSymbolTable);
         first = constDefParser.parseConstDef();
         token = this.iterator.readNextToken();
         while (token.getType().equals(TokenType.COMMA)) {
