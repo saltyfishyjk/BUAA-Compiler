@@ -47,6 +47,9 @@ public class BlockParser {
 
     public int checkReturn() {
         int len = this.blockItems.size();
+        if (len == 0) {
+            return 0;
+        }
         return this.blockItems.get(len - 1).checkReturn();
     }
 

@@ -116,6 +116,8 @@ public class FuncDefParser {
         if (this.curSymbolTable.checkBTypeError(symbolFunc)) {
             Error error = new Error(symbolFunc.getLineNum(), ErrorType.DUPLICATED_IDENT);
             ErrorTable.addError(error);
+        } else {
+            this.curSymbolTable.addSymol(this.symbolFunc);
         }
         /* 创建新的子符号表，形参与Block块内符号加入该新表 */
         this.curSymbolTable = new SymbolTable(this.curSymbolTable);
