@@ -32,7 +32,8 @@ public class BlockParser {
 
     public Block parseBlock() {
         this.leftBrace = this.iterator.readNextToken();
-        BlockItemParser blockItemParser = new BlockItemParser(this.iterator);
+        // BlockItemParser blockItemParser = new BlockItemParser(this.iterator);
+        BlockItemParser blockItemParser = new BlockItemParser(this.iterator, this.curSymbolTable);
         Token token = this.iterator.readNextToken();
         while (!token.getType().equals(TokenType.RBRACE)) {
             this.iterator.unReadToken(1);

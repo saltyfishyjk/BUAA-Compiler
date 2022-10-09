@@ -7,14 +7,22 @@ import frontend.parser.statement.BlockParser;
 import middle.error.Error;
 import middle.error.ErrorTable;
 import middle.error.ErrorType;
+import middle.symbol.SymbolTable;
 
 public class StmtParser {
     private TokenListIterator iterator;
     /* Stmt Attributes */
     private StmtEle stmtEle = null;
+    private SymbolTable curSymbolTable;
 
     public StmtParser(TokenListIterator iterator) {
         this.iterator = iterator;
+    }
+
+    public StmtParser(TokenListIterator iterator,
+                      SymbolTable curSymbolTable) {
+        this.iterator = iterator;
+        this.curSymbolTable = curSymbolTable;
     }
 
     public Stmt parseStmt() {
@@ -22,7 +30,9 @@ public class StmtParser {
         switch (first.getType()) {
             case IFTK: // 'if'
                 this.iterator.unReadToken(1);
-                StmtCondParser stmtCondParser = new StmtCondParser(this.iterator);
+                // StmtCondParser stmtCondParser = new StmtCondParser(this.iterator);
+                StmtCondParser stmtCondParser = new StmtCondParser(this.iterator,
+                        this.curSymbolTable);
                 this.stmtEle = stmtCondParser.parseStmtCond();
                 break;
             case WHILETK: // 'while'
@@ -64,12 +74,12 @@ public class StmtParser {
                 BlockParser blockParser = new BlockParser(this.iterator);
                 this.stmtEle = blockParser.parseBlock();
                 break;
-            case LPARENT: case INTCON: case PLUS: case MINU:
+            case LPARENT: case INTCON: case PLUS: case MINU: // (, num, +, -
                 this.iterator.unReadToken(1);
                 StmtExpParser stmtExpParser = new StmtExpParser(this.iterator);
                 this.stmtEle = stmtExpParser.parseStmtExp();
                 break;
-            default: // SHOULD at least have a SEMICN ';'
+            default: // 如果没有匹配到任何有效字符，说明当前应当为缺少分号的i类错误
                 handleIError(first);
                 // System.out.println("ARRIVE UNEXPECTED DEFAULT BRANCH");
         }

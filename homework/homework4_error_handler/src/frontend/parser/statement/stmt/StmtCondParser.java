@@ -5,6 +5,10 @@ import frontend.lexer.TokenListIterator;
 import frontend.lexer.TokenType;
 import frontend.parser.expression.Cond;
 import frontend.parser.expression.CondParser;
+import middle.error.Error;
+import middle.error.ErrorTable;
+import middle.error.ErrorType;
+import middle.symbol.SymbolTable;
 
 public class StmtCondParser {
     private TokenListIterator iterator;
@@ -17,9 +21,15 @@ public class StmtCondParser {
     private Token elseTk = null; // MAY exist 'else'
     private Stmt elseStmt = null; // MAY exist else statement
     private StmtCond stmtCond = null;
+    private SymbolTable curSymbolTable;
 
     public StmtCondParser(TokenListIterator iterator) {
         this.iterator = iterator;
+    }
+
+    public StmtCondParser(TokenListIterator iterator, SymbolTable curSymbolTable) {
+        this.iterator = iterator;
+        this.curSymbolTable = curSymbolTable;
     }
 
     public StmtCond parseStmtCond() {
@@ -31,13 +41,14 @@ public class StmtCondParser {
         if (!this.leftParent.getType().equals(TokenType.LPARENT)) {
             System.out.println("EXPECT LEFTPARENT IN STMTCONDPARSER");
         }
-        CondParser condParser = new CondParser(this.iterator);
+        // CondParser condParser = new CondParser(this.iterator);
+        CondParser condParser = new CondParser(this.iterator, this.curSymbolTable);
         this.cond = condParser.parseCond();
         this.rightParent = this.iterator.readNextToken();
-        if (!this.rightParent.getType().equals(TokenType.RPARENT)) {
-            //System.out.println("EXPECT RPARENT IN STMTCONDPARSER");
-        }
-        StmtParser stmtParser = new StmtParser(this.iterator);
+        /* 处理j类错误：缺失 ) */
+        handleJError(this.rightParent);
+        // StmtParser stmtParser = new StmtParser(this.iterator);
+        StmtParser stmtParser = new StmtParser(this.iterator, this.curSymbolTable);
         this.ifStmt = stmtParser.parseStmt();
         this.elseTk = this.iterator.readNextToken();
         if (this.elseTk.getType().equals(TokenType.ELSETK)) {
@@ -50,6 +61,15 @@ public class StmtCondParser {
                     this.cond, this.rightParent, this.ifStmt);
         }
         return this.stmtCond;
+    }
+
+    private void handleJError(Token token) {
+        if (!token.getType().equals(TokenType.RPARENT)) {
+            this.iterator.unReadToken(2);
+            Error error = new Error(this.iterator.readNextToken().getLineNum(),
+                    ErrorType.MISSING_R_PARENT);
+            ErrorTable.addError(error);
+        }
     }
 
 }
