@@ -72,6 +72,8 @@ public class StmtPrintParser {
     private void handleAError(FormatString formatString) {
         String s = formatString.getContent();
         int len = s.length();
+        s = s.substring(1, len - 1);
+        len = s.length();
         boolean flag = true;
         for (int i = 0; i < len; i++) {
             char c = s.charAt(i);
@@ -100,7 +102,7 @@ public class StmtPrintParser {
     }
 
     private void handleIError(Token token) {
-        if (token.getType().equals(TokenType.SEMICN)) {
+        if (!token.getType().equals(TokenType.SEMICN)) {
             this.iterator.unReadToken(2); // 后退两格以方便确定分号上一个非终结符位置
             Error error = new Error(this.iterator.readNextToken().getLineNum(),
                     ErrorType.MISSING_SEMICN);
