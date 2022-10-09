@@ -112,8 +112,13 @@ public class FuncDefParser {
         } else if (this.funcType.getType().equals(TokenType.INTTK)) {
             this.symbolFunc.setDimension(0);
         }
-        /* 创建新的子符号表，形参与Block块内符号加入本表 */
-        curSymbolTable = new SymbolTable(this.curSymbolTable);
+        /* 检查b类错误：名字重定义 */
+        if (this.curSymbolTable.checkBTypeError(symbolFunc)) {
+            Error error = new Error(symbolFunc.getLineNum(), ErrorType.DUPLICATED_IDENT);
+            ErrorTable.addError(error);
+        }
+        /* 创建新的子符号表，形参与Block块内符号加入该新表 */
+        this.curSymbolTable = new SymbolTable(this.curSymbolTable);
     }
 
     private void addFuncParamsSymbol(ArrayList<Symbol> symbols) {

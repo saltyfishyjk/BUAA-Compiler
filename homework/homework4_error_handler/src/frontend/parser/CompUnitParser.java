@@ -107,7 +107,9 @@ public class CompUnitParser {
     }
 
     private void parseMainFuncDef() {
-        MainFuncDefParser mainFuncDefParser = new MainFuncDefParser(this.iterator);
+        MainFuncDefParser mainFuncDefParser = new MainFuncDefParser(this.iterator,
+                this.curSymbolTable);
+        //MainFuncDefParser mainFuncDefParser = new MainFuncDefParser(this.iterator);
         this.mainFuncDef = mainFuncDefParser.parseMainFuncDef();
     }
 
