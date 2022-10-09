@@ -24,4 +24,8 @@ public class FormatString implements SyntaxNode {
         sb.append(this.token.syntaxOutput());
         return sb.toString();
     }
+
+    public String getContent() {
+        return this.token.getContent();
+    }
 }

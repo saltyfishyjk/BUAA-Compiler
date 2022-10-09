@@ -64,7 +64,8 @@ public class StmtParser {
                 break;
             case PRINTFTK: // 'printf'
                 this.iterator.unReadToken(1);
-                StmtPrintParser stmtPrintParser = new StmtPrintParser(this.iterator);
+                // StmtPrintParser stmtPrintParser = new StmtPrintParser(this.iterator);
+                StmtPrintParser stmtPrintParser = new StmtPrintParser(this.iterator, this.curSymbolTable);
                 this.stmtEle = stmtPrintParser.parseStmtPrint();
                 break;
             case SEMICN: // ';'
