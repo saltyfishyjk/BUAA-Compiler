@@ -51,7 +51,9 @@ public class StmtParser {
                 break;
             case CONTINUETK: // 'continue'
                 this.iterator.unReadToken(1);
-                StmtContinueParser stmtContinueParser = new StmtContinueParser(this.iterator);
+                // StmtContinueParser stmtContinueParser = new StmtContinueParser(this.iterator);
+                StmtContinueParser stmtContinueParser = new StmtContinueParser(this.iterator,
+                        this.curSymbolTable);
                 this.stmtEle = stmtContinueParser.parseStmtContinue();
                 break;
             case RETURNTK: // 'return'
