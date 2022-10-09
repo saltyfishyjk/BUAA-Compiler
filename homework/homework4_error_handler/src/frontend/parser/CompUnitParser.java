@@ -94,7 +94,8 @@ public class CompUnitParser {
                 second.getType().equals(TokenType.IDENFR)) {
                 /* first -> int/void && second -> IDENFR */
                 this.iterator.unReadToken(2);
-                FuncDefParser funcDefParser = new FuncDefParser(this.iterator);
+                // FuncDefParser funcDefParser = new FuncDefParser(this.iterator);
+                FuncDefParser funcDefParser = new FuncDefParser(this.iterator, this.curSymbolTable);
                 this.funcDefs.add(funcDefParser.parseFuncDef());
             } else {
                 this.iterator.unReadToken(2);

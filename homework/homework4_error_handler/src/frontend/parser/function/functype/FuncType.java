@@ -1,5 +1,6 @@
 package frontend.parser.function.functype;
 
+import frontend.lexer.TokenType;
 import frontend.parser.SyntaxNode;
 
 public class FuncType implements SyntaxNode {
@@ -16,5 +17,9 @@ public class FuncType implements SyntaxNode {
         sb.append(this.funcTypeEle.syntaxOutput());
         sb.append(this.name + "\n");
         return sb.toString();
+    }
+
+    public TokenType getType() {
+        return this.funcTypeEle.getType();
     }
 }
