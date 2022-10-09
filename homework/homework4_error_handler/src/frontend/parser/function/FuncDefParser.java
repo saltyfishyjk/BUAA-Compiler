@@ -13,9 +13,12 @@ import frontend.parser.terminal.IdentParser;
 import middle.error.Error;
 import middle.error.ErrorTable;
 import middle.error.ErrorType;
+import middle.symbol.Symbol;
 import middle.symbol.SymbolFunc;
 import middle.symbol.SymbolTable;
 import middle.symbol.SymbolType;
+
+import java.util.ArrayList;
 
 public class FuncDefParser {
     private TokenListIterator iterator;
@@ -28,6 +31,7 @@ public class FuncDefParser {
     private Block block = null;
     private FuncDef funcDef = null;
     private SymbolTable curSymbolTable;
+    private SymbolFunc symbolFunc;
 
     public FuncDefParser(TokenListIterator iterator) {
         this.iterator = iterator;
@@ -40,6 +44,7 @@ public class FuncDefParser {
 
     public FuncDef parseFuncDef() {
         FuncTypeParser funcTypeParser = new FuncTypeParser(this.iterator);
+        this.symbolFunc = null;
         this.funcType = funcTypeParser.parseFuncType();
         IdentParser identParser = new IdentParser(this.iterator);
         this.ident = identParser.parseIdent();
@@ -57,7 +62,8 @@ public class FuncDefParser {
         if (!this.rightParent.getType().equals(TokenType.RPARENT)) {
             this.iterator.unReadToken(1);
             // FuncFParamsParser funcFParamsParser = new FuncFParamsParser(this.iterator);
-            FuncFParamsParser funcFParamsParser = new FuncFParamsParser(this.iterator, this.curSymbolTable);
+            FuncFParamsParser funcFParamsParser = new FuncFParamsParser(this.iterator,
+                    this.curSymbolTable);
             this.funcFParams = funcFParamsParser.parseFuncFParams();
             /* ')' */
             this.rightParent = this.iterator.readNextToken();
@@ -67,6 +73,7 @@ public class FuncDefParser {
             this.block = blockParser.parseBlock();
             this.funcDef = new FuncDef(this.funcType, this.ident, this.leftParent,
                     this.funcFParams, this.rightParent, this.block);
+            addFuncParamsSymbol(funcFParamsParser.getSymbols());
         } else {
             BlockParser blockParser = new BlockParser(this.iterator);
             this.block = blockParser.parseBlock();
@@ -89,18 +96,20 @@ public class FuncDefParser {
     private void addFuncSymbol() {
         /* add func symbol */
         SymbolType symbolType = SymbolType.FUNC;
-        SymbolFunc symbolFunc = new SymbolFunc(this.ident.getLineNum(),
+        this.symbolFunc = new SymbolFunc(this.ident.getLineNum(),
                 this.ident.getName(), symbolType);
         if (this.funcType.getType().equals(TokenType.VOIDTK)) {
-            symbolFunc.setDimension(-1);
+            this.symbolFunc.setDimension(-1);
         } else if (this.funcType.getType().equals(TokenType.INTTK)) {
-            symbolFunc.setDimension(0);
+            this.symbolFunc.setDimension(0);
         }
         /* 创建新的子符号表，形参与Block块内符号加入本表 */
         curSymbolTable = new SymbolTable(this.curSymbolTable);
     }
 
-    private void addFuncParamsSymbol() {
-        /* TODO */
+    private void addFuncParamsSymbol(ArrayList<Symbol> symbols) {
+        for (Symbol symbol : symbols) {
+            this.symbolFunc.addSymbol(symbol);
+        }
     }
 }

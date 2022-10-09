@@ -1,10 +1,9 @@
 package middle.symbol;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class SymbolFunc extends Symbol {
-    /* 参数位置 -> 参数符号对象 */
-    private HashMap<Integer, Symbol> params = new HashMap<>();
+    private ArrayList<Symbol> symbols = new ArrayList<>();
 
     public SymbolFunc(int lineNum, String name, SymbolType symbolType) {
         super(lineNum, name, symbolType);
@@ -13,5 +12,9 @@ public class SymbolFunc extends Symbol {
     public SymbolFunc(int lineNum, String name, SymbolType symbolType, int dimension) {
         super(lineNum, name, symbolType);
         this.setDimension(dimension);
+    }
+
+    public void addSymbol(Symbol symbol) {
+        this.symbols.add(symbol);
     }
 }

@@ -6,6 +6,7 @@ import frontend.lexer.TokenType;
 import frontend.parser.function.FuncFParam;
 import frontend.parser.function.FuncFParamParser;
 import frontend.parser.function.FuncFParams;
+import middle.symbol.Symbol;
 import middle.symbol.SymbolTable;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class FuncFParamsParser {
     private ArrayList<Token> commas = new ArrayList<>();
     private ArrayList<FuncFParam> funcFParams = new ArrayList<>();
     private SymbolTable curSymbolTabl;
+    private ArrayList<Symbol> symbols = new ArrayList<>();
 
     public FuncFParamsParser(TokenListIterator iterator) {
         this.iterator = iterator;
@@ -37,9 +39,14 @@ public class FuncFParamsParser {
         while (token.getType().equals(TokenType.COMMA)) {
             this.commas.add(token);
             this.funcFParams.add(funcFParamParser.parseFuncFParam());
+            this.symbols.add(funcFParamParser.getSymbol());
             token = this.iterator.readNextToken();
         }
         this.iterator.unReadToken(1);
         return new FuncFParams(this.first, this.commas, this.funcFParams);
+    }
+
+    public ArrayList<Symbol> getSymbols() {
+        return symbols;
     }
 }

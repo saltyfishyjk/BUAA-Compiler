@@ -47,6 +47,7 @@ public class FuncFParamParser {
         this.constExps = new ArrayList<>();
         this.rightBrackets = new ArrayList<>();
         BTypeParser btypeParser = new BTypeParser(this.iterator);
+        this.symbol = null;
         this.btype = btypeParser.parseBtype();
         IdentParser identParser = new IdentParser(this.iterator);
         this.ident = identParser.parseIdent();
