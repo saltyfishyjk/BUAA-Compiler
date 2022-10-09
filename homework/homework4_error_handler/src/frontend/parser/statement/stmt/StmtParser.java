@@ -30,42 +30,38 @@ public class StmtParser {
         switch (first.getType()) {
             case IFTK: // 'if'
                 this.iterator.unReadToken(1);
-                // StmtCondParser stmtCondParser = new StmtCondParser(this.iterator);
                 StmtCondParser stmtCondParser = new StmtCondParser(this.iterator,
                         this.curSymbolTable);
                 this.stmtEle = stmtCondParser.parseStmtCond();
                 break;
             case WHILETK: // 'while'
                 this.iterator.unReadToken(1);
-                //StmtWhileParser stmtWhileParser = new StmtWhileParser(this.iterator);
                 StmtWhileParser stmtWhileParser = new StmtWhileParser(this.iterator,
                         this.curSymbolTable);
                 this.stmtEle = stmtWhileParser.parseStmtWhile();
                 break;
             case BREAKTK: // 'break'
                 this.iterator.unReadToken(1);
-                //StmtBreakParser stmtBreakParser = new StmtBreakParser(this.iterator);
                 StmtBreakParser stmtBreakParser = new StmtBreakParser(this.iterator,
                         this.curSymbolTable);
                 this.stmtEle = stmtBreakParser.parseStmtBreak();
                 break;
             case CONTINUETK: // 'continue'
                 this.iterator.unReadToken(1);
-                // StmtContinueParser stmtContinueParser = new StmtContinueParser(this.iterator);
                 StmtContinueParser stmtContinueParser = new StmtContinueParser(this.iterator,
                         this.curSymbolTable);
                 this.stmtEle = stmtContinueParser.parseStmtContinue();
                 break;
             case RETURNTK: // 'return'
                 this.iterator.unReadToken(1);
-                // StmtReturnParser stmtReturnParser = new StmtReturnParser(this.iterator);
-                StmtReturnParser stmtReturnParser = new StmtReturnParser(this.iterator, this.curSymbolTable);
+                StmtReturnParser stmtReturnParser = new StmtReturnParser(this.iterator,
+                        this.curSymbolTable);
                 this.stmtEle = stmtReturnParser.parseStmtReturn();
                 break;
             case PRINTFTK: // 'printf'
                 this.iterator.unReadToken(1);
-                // StmtPrintParser stmtPrintParser = new StmtPrintParser(this.iterator);
-                StmtPrintParser stmtPrintParser = new StmtPrintParser(this.iterator, this.curSymbolTable);
+                StmtPrintParser stmtPrintParser = new StmtPrintParser(this.iterator,
+                        this.curSymbolTable);
                 this.stmtEle = stmtPrintParser.parseStmtPrint();
                 break;
             case SEMICN: // ';'
@@ -79,12 +75,14 @@ public class StmtParser {
                 break;
             case LBRACE: // '{'
                 this.iterator.unReadToken(1);
-                BlockParser blockParser = new BlockParser(this.iterator);
+                // BlockParser blockParser = new BlockParser(this.iterator);
+                BlockParser blockParser = new BlockParser(this.iterator, this.curSymbolTable, 0);
                 this.stmtEle = blockParser.parseBlock();
                 break;
             case LPARENT: case INTCON: case PLUS: case MINU: // (, num, +, -
                 this.iterator.unReadToken(1);
-                StmtExpParser stmtExpParser = new StmtExpParser(this.iterator);
+                // StmtExpParser stmtExpParser = new StmtExpParser(this.iterator);
+                StmtExpParser stmtExpParser = new StmtExpParser(this.iterator, this.curSymbolTable);
                 this.stmtEle = stmtExpParser.parseStmtExp();
                 break;
             default: // 如果没有匹配到任何有效字符，说明当前应当为缺少分号的i类错误
@@ -113,16 +111,21 @@ public class StmtParser {
         this.iterator.unReadToken(cnt);
         if (flag) {
             if (mode == 0) {
-                StmtAssignParser stmtAssignParser = new StmtAssignParser(this.iterator);
+                // StmtAssignParser stmtAssignParser = new StmtAssignParser(this.iterator);
+                StmtAssignParser stmtAssignParser = new StmtAssignParser(this.iterator,
+                        this.curSymbolTable);
                 this.stmtEle = stmtAssignParser.parseStmtAssign();
             } else if (mode == 1) {
-                StmtGetIntParser stmtGetIntParser = new StmtGetIntParser(this.iterator);
+                // StmtGetIntParser stmtGetIntParser = new StmtGetIntParser(this.iterator);
+                StmtGetIntParser stmtGetIntParser = new StmtGetIntParser(this.iterator,
+                        this.curSymbolTable);
                 this.stmtEle = stmtGetIntParser.parseStmtGetInt();
             } else {
                 System.out.println("REACHED UNEXPECTED BRANCH");
             }
         } else {
-            StmtExpParser stmtExpParser = new StmtExpParser(this.iterator);
+            // StmtExpParser stmtExpParser = new StmtExpParser(this.iterator);
+            StmtExpParser stmtExpParser = new StmtExpParser(this.iterator, this.curSymbolTable);
             this.stmtEle = stmtExpParser.parseStmtExp();
         }
     }

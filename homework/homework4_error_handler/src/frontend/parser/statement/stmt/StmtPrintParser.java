@@ -49,7 +49,8 @@ public class StmtPrintParser {
         Token token = this.iterator.readNextToken();
         while (token.getType().equals(TokenType.COMMA)) {
             this.commmas.add(token);
-            ExpParser expParser = new ExpParser(this.iterator);
+            // ExpParser expParser = new ExpParser(this.iterator);
+            ExpParser expParser = new ExpParser(this.iterator, this.curSymbolTable);
             this.exps.add(expParser.parseExp());
             token = this.iterator.readNextToken();
         }

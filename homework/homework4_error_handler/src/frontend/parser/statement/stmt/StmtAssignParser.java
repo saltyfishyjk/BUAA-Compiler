@@ -7,6 +7,7 @@ import frontend.parser.expression.Exp;
 import frontend.parser.expression.ExpParser;
 import frontend.parser.expression.primaryexp.LVal;
 import frontend.parser.expression.primaryexp.LValParser;
+import middle.symbol.SymbolTable;
 
 public class StmtAssignParser {
     private TokenListIterator iterator;
@@ -15,9 +16,15 @@ public class StmtAssignParser {
     private Token eq; // '='
     private Exp exp;
     private Token semicn; // ';'
+    private SymbolTable curSymbolTable;
 
     public StmtAssignParser(TokenListIterator iterator) {
         this.iterator = iterator;
+    }
+
+    public StmtAssignParser(TokenListIterator iterator, SymbolTable curSymbolTable) {
+        this.iterator = iterator;
+        this.curSymbolTable = curSymbolTable;
     }
 
     public StmtAssign parseStmtAssign() {

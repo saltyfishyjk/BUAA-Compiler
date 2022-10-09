@@ -52,4 +52,18 @@ public class SymbolTable {
         }
         return false;
     }
+
+    /* 检测出C类错误返回true，否则返回false */
+    public boolean checkCTypeError(String name) {
+        for (String index : this.symbols.keySet()) {
+            if (index.equals(name)) {
+                return false;
+            }
+        }
+        if (this.hasParent()) {
+            return this.getParent().checkCTypeError(name);
+        } else {
+            return true;
+        }
+    }
 }

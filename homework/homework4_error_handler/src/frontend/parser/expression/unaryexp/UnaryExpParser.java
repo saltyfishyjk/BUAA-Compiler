@@ -4,14 +4,21 @@ import frontend.lexer.Token;
 import frontend.lexer.TokenListIterator;
 import frontend.lexer.TokenType;
 import frontend.parser.expression.primaryexp.PrimaryExpParser;
+import middle.symbol.SymbolTable;
 
 public class UnaryExpParser {
     private TokenListIterator iterator;
     /* UnaryExp Attributes */
     private UnaryExpEle unaryExpEle = null;
+    private SymbolTable curSymbolTable;
 
     public UnaryExpParser(TokenListIterator iterator) {
         this.iterator = iterator;
+    }
+
+    public UnaryExpParser(TokenListIterator iterator, SymbolTable curSymbolTable) {
+        this.iterator = iterator;
+        this.curSymbolTable = curSymbolTable;
     }
 
     public UnaryExp parseUnaryExp() {
@@ -23,11 +30,15 @@ public class UnaryExpParser {
             this.unaryExpEle = unaryExpFuncParser.parseUnaryFuncExp();
         } else if (isPrimaryExpFirst(first)) {
             this.iterator.unReadToken(2);
-            PrimaryExpParser primaryExpParser = new PrimaryExpParser(this.iterator);
+            // PrimaryExpParser primaryExpParser = new PrimaryExpParser(this.iterator);
+            PrimaryExpParser primaryExpParser = new PrimaryExpParser(this.iterator,
+                    this.curSymbolTable);
             this.unaryExpEle = primaryExpParser.parsePrimaryExp();
         } else if (isUnaryFirst(first)) {
             this.iterator.unReadToken(2);
-            UnaryExpOpParser unaryExpOpParser = new UnaryExpOpParser(this.iterator);
+            // UnaryExpOpParser unaryExpOpParser = new UnaryExpOpParser(this.iterator);
+            UnaryExpOpParser unaryExpOpParser = new UnaryExpOpParser(this.iterator,
+                    this.curSymbolTable);
             this.unaryExpEle = unaryExpOpParser.parseUnaryExpOp();
         }
         UnaryExp unaryExp = new UnaryExp(this.unaryExpEle);

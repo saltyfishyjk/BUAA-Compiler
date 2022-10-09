@@ -3,14 +3,21 @@ package frontend.parser.expression.primaryexp;
 import frontend.lexer.Token;
 import frontend.lexer.TokenListIterator;
 import frontend.lexer.TokenType;
+import middle.symbol.SymbolTable;
 
 public class PrimaryExpParser {
     private TokenListIterator iterator;
     /* PrimaryExp Attributes */
     private PrimaryExpEle primaryExpEle;
+    private SymbolTable curSymbolTable;
 
     public PrimaryExpParser(TokenListIterator iterator) {
         this.iterator = iterator;
+    }
+
+    public PrimaryExpParser(TokenListIterator iterator, SymbolTable curSymbolTable) {
+        this.iterator = iterator;
+        this.curSymbolTable = curSymbolTable;
     }
 
     public PrimaryExp parsePrimaryExp() {

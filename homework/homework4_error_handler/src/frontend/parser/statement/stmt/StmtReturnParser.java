@@ -33,7 +33,8 @@ public class StmtReturnParser {
         if (!this.returnTk.getType().equals(TokenType.RETURNTK)) {
             System.out.println("EXPECT RETURNTK IN STMTRETURNPARSER");
         }
-        ExpParser expParser = new ExpParser(this.iterator);
+        // ExpParser expParser = new ExpParser(this.iterator);
+        ExpParser expParser = new ExpParser(this.iterator, this.curSymbolTable);
         this.semicn = this.iterator.readNextToken();
         if (!this.semicn.getType().equals(TokenType.SEMICN)) {
             this.iterator.unReadToken(1);

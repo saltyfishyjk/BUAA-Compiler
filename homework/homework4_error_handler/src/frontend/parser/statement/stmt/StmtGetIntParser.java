@@ -4,6 +4,7 @@ import frontend.lexer.Token;
 import frontend.lexer.TokenListIterator;
 import frontend.parser.expression.primaryexp.LVal;
 import frontend.parser.expression.primaryexp.LValParser;
+import middle.symbol.SymbolTable;
 
 public class StmtGetIntParser {
     private TokenListIterator iterator;
@@ -14,9 +15,15 @@ public class StmtGetIntParser {
     private Token leftParent = null; // '('
     private Token rightParent = null; // ')'
     private Token semicn = null; // ';'
+    private SymbolTable curSymbolTable;
 
     public StmtGetIntParser(TokenListIterator iterator) {
         this.iterator = iterator;
+    }
+
+    public StmtGetIntParser(TokenListIterator iterator, SymbolTable curSymbolTable) {
+        this.iterator = iterator;
+        this.curSymbolTable = curSymbolTable;
     }
 
     public StmtGetint parseStmtGetInt() {
