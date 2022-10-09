@@ -9,15 +9,26 @@ public class SymbolTable {
     /* 符号名 -> 符号obj */
     private HashMap<String, Symbol> symbols;
     private SymbolTable parent = null;
+    private int cycleDepth;
 
     public SymbolTable() {
         this.symbols = new HashMap<>();
         this.parent = null;
+        this.cycleDepth = 0;
     }
 
     public SymbolTable(SymbolTable parent) {
         this.symbols = new HashMap<>();
         this.parent = parent;
+        this.cycleDepth = parent.getCycleDepth();
+    }
+
+    public int getCycleDepth() {
+        return cycleDepth;
+    }
+
+    public void setCycleDepth(int cycleDepth) {
+        this.cycleDepth = cycleDepth;
     }
 
     public SymbolTable getParent() {

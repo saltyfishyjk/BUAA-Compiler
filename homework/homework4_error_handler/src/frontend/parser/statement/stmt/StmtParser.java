@@ -44,7 +44,9 @@ public class StmtParser {
                 break;
             case BREAKTK: // 'break'
                 this.iterator.unReadToken(1);
-                StmtBreakParser stmtBreakParser = new StmtBreakParser(this.iterator);
+                //StmtBreakParser stmtBreakParser = new StmtBreakParser(this.iterator);
+                StmtBreakParser stmtBreakParser = new StmtBreakParser(this.iterator,
+                        this.curSymbolTable);
                 this.stmtEle = stmtBreakParser.parseStmtBreak();
                 break;
             case CONTINUETK: // 'continue'
@@ -83,7 +85,6 @@ public class StmtParser {
                 break;
             default: // 如果没有匹配到任何有效字符，说明当前应当为缺少分号的i类错误
                 handleIError(first);
-                // System.out.println("ARRIVE UNEXPECTED DEFAULT BRANCH");
         }
         Stmt stmt = new Stmt(this.stmtEle);
         return stmt;

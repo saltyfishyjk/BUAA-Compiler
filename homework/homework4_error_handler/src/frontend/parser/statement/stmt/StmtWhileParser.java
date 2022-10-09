@@ -44,8 +44,10 @@ public class StmtWhileParser {
         this.rightParent = this.iterator.readNextToken();
         /* 处理j类错误：缺失 ) */
         handleJError(this.rightParent);
-        // StmtParser stmtParser = new StmtParser(this.iterator);
-        StmtParser stmtParser = new StmtParser(this.iterator, this.curSymbolTable);
+        /* 进入循环体，创建新的子符号表，并使其深度+1 */
+        SymbolTable symbolTable = new SymbolTable(this.curSymbolTable);
+        symbolTable.setCycleDepth(this.curSymbolTable.getCycleDepth() + 1);
+        StmtParser stmtParser = new StmtParser(this.iterator, symbolTable);
         this.stmt = stmtParser.parseStmt();
         StmtWhile stmtWhile = new StmtWhile(this.whileTk, this.leftParent,
                 this.cond, this.rightParent, this.stmt);
