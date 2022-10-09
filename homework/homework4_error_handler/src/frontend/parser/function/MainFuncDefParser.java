@@ -8,11 +8,9 @@ import frontend.parser.statement.BlockParser;
 import middle.error.Error;
 import middle.error.ErrorTable;
 import middle.error.ErrorType;
-import middle.symbol.Symbol;
 import middle.symbol.SymbolFunc;
 import middle.symbol.SymbolTable;
 import middle.symbol.SymbolType;
-import middle.symbol.SymbolVar;
 
 public class MainFuncDefParser {
     private TokenListIterator iterator;
@@ -23,8 +21,8 @@ public class MainFuncDefParser {
     private Token rightParent; // ')'
     private Block block;
     private BlockParser blockParser;
-    SymbolFunc symbolFunc;
-    SymbolTable curSymbolTable;
+    private SymbolFunc symbolFunc;
+    private SymbolTable curSymbolTable;
 
     public MainFuncDefParser(TokenListIterator iterator) {
         this.iterator = iterator;
