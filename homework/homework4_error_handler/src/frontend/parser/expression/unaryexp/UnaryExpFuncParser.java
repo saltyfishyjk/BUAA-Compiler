@@ -133,6 +133,7 @@ public class UnaryExpFuncParser {
             Exp exp = exps.get(i);
             symbol = symbols.get(i);
             if (exp.getDimension() != symbol.getDimension()) {
+                /* TODO 处理exp维数问题 */
                 Error error = new Error(this.ident.getLineNum(), ErrorType.MISMATCH_PARAM_TYPE);
                 ErrorTable.addError(error);
                 break;

@@ -17,6 +17,7 @@ public class LVal implements PrimaryExpEle {
     private ArrayList<Exp> exps;
     private ArrayList<Token> rightBrackets;
     private SymbolType symbolType;
+    private int dimension;
 
     public LVal(Ident ident,
                 ArrayList<Token> leftBrackets,
@@ -35,6 +36,16 @@ public class LVal implements PrimaryExpEle {
                 SymbolType symbolType) {
         this(ident, leftBrackets, exps, rightBrackets);
         this.symbolType = symbolType;
+        if (this.symbolType != null) {
+            if (this.symbolType.equals(SymbolType.CON) || this.symbolType.equals(SymbolType.VAR)) {
+                this.dimension = 0;
+            } else if (this.symbolType.equals(SymbolType.CON1) ||
+                    this.symbolType.equals(SymbolType.VAR1)) {
+                this.dimension = 1;
+            } else {
+                this.dimension = 2;
+            }
+        }
     }
 
     @Override
@@ -56,7 +67,7 @@ public class LVal implements PrimaryExpEle {
 
     @Override
     public int getDimension() {
-        return leftBrackets.size();
+        return this.dimension - this.leftBrackets.size();
     }
 
     public SymbolType getSymbolType() {

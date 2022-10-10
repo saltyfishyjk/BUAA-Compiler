@@ -74,6 +74,7 @@ public class LValParser {
         }
     }
 
+    /* 处理k类错误：缺少右小括号 */
     private void handleKError(Token token) {
         if (!token.getType().equals(TokenType.RBRACK)) {
             this.iterator.unReadToken(2);

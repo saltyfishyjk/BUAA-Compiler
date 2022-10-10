@@ -24,21 +24,21 @@ public class Compiler {
         TokenLexer tokenLexer = new TokenLexer(sourceFileLexer);
         CompUnitParser compUnitParser = new CompUnitParser(tokenLexer.getTokenList());
         CompUnit compUnit = compUnitParser.parseCompUnit();
-        String outputFileName = "output.txt";
-        // String errorFileName = "error.txt";
+        //String outputFileName = "output.txt";
+        String errorFileName = "error.txt";
         try {
-            OutputStream outputStream = new FileOutputStream(outputFileName);
-            //OutputStream outputStream = new FileOutputStream(errorFileName);
+            //OutputStream outputStream = new FileOutputStream(outputFileName);
+            OutputStream outputStream = new FileOutputStream(errorFileName);
             try {
                 outputStream.write(ErrorTable.output().getBytes());
-                outputStream.write(compUnit.syntaxOutput().getBytes());
+                //outputStream.write(compUnit.syntaxOutput().getBytes());
             } catch (IOException e) {
-                System.err.println("Can not write " + outputFileName);
-                // System.err.println("Can not write " + errorFileName);
+                //System.err.println("Can not write " + outputFileName);
+                System.err.println("Can not write " + errorFileName);
             }
         } catch (FileNotFoundException e) {
-            System.err.println("Can not open " + outputFileName);
-            //System.err.println("Can not open " + errorFileName);
+            // System.err.println("Can not open " + outputFileName);
+            System.err.println("Can not open " + errorFileName);
         }
         //System.out.println(tokenLexer.getTokenList());
     }
