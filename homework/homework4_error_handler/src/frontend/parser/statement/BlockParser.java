@@ -32,6 +32,7 @@ public class BlockParser {
 
     public Block parseBlock() {
         this.leftBrace = this.iterator.readNextToken();
+        this.enterNewSymbolTable();
         // BlockItemParser blockItemParser = new BlockItemParser(this.iterator);
         BlockItemParser blockItemParser = new BlockItemParser(this.iterator, this.curSymbolTable);
         Token token = this.iterator.readNextToken();
@@ -43,6 +44,10 @@ public class BlockParser {
         this.rightBrace = token;
         Block block = new Block(this.leftBrace, this.blockItems, this.rightBrace);
         return block;
+    }
+
+    private void enterNewSymbolTable() {
+        this.curSymbolTable = new SymbolTable(this.curSymbolTable);
     }
 
     public int checkReturn() {
