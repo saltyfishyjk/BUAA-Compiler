@@ -3,6 +3,7 @@ package frontend.parser.expression.primaryexp;
 import frontend.lexer.Token;
 import frontend.parser.terminal.Ident;
 import frontend.parser.expression.Exp;
+import middle.symbol.SymbolType;
 
 import java.util.ArrayList;
 
@@ -15,6 +16,7 @@ public class LVal implements PrimaryExpEle {
     private ArrayList<Token> leftBrackets;
     private ArrayList<Exp> exps;
     private ArrayList<Token> rightBrackets;
+    private SymbolType symbolType;
 
     public LVal(Ident ident,
                 ArrayList<Token> leftBrackets,
@@ -24,6 +26,15 @@ public class LVal implements PrimaryExpEle {
         this.leftBrackets = leftBrackets;
         this.exps = exps;
         this.rightBrackets = rightBrackets;
+    }
+
+    public LVal(Ident ident,
+                ArrayList<Token> leftBrackets,
+                ArrayList<Exp> exps,
+                ArrayList<Token> rightBrackets,
+                SymbolType symbolType) {
+        this(ident, leftBrackets, exps, rightBrackets);
+        this.symbolType = symbolType;
     }
 
     @Override
@@ -46,5 +57,13 @@ public class LVal implements PrimaryExpEle {
     @Override
     public int getDimension() {
         return leftBrackets.size();
+    }
+
+    public SymbolType getSymbolType() {
+        return symbolType;
+    }
+
+    public int getLineNum() {
+        return this.ident.getLineNum();
     }
 }

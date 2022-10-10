@@ -10,7 +10,9 @@ import frontend.parser.terminal.IdentParser;
 import middle.error.Error;
 import middle.error.ErrorTable;
 import middle.error.ErrorType;
+import middle.symbol.Symbol;
 import middle.symbol.SymbolTable;
+import middle.symbol.SymbolType;
 
 import java.util.ArrayList;
 
@@ -22,6 +24,7 @@ public class LValParser {
     private ArrayList<Exp> exps = new ArrayList<>();
     private ArrayList<Token> rightBrackets = new ArrayList<>();
     private SymbolTable curSymbolTable;
+    private SymbolType symbolType;
 
     public LValParser(TokenListIterator iterator) {
         this.iterator = iterator;
@@ -53,14 +56,21 @@ public class LValParser {
             token = this.iterator.readNextToken();
         }
         this.iterator.unReadToken(1);
-        LVal lval = new LVal(this.ident, this.leftBrackets, this.exps, this.rightBrackets);
+        // LVal lval = new LVal(this.ident, this.leftBrackets, this.exps, this.rightBrackets);
+        LVal lval = new LVal(this.ident, this.leftBrackets, this.exps, this.rightBrackets,
+                getSymolType());
         return lval;
     }
 
+    /* 处理c类错误：未定义名字 */
     private void handleCError(Ident ident) {
         if (this.curSymbolTable.checkCTypeError(ident.getName())) {
             Error error = new Error(ident.getLineNum(), ErrorType.UNDEFINED_IDENT);
             ErrorTable.addError(error);
+            this.symbolType = null;
+        } else {
+            Symbol symbol = this.curSymbolTable.getSymbol(ident.getName());
+            this.symbolType = symbol.getSymbolType();
         }
     }
 
@@ -71,5 +81,9 @@ public class LValParser {
             Error error = new Error(lastToken.getLineNum(), ErrorType.MISSING_R_BACKET);
             ErrorTable.addError(error);
         }
+    }
+
+    public SymbolType getSymolType() {
+        return this.symbolType;
     }
 }

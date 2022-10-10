@@ -9,6 +9,7 @@ import middle.error.Error;
 import middle.error.ErrorTable;
 import middle.error.ErrorType;
 import middle.symbol.SymbolTable;
+import middle.symbol.SymbolType;
 
 public class StmtGetIntParser {
     private TokenListIterator iterator;
@@ -34,6 +35,8 @@ public class StmtGetIntParser {
         // LValParser lvalParser = new LValParser(this.iterator);
         LValParser lvalParser = new LValParser(this.iterator, this.curSymbolTable);
         this.lval = lvalParser.parseLVal();
+        /* 处理h类错误：修改常量值 */
+        handleHError(this.lval);
         this.eq = this.iterator.readNextToken();
         this.getint = this.iterator.readNextToken();
         this.leftParent = this.iterator.readNextToken();
@@ -52,6 +55,18 @@ public class StmtGetIntParser {
             this.iterator.unReadToken(2); // 后退两格以方便确定分号上一个非终结符位置
             Error error = new Error(this.iterator.readNextToken().getLineNum(),
                     ErrorType.MISSING_SEMICN);
+            ErrorTable.addError(error);
+        }
+    }
+
+    private void handleHError(LVal lval) {
+        if (lval.getSymbolType() == null) {
+            return;
+        }
+        if (lval.getSymbolType().equals(SymbolType.CON) ||
+                lval.getSymbolType().equals(SymbolType.CON1) ||
+                lval.getSymbolType().equals(SymbolType.CON2)) {
+            Error error = new Error(this.lval.getLineNum(), ErrorType.ALTER_CONST);
             ErrorTable.addError(error);
         }
     }
