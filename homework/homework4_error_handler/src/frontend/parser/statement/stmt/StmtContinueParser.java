@@ -25,8 +25,8 @@ public class StmtContinueParser {
     }
 
     public StmtContinue parseStmtContinue() {
-        handleMError();
         this.continueTk = this.iterator.readNextToken();
+        handleMError();
         if (!this.continueTk.getType().equals(TokenType.CONTINUETK)) {
             System.out.println("EXPECT CONTINUETK IN STMTCONTINUEPARSER");
         }

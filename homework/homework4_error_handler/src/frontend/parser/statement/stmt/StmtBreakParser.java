@@ -26,9 +26,9 @@ public class StmtBreakParser {
     }
 
     public StmtBreak parseStmtBreak() {
+        this.breakTk = this.iterator.readNextToken();
         /* 处理M类错误：在非循环块中使用break语句 */
         handleMError();
-        this.breakTk = this.iterator.readNextToken();
         if (!this.breakTk.getType().equals(TokenType.BREAKTK)) {
             System.out.println("EXPECT BREAKTK IN STMTBREAKPARSER");
         }
