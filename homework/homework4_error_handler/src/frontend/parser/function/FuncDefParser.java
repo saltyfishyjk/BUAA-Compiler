@@ -9,6 +9,7 @@ import frontend.parser.function.functype.FuncTypeParser;
 import frontend.parser.statement.Block;
 import frontend.parser.statement.BlockParser;
 import frontend.parser.statement.blockitem.BlockItemEle;
+import frontend.parser.statement.stmt.Stmt;
 import frontend.parser.statement.stmt.StmtReturn;
 import frontend.parser.terminal.Ident;
 import frontend.parser.terminal.IdentParser;
@@ -142,7 +143,8 @@ public class FuncDefParser {
             /* f error */
             if (this.blockParser.checkReturn() == 2) {
                 BlockItemEle blockItemEle = this.blockParser.getLastBlockItem().getBlockItemEle();
-                StmtReturn stmtReturn = (StmtReturn)blockItemEle; // MUST BE RETURN STMT
+                Stmt stmt = ((Stmt)blockItemEle); // MUST BE RETURN STMT
+                StmtReturn stmtReturn = (StmtReturn)stmt.getStmtEle();
                 int lineNum = stmtReturn.getReturnLineNum();
                 Error error = new Error(lineNum, ErrorType.RETURN_VALUE_VOID);
                 ErrorTable.addError(error);

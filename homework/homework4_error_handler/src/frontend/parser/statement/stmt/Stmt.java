@@ -31,4 +31,8 @@ public class Stmt implements BlockItemEle {
             return 0;
         }
     }
+
+    public StmtEle getStmtEle() {
+        return stmtEle;
+    }
 }
