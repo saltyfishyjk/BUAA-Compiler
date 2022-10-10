@@ -46,7 +46,7 @@ public class StmtBreakParser {
     }
 
     private void handleIError(Token token) {
-        if (token.getType().equals(TokenType.SEMICN)) {
+        if (!token.getType().equals(TokenType.SEMICN)) {
             this.iterator.unReadToken(2); // 后退两格以方便确定分号上一个非终结符位置
             Error error = new Error(this.iterator.readNextToken().getLineNum(),
                     ErrorType.MISSING_SEMICN);
