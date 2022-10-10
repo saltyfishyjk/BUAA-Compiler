@@ -43,7 +43,7 @@ public class SymbolTable {
         this.symbols.put(symbol.getName(), symbol);
     }
 
-    /* 检测出B类错误返回true，否则返回false */
+    /* 检测出b类错误返回true，否则返回false */
     public boolean checkBTypeError(Symbol symbol) {
         for (String name : this.symbols.keySet()) {
             if (name.equals(symbol.getName())) {
@@ -53,7 +53,7 @@ public class SymbolTable {
         return false;
     }
 
-    /* 检测出C类错误返回true，否则返回false */
+    /* 检测出c类错误返回true，否则返回false */
     public boolean checkCTypeError(String name) {
         for (String index : this.symbols.keySet()) {
             if (index.equals(name)) {

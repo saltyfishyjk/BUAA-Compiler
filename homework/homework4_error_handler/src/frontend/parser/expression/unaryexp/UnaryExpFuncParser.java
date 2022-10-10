@@ -26,6 +26,7 @@ public class UnaryExpFuncParser {
     private Token rightParent; // ')'
     private UnaryExpFunc unaryExpFunc = null;
     private SymbolTable curSymbolTable;
+    private int dimension;
 
     public UnaryExpFuncParser(TokenListIterator iterator) {
         this.iterator = iterator;
@@ -39,12 +40,14 @@ public class UnaryExpFuncParser {
     public UnaryExpFunc parseUnaryFuncExp() {
         IdentParser identParser = new IdentParser(this.iterator);
         this.ident = identParser.parseIdent();
-        /* 处理c类错误：未定义名字 */
+        /* 处理c类错误：未定义名字 & 获取维数 */
         handleCError(this.ident);
         this.leftParent = this.iterator.readNextToken();
         this.rightParent = this.iterator.readNextToken();
         /* 处理j类错误：缺失 ) */
-        handleJError(this.rightParent);
+        if (this.rightParent.getType().equals(TokenType.SEMICN)) {
+            handleJError(this.rightParent);
+        }
         if (!this.rightParent.getType().equals(TokenType.RPARENT)) {
             this.iterator.unReadToken(1);
             // FuncRParamsParser funcRParamsParser = new FuncRParamsParser(this.iterator);
@@ -53,9 +56,10 @@ public class UnaryExpFuncParser {
             this.funcRParams = funcRParamsParser.parseFuncRParams();
             this.rightParent = this.iterator.readNextToken();
             unaryExpFunc = new UnaryExpFunc(this.ident, this.funcRParams,
-                    this.leftParent, this.rightParent);
+                    this.leftParent, this.rightParent, this.dimension);
         } else {
-            unaryExpFunc = new UnaryExpFunc(this.ident, this.leftParent, this.rightParent);
+            unaryExpFunc = new UnaryExpFunc(this.ident, this.leftParent,
+                    this.rightParent, this.dimension);
         }
         /* 处理d类错误：函数参数个数不匹配 */
         handleDError(funcRParams);
@@ -64,10 +68,15 @@ public class UnaryExpFuncParser {
         return unaryExpFunc;
     }
 
+    /* 处理c类错误：未定义名字 & 获取维数 */
     private void handleCError(Ident ident) {
         if (this.curSymbolTable.checkCTypeError(ident.getName())) {
             Error error = new Error(ident.getLineNum(), ErrorType.UNDEFINED_IDENT);
             ErrorTable.addError(error);
+            this.dimension = -2; // 非法数据
+        } else {
+            Symbol symbol = this.curSymbolTable.getSymbol(ident.getName());
+            this.dimension = symbol.getDimension();
         }
     }
 

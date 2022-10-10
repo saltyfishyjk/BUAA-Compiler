@@ -63,7 +63,8 @@ public class ConstDefParser {
         }
         this.eq = token;
         // ConstInitValParser constInitValParser = new ConstInitValParser(this.iterator);
-        ConstInitValParser constInitValParser = new ConstInitValParser(this.iterator, this.curSymbolTable);
+        ConstInitValParser constInitValParser = new ConstInitValParser(this.iterator,
+                this.curSymbolTable);
         this.constInitVal = constInitValParser.parseConstInitVal();
         ConstDef constDef = new ConstDef(this.ident, this.leftBrackets, this.constExps,
                 this.rightBrackets, this.eq, this.constInitVal);

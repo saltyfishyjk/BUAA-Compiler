@@ -35,10 +35,13 @@ public class FuncFParamsParser {
         // FuncFParamParser funcFParamParser = new FuncFParamParser(this.iterator);
         FuncFParamParser funcFParamParser = new FuncFParamParser(this.iterator, this.curSymbolTabl);
         this.first = funcFParamParser.parseFuncFParam();
+        /* 将第一个参数加入symbols */
+        this.symbols.add(funcFParamParser.getSymbol());
         Token token = this.iterator.readNextToken();
         while (token.getType().equals(TokenType.COMMA)) {
             this.commas.add(token);
             this.funcFParams.add(funcFParamParser.parseFuncFParam());
+            /* 将后续参数加入symbols */
             this.symbols.add(funcFParamParser.getSymbol());
             token = this.iterator.readNextToken();
         }

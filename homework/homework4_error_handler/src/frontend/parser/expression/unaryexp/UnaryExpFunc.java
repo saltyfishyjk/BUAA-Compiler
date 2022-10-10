@@ -12,6 +12,7 @@ public class UnaryExpFunc implements UnaryExpEle {
     private FuncRParams funcRParams = null; // MAY exist
     private Token leftParent;
     private Token rightParent;
+    private int dimension; // 维数
 
     public UnaryExpFunc(Ident ident,
                         Token leftParent,
@@ -22,11 +23,28 @@ public class UnaryExpFunc implements UnaryExpEle {
     }
 
     public UnaryExpFunc(Ident ident,
+                        Token leftParent,
+                        Token rightParent,
+                        int dimension) {
+        this(ident, leftParent, rightParent);
+        this.dimension = dimension;
+    }
+
+    public UnaryExpFunc(Ident ident,
                         FuncRParams funcRParams,
                         Token leftParent,
                         Token rightBracker) {
         this(ident, leftParent, rightBracker);
         this.funcRParams = funcRParams;
+    }
+
+    public UnaryExpFunc(Ident ident,
+                        FuncRParams funcRParams,
+                        Token leftParent,
+                        Token rightParent,
+                        int dimension) {
+        this(ident, funcRParams, leftParent, rightParent);
+        this.dimension = dimension;
     }
 
     @Override
@@ -43,6 +61,8 @@ public class UnaryExpFunc implements UnaryExpEle {
 
     @Override
     public int getDimension() {
-        return 0;
+        /* TODO */
+        /* 根据函数类别的不同返回-1（void）或0（int），需要检查符号表 */
+        return this.dimension;
     }
 }
