@@ -69,6 +69,7 @@ public class FuncDefParser {
             FuncFParamsParser funcFParamsParser = new FuncFParamsParser(this.iterator,
                     this.curSymbolTable);
             this.funcFParams = funcFParamsParser.parseFuncFParams();
+            addFuncParamsSymbol(funcFParamsParser.getSymbols());
             /* ')' */
             this.rightParent = this.iterator.readNextToken();
             /* 处理有参数时j类错误：缺失 ) */
@@ -80,7 +81,7 @@ public class FuncDefParser {
             handleFandGError();
             this.funcDef = new FuncDef(this.funcType, this.ident, this.leftParent,
                     this.funcFParams, this.rightParent, this.block);
-            addFuncParamsSymbol(funcFParamsParser.getSymbols());
+
         } else {
             setBlockParser();
             // BlockParser blockParser = new BlockParser(this.iterator);
