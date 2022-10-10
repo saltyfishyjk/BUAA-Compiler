@@ -27,11 +27,11 @@ public class Compiler {
         String outputFileName = "output.txt";
         String errorFileName = "error.txt";
         try {
-            // OutputStream outputStream = new FileOutputStream(outputFileName);
-            OutputStream outputStream = new FileOutputStream(errorFileName);
+            OutputStream outputStream = new FileOutputStream(outputFileName);
+            //OutputStream outputStream = new FileOutputStream(errorFileName);
             try {
-                outputStream.write(ErrorTable.output().getBytes());
-                // outputStream.write(compUnit.syntaxOutput().getBytes());
+                //outputStream.write(ErrorTable.output().getBytes());
+                 outputStream.write(compUnit.syntaxOutput().getBytes());
                 //outputStream.write(tokenLexer.getTokenList().toString().getBytes());
             } catch (IOException e) {
                 // System.err.println("Can not write " + outputFileName);

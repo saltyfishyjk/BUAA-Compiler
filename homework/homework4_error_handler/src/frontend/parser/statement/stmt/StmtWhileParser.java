@@ -39,7 +39,8 @@ public class StmtWhileParser {
         if (!this.leftParent.getType().equals(TokenType.LPARENT)) {
             System.out.println("EXPECT LEFTPARENT IN STMTWHILEPARER");
         }
-        CondParser condParser = new CondParser(this.iterator);
+        // CondParser condParser = new CondParser(this.iterator);
+        CondParser condParser = new CondParser(this.iterator, this.curSymbolTable);
         this.cond = condParser.parseCond();
         this.rightParent = this.iterator.readNextToken();
         /* 处理j类错误：缺失 ) */
