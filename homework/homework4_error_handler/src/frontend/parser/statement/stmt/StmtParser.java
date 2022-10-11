@@ -75,21 +75,18 @@ public class StmtParser {
                 break;
             case LBRACE: // '{'
                 this.iterator.unReadToken(1);
-                // BlockParser blockParser = new BlockParser(this.iterator);
                 BlockParser blockParser = new BlockParser(this.iterator, this.curSymbolTable, 0);
                 this.stmtEle = blockParser.parseBlock();
                 break;
             case LPARENT: case INTCON: case PLUS: case MINU: // (, num, +, -
                 this.iterator.unReadToken(1);
-                // StmtExpParser stmtExpParser = new StmtExpParser(this.iterator);
                 StmtExpParser stmtExpParser = new StmtExpParser(this.iterator, this.curSymbolTable);
                 this.stmtEle = stmtExpParser.parseStmtExp();
                 break;
             default: // 如果没有匹配到任何有效字符，说明当前应当为缺少分号的i类错误
                 handleIError(first);
         }
-        Stmt stmt = new Stmt(this.stmtEle);
-        return stmt;
+        return new Stmt(this.stmtEle);
     }
 
     private void caseIdenfr(Token first) {

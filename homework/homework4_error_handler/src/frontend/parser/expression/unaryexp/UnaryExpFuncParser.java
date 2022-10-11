@@ -55,6 +55,9 @@ public class UnaryExpFuncParser {
                     this.curSymbolTable);
             this.funcRParams = funcRParamsParser.parseFuncRParams();
             this.rightParent = this.iterator.readNextToken();
+            if (this.rightParent.getType().equals(TokenType.SEMICN)) {
+                handleJError(this.rightParent);
+            }
             unaryExpFunc = new UnaryExpFunc(this.ident, this.funcRParams,
                     this.leftParent, this.rightParent, this.dimension);
         } else {
