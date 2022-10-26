@@ -44,4 +44,16 @@ public class IrUser extends IrValue {
     public int getNumOp() {
         return numOp;
     }
+
+    /* 根据给定index找到指定操作数 */
+    public IrValue getOperand(int index) {
+        for (IrUse use : this.operands) {
+            if (use.getOperandRank() == index) {
+                return use.getValue();
+            }
+        }
+        /* 不应当运行到这里 */
+        System.out.println("ERROR in IrUser! Should not reach here");
+        return null;
+    }
 }
