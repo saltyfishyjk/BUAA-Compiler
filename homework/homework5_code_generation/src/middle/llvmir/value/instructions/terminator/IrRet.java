@@ -1,7 +1,6 @@
 package middle.llvmir.value.instructions.terminator;
 
 import middle.llvmir.IrValue;
-import middle.llvmir.type.IrValueType;
 import middle.llvmir.type.IrVoidType;
 import middle.llvmir.value.instructions.IrInstruction;
 import middle.llvmir.value.instructions.IrInstructionType;
