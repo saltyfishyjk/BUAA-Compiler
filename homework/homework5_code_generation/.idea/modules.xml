@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/homework4_error_handler.iml" filepath="$PROJECT_DIR$/homework4_error_handler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/homework5_code_generation.iml" filepath="$PROJECT_DIR$/.idea/homework5_code_generation.iml" />
+    </modules>
+  </component>
+</project>

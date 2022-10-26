@@ -11,8 +11,9 @@ import java.util.ArrayList;
 
 /**
  * Call -> <result> = call [ret attrs] <ty> <fnptrval>(<function args>)
- * ty:type Value类型
- * fnptrval:FunctionPointerValue 为一个要调用函数的指针
+ * LLVM IR Call 函数调用指令
+ * ty : type Value类型
+ * fnptrval : FunctionPointerValue 为一个要调用函数的指针
  * function args : 函数参数，第0个参数是函数名
  */
 public class IrCall extends IrInstruction {

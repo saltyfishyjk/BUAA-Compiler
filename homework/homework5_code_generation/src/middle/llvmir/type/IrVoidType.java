@@ -9,7 +9,7 @@ public class IrVoidType extends IrValueType {
 
     private IrVoidType() {}
 
-    public IrVoidType getVoidType() {
+    public static IrVoidType getVoidType() {
         return voidType;
     }
 
