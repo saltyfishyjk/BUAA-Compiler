@@ -3,8 +3,6 @@ package middle.llvmir.value;
 import middle.llvmir.IrValue;
 import middle.llvmir.type.IrValueType;
 
-import java.util.ArrayList;
-
 /**
  * LLVM IR Param 函数形参
  */

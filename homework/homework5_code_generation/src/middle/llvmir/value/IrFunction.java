@@ -25,7 +25,7 @@ public class IrFunction extends IrValue {
             IrFunctionType type = (IrFunctionType) this.getValueType();
             ArrayList<IrValueType> temp = type.getParamTypes();
             int len = temp.size();
-            for (int i = 0; i < len; i++ ) {
+            for (int i = 0; i < len; i++) {
                 this.params.add(new IrParam(temp.get(i), i));
             }
         } else {

@@ -41,6 +41,7 @@ public class IrUser extends IrValue {
         this.operands.add(newUse); // TODO
     }
 
+    /* 获取操作数数量，可以用来处理br等操作数不定的情况 */
     public int getNumOp() {
         return numOp;
     }
