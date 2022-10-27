@@ -26,4 +26,8 @@ public class IrArrayType extends IrValueType {
         return intContains;
     }
 
+    public IrValueType getEleType() {
+        return valueType;
+    }
+
 }
