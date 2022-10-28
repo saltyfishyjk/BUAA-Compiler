@@ -35,4 +35,8 @@ public class IrValue {
     public IrValueType getValueType() {
         return valueType;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
