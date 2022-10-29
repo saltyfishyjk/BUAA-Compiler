@@ -53,4 +53,8 @@ public class ConstDecl implements DeclEle {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    public ArrayList<ConstDef> getConstDefs() {
+        return constDefs;
+    }
 }

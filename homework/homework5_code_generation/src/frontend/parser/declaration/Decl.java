@@ -22,4 +22,8 @@ public class Decl implements BlockItemEle {
     public int checkReturn() {
         return 0;
     }
+
+    public DeclEle getDeclEle() {
+        return declEle;
+    }
 }

@@ -43,7 +43,7 @@ public class IrBuilder {
      */
 
     /* 因为这里生成的IrFunction一定是IrModule的属性，因此只传一个参数即可 */
-    public IrFunction genIrFunction(FuncDef funcDef) {
+    private IrFunction genIrFunction(FuncDef funcDef) {
         /* TODO : fill contents */
         return null;
     }
@@ -53,7 +53,7 @@ public class IrBuilder {
      * 通过重载传入参数来处理不同情况
      */
 
-    public ArrayList<IrBasicBlock> genIrBasicBlock(BlockItemEle block) {
+    private ArrayList<IrBasicBlock> genIrBasicBlock(BlockItemEle block) {
         /* TODO : fill contents */
         return null;
     }
@@ -63,13 +63,14 @@ public class IrBuilder {
      * 通过重载传入参数来处理不同情况
      */
 
-    public ArrayList<IrInstruction> genIrInstruction(DeclEle decl) {
+    private ArrayList<IrInstruction> genIrInstruction(DeclEle decl) {
         /* TODO : fill contents */
         return null;
     }
 
-    public ArrayList<IrInstruction> genIrInstruction(StmtEle stmt) {
+    private ArrayList<IrInstruction> genIrInstruction(StmtEle stmt) {
         /* TODO : fill contents */
         return null;
     }
+
 }

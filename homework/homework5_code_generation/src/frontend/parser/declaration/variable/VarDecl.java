@@ -44,4 +44,8 @@ public class VarDecl implements DeclEle {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    public ArrayList<VarDef> getVarDefs() {
+        return varDefs;
+    }
 }
