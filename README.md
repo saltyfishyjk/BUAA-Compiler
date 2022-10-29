@@ -442,5 +442,64 @@ br i1 %2,label %3,label
 
 #### 从LLVM IR 到mips
 
+### 编码实现
+
+#### 从AST到LLVM IR
+
+LLVM IR的结构如下：
+
+```
+- Module 
+	- Function
+		- BasicBlock
+			- Instruction
+```
+
+由于SysY的文法和LLVM IR并不完全对应，因此以下详细讨论生成器`IrBuilder`的设计。
+
+其中对SysY的术语和LLVM IR的术语会混合使用，为了和代码保持一致，也为了区分彼此，对于SysY的文法名词，我们采用文法
+
+##### `genIrModule`
+
+对给定`CompUnit`解析并生成`IrModule`。
+
+其中，`IrModule`包含`List<IrGlobalVariable>`和`List<IrFunction>`，分别调用`genIrInstruction`方法（`IrGlobalVariable`的来源本质上是SysY中的`Decl`，后续将简述重载在本方法中的使用）和`genIrFunction`方法。
+
+##### `genIrFunction`
+
+对给定的`Function`解析并生成`IrFunction`。值得注意的是，SysY并不支持嵌套`Function`，这给我们提供了便利：本方法返回的是一个`IrFunction`对象。
+
+其中，`IrFunction`包含`List<IrParam>`和`List<IrBasicBlock>`。其中，`List<IrParam>`通过本质上是`IrFunctionType`的`IrValueType`中的`List<IrValueType>`来表达；`List<IrBasicBlock>`通过`genIrBasicBlock`方法来获取。
+
+特别地，分析LLVM IR中`IrFunction`和SysY中`Function`部分的区别：
+
+- 在LLVM IR中，`IrFunction`的属性是`List<IrBasicBlock>`，其中`IrBasicBlock`是**基本块**，其内部的属性为`List<IrInstruction>`，**不再嵌套`IrBasicBlcok`**
+- 在SysY中，文法是递归下降的，包含了更丰富的语义。具体地，`Function`的属性`Block`中有若干个`BlockItem`，每个`BlockItem`可能是`ConstDecl, VarDecl, StmtAssign, Block, StmtCond, StmtWhile, StmtBreak, StmtContinue, StmtReturn, StmtGetint, StmtPrint`中的某一个。这里，我们从LLVM IR的角度考虑，将其分类如下：
+  - 调用`genIrBasicBlock`，获得`List<IrBasicBlock>`返回`List`的主要原因是可能存在嵌套结构，但嵌套结构会被“展开铺平”，因此返回的是一个列表。
+    - `Block`
+    - `StmtCond` 
+    - `StmtWhile`
+  - 调用`genInstruction`，获得`List<IrBasicBlock>`中的一组指令。
+    - `ConstDecl`
+    - `VarDecl`
+    - `StmtAssign`
+    - `StmtBreak`
+    - `StmtContinue`
+    - `StmtReturn`
+    - `StmtGetint`
+    - `StmtPrint`
+
+##### `genIrBasicBlock`
+
+对给定的部分`Stmt`返回`List<IrBasicBlock>`。
+
+这里，我们突出利用了Java提供的重载功能，在`genIrFunction`中已经详细列举了所有可能的传入参数，即`Block, StmtCond, StmtWhile`，对三种情况分别重载传入参数。
+
+##### `genIrInstruction`
+
+对给定的`Decl`和部分`Stmt`返回`List<IrInstruction>`。
+
+类似地，我们也着重采用了Java的重载功能，对于所有的可能情况分别重载传入参数。
+
 ## Part 7 代码优化设计
 

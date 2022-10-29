@@ -10,7 +10,16 @@ public class IrModule {
     private ArrayList<IrGlobalVariable> globalVariables; // Module中的全局变量
 
     public IrModule() {
-        /* TODO */
+        this.functions = new ArrayList<>();
+        this.globalVariables = new ArrayList<>();
+    }
+
+    public void addIrFunction(IrFunction function) {
+        this.functions.add(function);
+    }
+
+    public void addIrGlobalVariables(IrGlobalVariable variable) {
+        this.globalVariables.add(variable);
     }
 
 }

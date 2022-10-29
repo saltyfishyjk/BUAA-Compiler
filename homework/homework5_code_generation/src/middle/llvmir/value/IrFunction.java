@@ -15,9 +15,11 @@ public class IrFunction extends IrValue {
     private ArrayList<IrBasicBlock> blocks; // 函数内基本块列表
     private IrModule module; // 父module
 
-    public IrFunction(IrValueType valueType) {
+    public IrFunction(IrValueType valueType, IrModule module) {
         super(valueType);
         initParams();
+        this.module = module;
+        this.blocks = new ArrayList<>();
     }
 
     /**
@@ -38,5 +40,9 @@ public class IrFunction extends IrValue {
 
     public ArrayList<IrParam> getParams() {
         return params;
+    }
+
+    public void addIrBasicBlock(IrBasicBlock block) {
+        this.blocks.add(block);
     }
 }
