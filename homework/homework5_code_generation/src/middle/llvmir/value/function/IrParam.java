@@ -13,4 +13,8 @@ public class IrParam extends IrValue {
         super(valueType);
         this.rank = rank;
     }
+
+    public void setName(String name) {
+        super.setName(name);
+    }
 }

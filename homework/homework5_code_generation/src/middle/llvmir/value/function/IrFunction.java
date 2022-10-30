@@ -12,8 +12,8 @@ import java.util.ArrayList;
  * LLVM IR Function 函数定义
  */
 public class IrFunction extends IrValue {
-    private ArrayList<IrParam> params; // 函数形参列表
-    private ArrayList<IrBasicBlock> blocks; // 函数内基本块列表
+    private ArrayList<IrParam> params = new ArrayList<>(); // 函数形参列表
+    private ArrayList<IrBasicBlock> blocks = new ArrayList<>(); // 函数内基本块列表
     private IrModule module; // 父module
 
     /* IrValueType应当为IrFunctionType */
@@ -21,7 +21,6 @@ public class IrFunction extends IrValue {
         super(valueType);
         initParams();
         this.module = module;
-        this.blocks = new ArrayList<>();
     }
 
     /**

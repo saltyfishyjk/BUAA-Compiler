@@ -7,7 +7,6 @@ import frontend.parser.function.FuncDef;
 import frontend.parser.statement.blockitem.BlockItemEle;
 import frontend.parser.statement.stmt.StmtEle;
 import middle.llvmir.value.IrBasicBlock;
-import middle.llvmir.value.function.IrFunction;
 import middle.llvmir.value.function.IrFunctionBuilder;
 import middle.llvmir.value.globalvariable.IrGlobalVariable;
 import middle.llvmir.value.globalvariable.IrGlobalVariableBuilder;
@@ -55,6 +54,10 @@ public class IrBuilder {
             IrFunctionBuilder functionBuilder = new IrFunctionBuilder(table, funcDef, this.module);
             this.module.addIrFunction(functionBuilder.genIrFunction());
         }
+        SymbolTable table = new SymbolTable(symbolTable);
+        IrFunctionBuilder functionBuilder = new IrFunctionBuilder(table,
+                this.compUnit.getMainFuncDef(), this.module);
+        this.module.addIrFunction(functionBuilder.genIrFunction());
         return this.module;
     }
 
