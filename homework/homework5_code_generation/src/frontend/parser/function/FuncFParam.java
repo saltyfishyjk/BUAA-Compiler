@@ -68,4 +68,17 @@ public class FuncFParam implements SyntaxNode {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    /* 在代码生成作业1中用于获知函数的参数类型为0或1或2维数组 可能后续需要修改 */
+    public int getDimension() {
+        if (this.leftBracketFirst == null) {
+            return 0;
+        } else {
+            if (this.leftBrackets == null || this.leftBrackets.size() == 0) {
+                return 1;
+            } else {
+                return 2;
+            }
+        }
+    }
 }

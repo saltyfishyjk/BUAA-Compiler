@@ -1,9 +1,10 @@
-package middle.llvmir.value;
+package middle.llvmir.value.function;
 
 import middle.llvmir.IrModule;
 import middle.llvmir.IrValue;
 import middle.llvmir.type.IrFunctionType;
 import middle.llvmir.type.IrValueType;
+import middle.llvmir.value.IrBasicBlock;
 
 import java.util.ArrayList;
 
@@ -15,6 +16,7 @@ public class IrFunction extends IrValue {
     private ArrayList<IrBasicBlock> blocks; // 函数内基本块列表
     private IrModule module; // 父module
 
+    /* IrValueType应当为IrFunctionType */
     public IrFunction(IrValueType valueType, IrModule module) {
         super(valueType);
         initParams();

@@ -51,4 +51,12 @@ public class FuncDef implements SyntaxNode {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    public String getRetType() {
+        return this.funcType.getRetType();
+    }
+
+    public FuncFParams getFuncFParams() {
+        return funcFParams;
+    }
 }

@@ -38,4 +38,12 @@ public class FuncFParams implements SyntaxNode {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    public FuncFParam getFirst() {
+        return first;
+    }
+
+    public ArrayList<FuncFParam> getFuncFParams() {
+        return funcFParams;
+    }
 }

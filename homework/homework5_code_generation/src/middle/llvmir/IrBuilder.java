@@ -7,7 +7,8 @@ import frontend.parser.function.FuncDef;
 import frontend.parser.statement.blockitem.BlockItemEle;
 import frontend.parser.statement.stmt.StmtEle;
 import middle.llvmir.value.IrBasicBlock;
-import middle.llvmir.value.IrFunction;
+import middle.llvmir.value.function.IrFunction;
+import middle.llvmir.value.function.IrFunctionBuilder;
 import middle.llvmir.value.globalvariable.IrGlobalVariable;
 import middle.llvmir.value.globalvariable.IrGlobalVariableBuilder;
 import middle.llvmir.value.instructions.IrInstruction;
@@ -49,18 +50,12 @@ public class IrBuilder {
                 this.module.addIrGlobalVariables(index);
             }
         }
-        /* TODO : 生成函数 */
+        for (FuncDef funcDef : this.compUnit.getFuncDefs()) {
+            SymbolTable table = new SymbolTable(symbolTable); // 进入新的函数，进入新的子表
+            IrFunctionBuilder functionBuilder = new IrFunctionBuilder(table, funcDef, this.module);
+            this.module.addIrFunction(functionBuilder.genIrFunction());
+        }
         return this.module;
-    }
-
-    /**
-     * ---------- 生成LLVM IR Function ----------
-     */
-
-    /* 因为这里生成的IrFunction一定是IrModule的属性，因此只传一个参数即可 */
-    private IrFunction genIrFunction(FuncDef funcDef) {
-        /* TODO : fill contents */
-        return null;
     }
 
     /**

@@ -3,7 +3,7 @@ package middle.llvmir.value.instructions.terminator;
 import middle.llvmir.IrValue;
 import middle.llvmir.type.IrFunctionType;
 import middle.llvmir.type.IrVoidType;
-import middle.llvmir.value.IrFunction;
+import middle.llvmir.value.function.IrFunction;
 import middle.llvmir.value.instructions.IrInstruction;
 import middle.llvmir.value.instructions.IrInstructionType;
 

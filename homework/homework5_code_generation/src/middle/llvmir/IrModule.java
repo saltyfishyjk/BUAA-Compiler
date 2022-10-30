@@ -1,6 +1,6 @@
 package middle.llvmir;
 
-import middle.llvmir.value.IrFunction;
+import middle.llvmir.value.function.IrFunction;
 import middle.llvmir.value.globalvariable.IrGlobalVariable;
 import middle.llvmir.value.IrNode;
 

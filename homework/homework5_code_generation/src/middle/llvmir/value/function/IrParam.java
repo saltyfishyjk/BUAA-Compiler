@@ -1,4 +1,4 @@
-package middle.llvmir.value;
+package middle.llvmir.value.function;
 
 import middle.llvmir.IrValue;
 import middle.llvmir.type.IrValueType;

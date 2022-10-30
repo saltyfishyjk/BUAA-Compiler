@@ -22,4 +22,12 @@ public class FuncType implements SyntaxNode {
     public TokenType getType() {
         return this.funcTypeEle.getType();
     }
+
+    public String getRetType() {
+        if (funcTypeEle instanceof FuncTypeInt) {
+            return "int";
+        } else {
+            return "void";
+        }
+    }
 }
