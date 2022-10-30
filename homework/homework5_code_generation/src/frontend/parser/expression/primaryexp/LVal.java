@@ -84,7 +84,7 @@ public class LVal implements PrimaryExpEle {
 
     @Override
     public int calcNode(SymbolTable symbolTable) {
-        Symbol symbol = symbolTable.getSymbol(this.name);
+        Symbol symbol = symbolTable.getSymbol(this.ident.getName());
         /* TODO : 计算普通变量，一维数组和二维数组的值 */
         if (exps == null || exps.size() == 0) {
             // 零维
