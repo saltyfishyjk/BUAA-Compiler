@@ -1,7 +1,7 @@
 package middle.llvmir;
 
 import middle.llvmir.value.IrFunction;
-import middle.llvmir.value.IrGlobalVariable;
+import middle.llvmir.value.globalvariable.IrGlobalVariable;
 import middle.llvmir.value.IrNode;
 
 import java.util.ArrayList;

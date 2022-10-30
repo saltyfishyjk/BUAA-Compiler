@@ -1,4 +1,4 @@
-package middle.llvmir.value;
+package middle.llvmir.value.globalvariable;
 
 import frontend.parser.declaration.Decl;
 import frontend.parser.declaration.DeclEle;

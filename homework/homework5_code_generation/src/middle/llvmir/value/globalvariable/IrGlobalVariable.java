@@ -1,10 +1,11 @@
-package middle.llvmir.value;
+package middle.llvmir.value.globalvariable;
 
 import middle.llvmir.IrUser;
 import middle.llvmir.type.IrArrayType;
 import middle.llvmir.type.IrIntegerType;
 import middle.llvmir.type.IrPointerType;
 import middle.llvmir.type.IrValueType;
+import middle.llvmir.value.IrNode;
 import middle.llvmir.value.constant.IrConstant;
 
 import java.util.ArrayList;

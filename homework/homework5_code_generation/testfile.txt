@@ -5,7 +5,7 @@ const int ONE = 1, TWO = 2, THREE = 4 * 7 - 5 * +5;
 
 int one = 1, two = 2, three =  55 / 9 - 9 % 6;
 int gvar;
-int x = (THREE + 9) * THREE;
+int x = (THREE + 9) * THREE - TWO* TWO;
 
 int main() {
     const int ONE = 1;

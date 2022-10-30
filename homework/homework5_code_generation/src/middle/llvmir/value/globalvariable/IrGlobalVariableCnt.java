@@ -1,4 +1,4 @@
-package middle.llvmir.value;
+package middle.llvmir.value.globalvariable;
 
 public class IrGlobalVariableCnt {
     private static int cnt = 0;

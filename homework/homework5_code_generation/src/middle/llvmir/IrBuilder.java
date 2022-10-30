@@ -8,8 +8,8 @@ import frontend.parser.statement.blockitem.BlockItemEle;
 import frontend.parser.statement.stmt.StmtEle;
 import middle.llvmir.value.IrBasicBlock;
 import middle.llvmir.value.IrFunction;
-import middle.llvmir.value.IrGlobalVariable;
-import middle.llvmir.value.IrGlobalVariableBuilder;
+import middle.llvmir.value.globalvariable.IrGlobalVariable;
+import middle.llvmir.value.globalvariable.IrGlobalVariableBuilder;
 import middle.llvmir.value.instructions.IrInstruction;
 import middle.symbol.SymbolTable;
 
