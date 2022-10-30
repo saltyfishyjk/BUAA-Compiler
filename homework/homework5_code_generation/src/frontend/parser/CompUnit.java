@@ -43,4 +43,16 @@ public class CompUnit implements SyntaxNode {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    public ArrayList<Decl> getDecls() {
+        return decls;
+    }
+
+    public ArrayList<FuncDef> getFuncDefs() {
+        return funcDefs;
+    }
+
+    public MainFuncDef getMainFuncDef() {
+        return mainFuncDef;
+    }
 }

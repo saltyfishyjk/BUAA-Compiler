@@ -2,11 +2,13 @@ package frontend.parser.expression;
 
 import frontend.parser.declaration.variable.initval.InitValEle;
 import frontend.parser.expression.multiexp.AddExp;
+import middle.symbol.SymbolTable;
+import middle.symbol.ValNode;
 
 /**
  * 表达式
  */
-public class Exp implements InitValEle {
+public class Exp implements InitValEle, ValNode {
     private final String name = "<Exp>";
     private AddExp addExp;
 
@@ -28,5 +30,10 @@ public class Exp implements InitValEle {
 
     public int getDimension() {
         return addExp.getDimension();
+    }
+
+    @Override
+    public int calcNode(SymbolTable symbolTable) {
+        return addExp.calcNode(symbolTable);
     }
 }

@@ -6,6 +6,8 @@ import middle.llvmir.value.IrBasicBlock;
 import middle.llvmir.value.instructions.IrInstruction;
 import middle.llvmir.value.instructions.IrInstructionType;
 
+/* TODO : 本次作业不涉及跳转（条件和循环） */
+
 /**
  * Br -> br i1 <cond>, label <iftrue>, label <iffalse> | br label <dest>
  * LLVM IR Br 分支跳转指令，共有两种可能，分别为有条件跳转和无条件跳转

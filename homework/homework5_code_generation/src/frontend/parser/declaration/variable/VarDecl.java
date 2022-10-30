@@ -48,4 +48,8 @@ public class VarDecl implements DeclEle {
     public ArrayList<VarDef> getVarDefs() {
         return varDefs;
     }
+
+    public VarDef getFirst() {
+        return first;
+    }
 }

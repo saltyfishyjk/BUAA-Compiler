@@ -3,6 +3,7 @@ package frontend.parser.expression.unaryexp;
 import frontend.lexer.Token;
 import frontend.parser.terminal.Ident;
 import frontend.parser.expression.FuncRParams;
+import middle.symbol.SymbolTable;
 
 /**
  * <Ident> '(' [<FuncRParams>] ')'
@@ -64,5 +65,11 @@ public class UnaryExpFunc implements UnaryExpEle {
         /* TODO */
         /* 根据函数类别的不同返回-1（void）或0（int），需要检查符号表 */
         return this.dimension;
+    }
+
+    @Override
+    public int calcNode(SymbolTable symbolTable) {
+        System.out.println("ERROR in UnaryExpFunc.calcNode : should not call this func");
+        return 0;
     }
 }

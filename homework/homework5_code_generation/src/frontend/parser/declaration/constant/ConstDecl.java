@@ -54,6 +54,10 @@ public class ConstDecl implements DeclEle {
         return sb.toString();
     }
 
+    public ConstDef getFirst() {
+        return first;
+    }
+
     public ArrayList<ConstDef> getConstDefs() {
         return constDefs;
     }

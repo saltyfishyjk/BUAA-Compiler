@@ -2,6 +2,7 @@ package frontend.parser.expression.primaryexp;
 
 import frontend.parser.expression.primaryexp.PrimaryExpEle;
 import frontend.parser.expression.unaryexp.UnaryExpEle;
+import middle.symbol.SymbolTable;
 
 public class PrimaryExp implements UnaryExpEle {
     private final String name = "<PrimaryExp>";
@@ -22,5 +23,10 @@ public class PrimaryExp implements UnaryExpEle {
     @Override
     public int getDimension() {
         return this.primaryExpEle.getDimension();
+    }
+
+    @Override
+    public int calcNode(SymbolTable symbolTable) {
+        return this.primaryExpEle.calcNode(symbolTable);
     }
 }

@@ -101,7 +101,7 @@ public class ConstDefParser {
         }
         Symbol symbol = new SymbolCon(this.ident.getLineNum(), this.ident.getName(),
                 symbolType, dimension);
-        /* TODO : ADD CONST INIT */
+        // setInitVal(symbol, this.constInitVal);
         /* 处理b类错误：名字重定义行为 */
         if (this.curSymbolTable.checkBTypeError(symbol)) {
             Error error = new Error(symbol.getLineNum(), ErrorType.DUPLICATED_IDENT);

@@ -38,4 +38,13 @@ public class VarDefNull implements VarDefEle {
         }
         return sb.toString();
     }
+
+    public Ident getIdent() {
+        return ident;
+    }
+
+    @Override
+    public ArrayList<Token> getLeftBraces() {
+        return leftBraces;
+    }
 }

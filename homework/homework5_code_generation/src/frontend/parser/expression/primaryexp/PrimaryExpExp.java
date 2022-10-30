@@ -2,11 +2,13 @@ package frontend.parser.expression.primaryexp;
 
 import frontend.lexer.Token;
 import frontend.parser.expression.Exp;
+import middle.symbol.SymbolTable;
+import middle.symbol.ValNode;
 
 /**
  * '(' <Exp> ')'
  */
-public class PrimaryExpExp implements PrimaryExpEle {
+public class PrimaryExpExp implements PrimaryExpEle, ValNode {
     private Token leftParent; // must be '('
     private Exp exp;
     private Token rightParent; // must be ')'
@@ -29,5 +31,10 @@ public class PrimaryExpExp implements PrimaryExpEle {
     @Override
     public int getDimension() {
         return this.exp.getDimension();
+    }
+
+    @Override
+    public int calcNode(SymbolTable symbolTable) {
+        return this.exp.calcNode(symbolTable);
     }
 }

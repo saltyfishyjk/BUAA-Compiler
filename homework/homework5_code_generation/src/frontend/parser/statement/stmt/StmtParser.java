@@ -69,7 +69,6 @@ public class StmtParser {
                 StmtNullParser stmtNullParser = new StmtNullParser(this.iterator);
                 this.stmtEle = stmtNullParser.pasreStmtNull();
                 break;
-                /* TODO : handle exp and lval*/
             case IDENFR:
                 caseIdenfr(first);
                 break;
@@ -84,10 +83,8 @@ public class StmtParser {
                 this.stmtEle = stmtExpParser.parseStmtExp();
                 break;
             default: // 如果没有匹配到任何有效字符，说明当前应当为缺少分号的i类错误
-                handleIError(first);
-        }
-        return new Stmt(this.stmtEle);
-    }
+                handleIError(first); }
+        return new Stmt(this.stmtEle); }
 
     private void caseIdenfr(Token first) {
         /* need to distinguish LVal = Exp, LVal = getint and [Exp] */

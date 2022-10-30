@@ -50,4 +50,16 @@ public class ConstDef implements SyntaxNode {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    public Ident getIdent() {
+        return ident;
+    }
+
+    public ArrayList<Token> getLeftBracks() {
+        return leftBracks;
+    }
+
+    public ConstInitVal getConstInitval() {
+        return constInitval;
+    }
 }

@@ -1,6 +1,7 @@
 package frontend.parser.declaration.constant.constinitval;
 
 import frontend.lexer.Token;
+import middle.symbol.SymbolTable;
 
 import java.util.ArrayList;
 
@@ -54,5 +55,15 @@ public class ConstInitValMulti implements ConstInitValEle {
         }
         sb.append(this.rightBrace.syntaxOutput());
         return sb.toString();
+    }
+
+    public ArrayList<ConstInitVal> getConstInitVals() {
+        return constInitVals;
+    }
+
+    @Override
+    public int calcNode(SymbolTable symbolTable) {
+        System.out.println("ERROR in ConstInitValMulti.calcNode : should not calc Multi Val");
+        return 0;
     }
 }

@@ -22,4 +22,8 @@ public class UnaryOp implements SyntaxNode {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    public Token getToken() {
+        return token;
+    }
 }

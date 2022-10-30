@@ -46,4 +46,16 @@ public class VarDefInit implements VarDefEle {
         sb.append(this.initVal.syntaxOutput());
         return sb.toString();
     }
+
+    public Ident getIdent() {
+        return ident;
+    }
+
+    public ArrayList<Token> getLeftBraces() {
+        return leftBraces;
+    }
+
+    public InitVal getInitVal() {
+        return initVal;
+    }
 }

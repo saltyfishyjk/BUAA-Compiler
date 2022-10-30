@@ -1,5 +1,7 @@
 package middle.llvmir.type;
 
+import java.util.ArrayList;
+
 /**
  * LLVM IR None Type
  * 用于没有ValueType的Value
@@ -12,5 +14,11 @@ public class IrNoneType extends IrValueType {
 
     public static IrNoneType getNoneType() {
         return noneType;
+    }
+
+    @Override
+    public ArrayList<String> irOutput() {
+        /* TODO : 待施工 */
+        return super.irOutput();
     }
 }

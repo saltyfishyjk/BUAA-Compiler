@@ -2,8 +2,10 @@ package frontend.parser.expression.unaryexp;
 
 import frontend.parser.SyntaxNode;
 import frontend.parser.expression.unaryexp.UnaryExpEle;
+import middle.symbol.SymbolTable;
+import middle.symbol.ValNode;
 
-public class UnaryExp implements SyntaxNode {
+public class UnaryExp implements SyntaxNode, ValNode {
     private final String name = "<UnaryExp>";
     private UnaryExpEle unaryExpEle;
 
@@ -23,4 +25,8 @@ public class UnaryExp implements SyntaxNode {
         return this.unaryExpEle.getDimension();
     }
 
+    @Override
+    public int calcNode(SymbolTable symbolTable) {
+        return this.unaryExpEle.calcNode(symbolTable);
+    }
 }

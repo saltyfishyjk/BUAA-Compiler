@@ -1,6 +1,7 @@
 package frontend.parser.expression.primaryexp;
 
 import frontend.parser.terminal.IntConst;
+import middle.symbol.SymbolTable;
 
 /**
  * Number 非终结符
@@ -34,5 +35,10 @@ public class Number implements PrimaryExpEle {
     @Override
     public int getDimension() {
         return 0;
+    }
+
+    @Override
+    public int calcNode(SymbolTable symbolTable) {
+        return this.intConst.getNum();
     }
 }

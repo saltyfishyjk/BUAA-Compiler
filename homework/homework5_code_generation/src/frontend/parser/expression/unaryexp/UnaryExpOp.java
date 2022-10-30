@@ -1,5 +1,8 @@
 package frontend.parser.expression.unaryexp;
 
+import frontend.lexer.TokenType;
+import middle.symbol.SymbolTable;
+
 public class UnaryExpOp implements UnaryExpEle {
     private UnaryOp unaryOp;
     private UnaryExp unaryExp;
@@ -20,5 +23,17 @@ public class UnaryExpOp implements UnaryExpEle {
     @Override
     public int getDimension() {
         return this.unaryExp.getDimension();
+    }
+
+    @Override
+    public int calcNode(SymbolTable symbolTable) {
+        if (this.unaryOp.getToken().getType().equals(TokenType.PLUS)) {
+            return this.unaryExp.calcNode(symbolTable);
+        } else if (this.unaryOp.getToken().getType().equals(TokenType.MINU)) {
+            return this.unaryExp.calcNode(symbolTable);
+        } else {
+            System.out.println("ERROR in UnaryExpOp.calcNode : should not calc such op");
+            return 0;
+        }
     }
 }

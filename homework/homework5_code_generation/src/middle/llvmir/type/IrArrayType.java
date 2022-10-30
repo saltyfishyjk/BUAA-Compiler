@@ -1,5 +1,7 @@
 package middle.llvmir.type;
 
+import java.util.ArrayList;
+
 /**
  * LLVM IR Array Type
  * 数组类型，通过多层嵌套来表示多维数组
@@ -30,4 +32,9 @@ public class IrArrayType extends IrValueType {
         return valueType;
     }
 
+    @Override
+    public ArrayList<String> irOutput() {
+        /* TODO : 本次作业不涉及数组 */
+        return super.irOutput();
+    }
 }

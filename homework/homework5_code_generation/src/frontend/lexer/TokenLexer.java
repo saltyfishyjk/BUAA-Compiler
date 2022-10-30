@@ -64,7 +64,6 @@ public class TokenLexer {
      * 对于int和inta的情况，主要通过为int等标识符设置后缀不能添加数字、字符和下划线来实现
      */
     private void addToken() {
-        // TODO : 处理异常
         for (TokenType tokenType : TokenType.values()) {
             Pattern pattern = tokenType.getPattern();
             String tokenStr = this.sourceFileLexer.hitSubStr(pattern);

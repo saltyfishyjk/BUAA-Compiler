@@ -1,12 +1,15 @@
 package middle.llvmir;
 
 import frontend.parser.CompUnit;
+import frontend.parser.declaration.Decl;
 import frontend.parser.declaration.DeclEle;
 import frontend.parser.function.FuncDef;
 import frontend.parser.statement.blockitem.BlockItemEle;
 import frontend.parser.statement.stmt.StmtEle;
 import middle.llvmir.value.IrBasicBlock;
 import middle.llvmir.value.IrFunction;
+import middle.llvmir.value.IrGlobalVariable;
+import middle.llvmir.value.IrGlobalVariableBuilder;
 import middle.llvmir.value.instructions.IrInstruction;
 import middle.symbol.SymbolTable;
 
@@ -34,7 +37,19 @@ public class IrBuilder {
      */
 
     public IrModule genIrModule() {
-
+        /* 生成全局变量 */
+        for (Decl decl : this.compUnit.getDecls()) {
+            IrGlobalVariableBuilder variableBuilder =
+                    new IrGlobalVariableBuilder(this.symbolTable, decl);
+            ArrayList<IrGlobalVariable> temp = variableBuilder.genIrGlobalVariable();
+            for (IrGlobalVariable index : temp) {
+                if (index == null) {
+                    continue;
+                }
+                this.module.addIrGlobalVariables(index);
+            }
+        }
+        /* TODO : 生成函数 */
         return this.module;
     }
 

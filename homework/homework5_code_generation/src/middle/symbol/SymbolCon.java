@@ -27,4 +27,26 @@ public class SymbolCon extends Symbol {
     public void setInitval2(ArrayList<ArrayList<Integer>> initval2) {
         this.initval2 = initval2;
     }
+
+    @Override
+    public int getDimension() {
+        return super.getDimension();
+    }
+
+    @Override
+    public int getLineNum() {
+        return super.getLineNum();
+    }
+
+    public int getInitVal() {
+        return initVal;
+    }
+
+    public ArrayList<ArrayList<Integer>> getInitval2() {
+        return initval2;
+    }
+
+    public ArrayList<Integer> getInitval1() {
+        return initval1;
+    }
 }

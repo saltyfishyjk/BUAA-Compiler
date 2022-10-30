@@ -17,4 +17,8 @@ public class InitVal implements SyntaxNode {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    public InitValEle getInitValEle() {
+        return initValEle;
+    }
 }
