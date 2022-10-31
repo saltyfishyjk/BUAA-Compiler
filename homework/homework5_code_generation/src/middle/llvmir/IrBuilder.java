@@ -4,9 +4,7 @@ import frontend.parser.CompUnit;
 import frontend.parser.declaration.Decl;
 import frontend.parser.declaration.DeclEle;
 import frontend.parser.function.FuncDef;
-import frontend.parser.statement.blockitem.BlockItemEle;
 import frontend.parser.statement.stmt.StmtEle;
-import middle.llvmir.value.basicblock.IrBasicBlock;
 import middle.llvmir.value.function.IrFunctionBuilder;
 import middle.llvmir.value.globalvariable.IrGlobalVariable;
 import middle.llvmir.value.globalvariable.IrGlobalVariableBuilder;
@@ -59,16 +57,6 @@ public class IrBuilder {
                 this.compUnit.getMainFuncDef(), this.module);
         this.module.addIrFunction(functionBuilder.genIrFunction());
         return this.module;
-    }
-
-    /**
-     * ---------- 生成LLVM IR BasicBlock ----------
-     * 通过重载传入参数来处理不同情况
-     */
-
-    private ArrayList<IrBasicBlock> genIrBasicBlock(BlockItemEle block) {
-        /* TODO : fill contents */
-        return null;
     }
 
     /**

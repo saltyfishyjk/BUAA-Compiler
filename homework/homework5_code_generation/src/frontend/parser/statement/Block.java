@@ -34,4 +34,8 @@ public class Block implements StmtEle {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    public ArrayList<BlockItem> getBlockItems() {
+        return blockItems;
+    }
 }
