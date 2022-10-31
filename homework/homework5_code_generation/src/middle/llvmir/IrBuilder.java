@@ -2,13 +2,10 @@ package middle.llvmir;
 
 import frontend.parser.CompUnit;
 import frontend.parser.declaration.Decl;
-import frontend.parser.declaration.DeclEle;
 import frontend.parser.function.FuncDef;
-import frontend.parser.statement.stmt.StmtEle;
 import middle.llvmir.value.function.IrFunctionBuilder;
 import middle.llvmir.value.globalvariable.IrGlobalVariable;
 import middle.llvmir.value.globalvariable.IrGlobalVariableBuilder;
-import middle.llvmir.value.instructions.IrInstruction;
 import middle.symbol.SymbolTable;
 
 import java.util.ArrayList;
@@ -58,20 +55,4 @@ public class IrBuilder {
         this.module.addIrFunction(functionBuilder.genIrFunction());
         return this.module;
     }
-
-    /**
-     * ---------- 生成LLVM IR Instruction ----------
-     * 通过重载传入参数来处理不同情况
-     */
-
-    private ArrayList<IrInstruction> genIrInstruction(DeclEle decl) {
-        /* TODO : fill contents */
-        return null;
-    }
-
-    private ArrayList<IrInstruction> genIrInstruction(StmtEle stmt) {
-        /* TODO : fill contents */
-        return null;
-    }
-
 }

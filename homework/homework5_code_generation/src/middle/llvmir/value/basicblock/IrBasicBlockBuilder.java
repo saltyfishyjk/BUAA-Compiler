@@ -130,7 +130,7 @@ public class IrBasicBlockBuilder {
                     }
                     IrInstructionBuilder irInstructionBuilder = new
                             IrInstructionBuilder(this.symbolTable, basicBlock, curEle);
-                    ArrayList<IrInstruction> temp = irInstructionBuilder.genIrstruction();
+                    ArrayList<IrInstruction> temp = irInstructionBuilder.genIrInstruction();
                     basicBlock.addAllIrInstruction(temp);
                     ptr += 1;
                 }
@@ -168,6 +168,7 @@ public class IrBasicBlockBuilder {
      * - 9 : StmtReturn
      * - 10 : StmtGetint
      * - 11 : StmtPrint
+     * ---------- 以上应当调用genIrInstruction解析
      */
     private int checkBlockItemEleType(BlockItemEle ele) {
         int ret = 0;
