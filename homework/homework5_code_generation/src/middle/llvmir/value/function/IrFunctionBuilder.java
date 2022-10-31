@@ -9,7 +9,7 @@ import middle.llvmir.type.IrFunctionType;
 import middle.llvmir.type.IrIntegerType;
 import middle.llvmir.type.IrValueType;
 import middle.llvmir.type.IrVoidType;
-import middle.llvmir.value.IrNode;
+import middle.llvmir.value.basicblock.IrBasicBlockBuilder;
 import middle.symbol.SymbolTable;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * LLVM IR Function Builder
  * LLVM IR 函数生成器
  */
-public class IrFunctionBuilder implements IrNode {
+public class IrFunctionBuilder {
     private SymbolTable symbolTable; // 当前所处符号表
     private FuncDef funcDef; //
     private IrModule module; // 父Module
@@ -84,7 +84,10 @@ public class IrFunctionBuilder implements IrNode {
         }
         IrFunctionType irFunctionType = new IrFunctionType(retType, paramTypes);
         IrFunction irFunction = new IrFunction(irFunctionType, this.module);
-        /* TODO : 解析Block */
+        /* 解析Block */
+        IrBasicBlockBuilder basicBlockBuilder = new IrBasicBlockBuilder(this.symbolTable,
+                funcDef.getBlock());
+        irFunction.addAllIrBasicBlock(basicBlockBuilder.genIrBasicBlock());
         return irFunction;
     }
 
@@ -96,7 +99,10 @@ public class IrFunctionBuilder implements IrNode {
         ArrayList<IrValueType> paramTypes = new ArrayList<>();
         IrFunctionType irFunctionType = new IrFunctionType(retType, paramTypes);
         IrFunction irFunction = new IrFunction(irFunctionType, this.module);
-        /* TODO : 解析Block */
+        /* 解析Block */
+        IrBasicBlockBuilder basicBlockBuilder = new IrBasicBlockBuilder(this.symbolTable,
+                mainFuncDef.getBlock());
+        irFunction.addAllIrBasicBlock(basicBlockBuilder.genIrBasicBlock());
         return irFunction;
     }
 
@@ -115,9 +121,4 @@ public class IrFunctionBuilder implements IrNode {
         return type;
     }
 
-    @Override
-    public ArrayList<String> irOutput() {
-        /* TODO */
-        return null;
-    }
 }

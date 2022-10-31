@@ -1,4 +1,4 @@
-package middle.llvmir.value;
+package middle.llvmir.value.basicblock;
 
 import middle.llvmir.IrValue;
 import middle.llvmir.type.IrLabelType;

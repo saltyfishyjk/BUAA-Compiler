@@ -6,7 +6,7 @@ import frontend.parser.declaration.DeclEle;
 import frontend.parser.function.FuncDef;
 import frontend.parser.statement.blockitem.BlockItemEle;
 import frontend.parser.statement.stmt.StmtEle;
-import middle.llvmir.value.IrBasicBlock;
+import middle.llvmir.value.basicblock.IrBasicBlock;
 import middle.llvmir.value.function.IrFunctionBuilder;
 import middle.llvmir.value.globalvariable.IrGlobalVariable;
 import middle.llvmir.value.globalvariable.IrGlobalVariableBuilder;

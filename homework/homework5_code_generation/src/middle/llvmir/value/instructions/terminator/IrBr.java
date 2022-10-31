@@ -2,7 +2,7 @@ package middle.llvmir.value.instructions.terminator;
 
 import middle.llvmir.IrValue;
 import middle.llvmir.type.IrLabelType;
-import middle.llvmir.value.IrBasicBlock;
+import middle.llvmir.value.basicblock.IrBasicBlock;
 import middle.llvmir.value.instructions.IrInstruction;
 import middle.llvmir.value.instructions.IrInstructionType;
 

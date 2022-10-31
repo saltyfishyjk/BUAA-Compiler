@@ -35,4 +35,8 @@ public class MainFuncDef implements SyntaxNode {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    public Block getBlock() {
+        return this.block;
+    }
 }

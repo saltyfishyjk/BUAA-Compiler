@@ -57,6 +57,10 @@ public class FuncDef implements SyntaxNode {
     }
 
     public FuncFParams getFuncFParams() {
-        return funcFParams;
+        return this.funcFParams;
+    }
+
+    public Block getBlock() {
+        return this.block;
     }
 }

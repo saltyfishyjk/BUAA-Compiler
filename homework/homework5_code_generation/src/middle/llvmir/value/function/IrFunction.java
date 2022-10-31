@@ -4,7 +4,7 @@ import middle.llvmir.IrModule;
 import middle.llvmir.IrValue;
 import middle.llvmir.type.IrFunctionType;
 import middle.llvmir.type.IrValueType;
-import middle.llvmir.value.IrBasicBlock;
+import middle.llvmir.value.basicblock.IrBasicBlock;
 
 import java.util.ArrayList;
 
@@ -45,5 +45,11 @@ public class IrFunction extends IrValue {
 
     public void addIrBasicBlock(IrBasicBlock block) {
         this.blocks.add(block);
+    }
+
+    public void addAllIrBasicBlock(ArrayList<IrBasicBlock> list) {
+        for (IrBasicBlock basicBlock : list) {
+            this.addIrBasicBlock(basicBlock);
+        }
     }
 }
