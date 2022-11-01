@@ -67,4 +67,8 @@ public class FuncDef implements SyntaxNode {
     public String getName() {
         return this.ident.getName();
     }
+
+    public FuncType getFuncType() {
+        return funcType;
+    }
 }

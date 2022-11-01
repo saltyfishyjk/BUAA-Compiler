@@ -39,4 +39,9 @@ public class MainFuncDef implements SyntaxNode {
     public Block getBlock() {
         return this.block;
     }
+
+    public String getName() {
+        return "main";
+    }
+
 }

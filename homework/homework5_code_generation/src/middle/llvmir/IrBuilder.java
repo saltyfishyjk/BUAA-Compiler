@@ -1,12 +1,16 @@
 package middle.llvmir;
 
+import frontend.lexer.TokenType;
 import frontend.parser.CompUnit;
 import frontend.parser.declaration.Decl;
 import frontend.parser.function.FuncDef;
+import middle.llvmir.value.function.IrFunction;
 import middle.llvmir.value.function.IrFunctionBuilder;
 import middle.llvmir.value.globalvariable.IrGlobalVariable;
 import middle.llvmir.value.globalvariable.IrGlobalVariableBuilder;
+import middle.symbol.SymbolFunc;
 import middle.symbol.SymbolTable;
+import middle.symbol.SymbolType;
 
 import java.util.ArrayList;
 
@@ -46,11 +50,10 @@ public class IrBuilder {
         }
         for (FuncDef funcDef : this.compUnit.getFuncDefs()) {
             SymbolTable table = new SymbolTable(symbolTable); // 进入新的函数，进入新的子表
-            /* TODO : 将函数名填表 */
             IrFunctionBuilder functionBuilder = new IrFunctionBuilder(table, funcDef, this.module);
-            this.module.addIrFunction(functionBuilder.genIrFunction());
+            IrFunction irFunction = functionBuilder.genIrFunction();
+            this.module.addIrFunction(irFunction);
         }
-        /* TODO : 将主函数名填表 */
         SymbolTable table = new SymbolTable(symbolTable);
         IrFunctionBuilder functionBuilder = new IrFunctionBuilder(table,
                 this.compUnit.getMainFuncDef(), this.module);
