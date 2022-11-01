@@ -136,7 +136,7 @@ public class IrGlobalVariableBuilder {
             IrConstantInt constantInt = new IrConstantInt(IrIntegerType.get32(),
                     ((SymbolVar) symbol).getInitVal());
             // @是全局变量的标记
-            String name = "@_GlobalConst" + IrGlobalVariableCnt.getCnt(); // 自增变量名
+            String name = "@_GlobalVariable" + IrGlobalVariableCnt.getCnt(); // 自增变量名
             IrValueType type = IrIntegerType.get32(); // 32整数
             boolean isConst = false;
             globalVariable = new IrGlobalVariable(name, type, isConst, constantInt);
