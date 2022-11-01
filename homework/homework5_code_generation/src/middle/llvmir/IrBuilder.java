@@ -1,6 +1,5 @@
 package middle.llvmir;
 
-import frontend.lexer.TokenType;
 import frontend.parser.CompUnit;
 import frontend.parser.declaration.Decl;
 import frontend.parser.function.FuncDef;
@@ -8,10 +7,7 @@ import middle.llvmir.value.function.IrFunction;
 import middle.llvmir.value.function.IrFunctionBuilder;
 import middle.llvmir.value.globalvariable.IrGlobalVariable;
 import middle.llvmir.value.globalvariable.IrGlobalVariableBuilder;
-import middle.symbol.SymbolFunc;
 import middle.symbol.SymbolTable;
-import middle.symbol.SymbolType;
-
 import java.util.ArrayList;
 
 /**
