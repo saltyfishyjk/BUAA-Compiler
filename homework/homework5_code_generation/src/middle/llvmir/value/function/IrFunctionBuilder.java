@@ -108,7 +108,7 @@ public class IrFunctionBuilder {
                 "@" + this.funcDef.getName(), functionCnt);
         /* 解析Block */
         IrBasicBlockBuilder basicBlockBuilder = new IrBasicBlockBuilder(this.symbolTable,
-                funcDef.getBlock());
+                funcDef.getBlock(), this.functionCnt);
         irFunction.addAllIrBasicBlock(basicBlockBuilder.genIrBasicBlock());
         return irFunction;
     }
@@ -124,7 +124,7 @@ public class IrFunctionBuilder {
         irFunction.setName("@main");
         /* 解析Block */
         IrBasicBlockBuilder basicBlockBuilder = new IrBasicBlockBuilder(this.symbolTable,
-                mainFuncDef.getBlock());
+                mainFuncDef.getBlock(), this.functionCnt);
         irFunction.addAllIrBasicBlock(basicBlockBuilder.genIrBasicBlock());
         return irFunction;
     }

@@ -62,4 +62,21 @@ public class ConstDef implements SyntaxNode {
     public ConstInitVal getConstInitval() {
         return constInitval;
     }
+
+    public int getDimension() {
+        if (this.leftBracks == null || this.leftBracks.size() == 0) {
+            return 0;
+        } else if (this.leftBracks.size() == 1) {
+            return 1;
+        } else if (this.leftBracks.size() == 2) {
+            return 2;
+        } else {
+            System.out.println("ERROR in ConstDef : should not reach here");
+        }
+        return 0;
+    }
+
+    public String getName() {
+        return this.ident.getName();
+    }
 }

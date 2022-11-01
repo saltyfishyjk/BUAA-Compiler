@@ -16,6 +16,11 @@ public class SymbolCon extends Symbol {
         this.setDimension(dimension);
     }
 
+    /* 用于中间代码生成，lineNum不重要 */
+    public SymbolCon(String name, SymbolType symbolType, int dimension) {
+        this(0, name, symbolType, dimension);
+    }
+
     public void setInitVal(int initVal) {
         this.initVal = initVal;
     }

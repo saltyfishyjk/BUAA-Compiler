@@ -30,6 +30,7 @@ public class UnaryExpOp implements UnaryExpEle {
         if (this.unaryOp.getToken().getType().equals(TokenType.PLUS)) {
             return this.unaryExp.calcNode(symbolTable);
         } else if (this.unaryOp.getToken().getType().equals(TokenType.MINU)) {
+            // 返回的应当是负数
             return (-1) * this.unaryExp.calcNode(symbolTable);
         } else {
             System.out.println("ERROR in UnaryExpOp.calcNode : should not calc such op");

@@ -19,6 +19,7 @@ import frontend.parser.statement.stmt.StmtNull;
 import frontend.parser.statement.stmt.StmtPrint;
 import frontend.parser.statement.stmt.StmtReturn;
 import frontend.parser.statement.stmt.StmtWhile;
+import middle.llvmir.value.function.IrFunctionCnt;
 import middle.llvmir.value.instructions.IrInstruction;
 import middle.llvmir.value.instructions.IrInstructionBuilder;
 import middle.symbol.SymbolTable;
@@ -31,32 +32,34 @@ import java.util.ArrayList;
  */
 public class IrBasicBlockBuilder {
     private SymbolTable symbolTable;
+    private IrFunctionCnt functionCnt = null;
     private Block block = null;
     private StmtCond stmtCond = null;
     private StmtWhile stmtWhile = null;
     private ArrayList<BlockItem> blockItems = null;
     private ArrayList<IrBasicBlock> basicBlocks = new ArrayList<>();
 
-    public IrBasicBlockBuilder(SymbolTable symbolTable) {
+    public IrBasicBlockBuilder(SymbolTable symbolTable, IrFunctionCnt functionCnt) {
         this.symbolTable = symbolTable;
+        this.functionCnt = functionCnt;
     }
 
     // 传入的元素是Block
-    public IrBasicBlockBuilder(SymbolTable symbolTable, Block block) {
-        this(symbolTable);
+    public IrBasicBlockBuilder(SymbolTable symbolTable, Block block, IrFunctionCnt functionCnt) {
+        this(symbolTable, functionCnt);
         this.block = block;
         this.blockItems = this.block.getBlockItems();
     }
 
     // 传入的元素是StmtCond
-    public IrBasicBlockBuilder(SymbolTable symbolTable, StmtCond stmtCond) {
-        this(symbolTable);
+    public IrBasicBlockBuilder(SymbolTable symbolTable, StmtCond stmtCond, IrFunctionCnt functionCnt) {
+        this(symbolTable, functionCnt);
         this.stmtCond = stmtCond;
     }
 
     // 传入的元素是StmtWhile
-    public IrBasicBlockBuilder(SymbolTable symbolTable, StmtWhile stmtWhile) {
-        this(symbolTable);
+    public IrBasicBlockBuilder(SymbolTable symbolTable, StmtWhile stmtWhile, IrFunctionCnt functionCnt) {
+        this(symbolTable, functionCnt);
         this.stmtWhile = stmtWhile;
     }
 
@@ -101,13 +104,13 @@ public class IrBasicBlockBuilder {
                 StmtEle stmtEle = stmt.getStmtEle();
                 switch (typeCode) {
                     case 1: // 说明是StmtCond
-                        builder = new IrBasicBlockBuilder(newSymbolTable, (StmtCond)stmtEle);
+                        builder = new IrBasicBlockBuilder(newSymbolTable, (StmtCond)stmtEle, this.functionCnt);
                         break;
                     case 2:
-                        builder = new IrBasicBlockBuilder(newSymbolTable, (StmtWhile)stmtEle);
+                        builder = new IrBasicBlockBuilder(newSymbolTable, (StmtWhile)stmtEle, this.functionCnt);
                         break;
                     case 3:
-                        builder = new IrBasicBlockBuilder(newSymbolTable, (Block)stmtEle);
+                        builder = new IrBasicBlockBuilder(newSymbolTable, (Block)stmtEle, this.functionCnt);
                         break;
                     default:
                         System.out.
@@ -134,7 +137,7 @@ public class IrBasicBlockBuilder {
                                 println("ERROR in IrBasicBlockItemBuilder : should not reach here");
                     }
                     IrInstructionBuilder irInstructionBuilder = new
-                            IrInstructionBuilder(this.symbolTable, basicBlock, curEle);
+                            IrInstructionBuilder(this.symbolTable, basicBlock, curEle, this.functionCnt);
                     ArrayList<IrInstruction> temp = irInstructionBuilder.genIrInstruction();
                     if (temp != null && temp.size() != 0) {
                         basicBlock.addAllIrInstruction(temp);

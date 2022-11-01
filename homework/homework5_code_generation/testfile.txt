@@ -12,6 +12,8 @@ int x = (THREE + 9) * THREE - TWO* TWO;
 
 
 int pm(int z, int x) {
+	const int t = 10;
+	const int w = t + 19;
     return z + x;
 }
 
