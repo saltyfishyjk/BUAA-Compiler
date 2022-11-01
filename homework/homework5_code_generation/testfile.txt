@@ -1,5 +1,7 @@
 /* C级：基本类型变量声明定义与算数表达式测试 */
 
+int neg = -928
+
 const int ZERO = 0;
 const int ONE = 1, TWO = 2, THREE = 4 * 7 - 5 * +5;
 
@@ -7,7 +9,7 @@ int one = 1, two = 2, three =  55 / 9 - 9 % 6;
 int gvar;
 int x = (THREE + 9) * THREE - TWO* TWO;
 
-int neg = -928
+
 
 int pm(int z, int x) {
     return z + x;
