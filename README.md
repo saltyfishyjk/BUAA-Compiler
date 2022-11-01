@@ -488,6 +488,8 @@ LLVM IR的结构如下：
     - `StmtReturn`
     - `StmtGetint`
     - `StmtPrint`
+    - `StmtExp`
+  - 特别地，`StmtNull`仅有分号，没有实际语义，不翻译为中间代码，直接忽略
 
 ##### `genIrBasicBlock`
 

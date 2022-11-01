@@ -13,7 +13,9 @@ import frontend.parser.statement.stmt.StmtBreak;
 import frontend.parser.statement.stmt.StmtCond;
 import frontend.parser.statement.stmt.StmtContinue;
 import frontend.parser.statement.stmt.StmtEle;
+import frontend.parser.statement.stmt.StmtExp;
 import frontend.parser.statement.stmt.StmtGetint;
+import frontend.parser.statement.stmt.StmtNull;
 import frontend.parser.statement.stmt.StmtPrint;
 import frontend.parser.statement.stmt.StmtReturn;
 import frontend.parser.statement.stmt.StmtWhile;
@@ -114,7 +116,7 @@ public class IrBasicBlockBuilder {
                 }
                 this.addAllIrBasicBlocks(builder.genIrBasicBlock());
                 ptr += 1;
-            } else if (typeCode <= 11) {
+            } else if (typeCode <= 12) {
                 /* 说明将要解析的元素是指令，一直解析直到元素末尾或遇到块类元素 */
                 IrBasicBlock basicBlock = new IrBasicBlock("TEMP NO NAME");
                 while (ptr < len) {
@@ -124,17 +126,25 @@ public class IrBasicBlockBuilder {
                     int curTypeCode = checkBlockItemEleType(curEle);
                     if (0 < curTypeCode && curTypeCode <= 3) {
                         break;
-                    } else if (curTypeCode <= 0 || curTypeCode > 11) {
+                    } else if (curTypeCode == 13) {
+                        ptr += 1;
+                        continue;
+                    } else if (curTypeCode <= 0 || curTypeCode > 13) {
                         System.out.
                                 println("ERROR in IrBasicBlockItemBuilder : should not reach here");
                     }
                     IrInstructionBuilder irInstructionBuilder = new
                             IrInstructionBuilder(this.symbolTable, basicBlock, curEle);
                     ArrayList<IrInstruction> temp = irInstructionBuilder.genIrInstruction();
-                    basicBlock.addAllIrInstruction(temp);
+                    if (temp != null && temp.size() != 0) {
+                        basicBlock.addAllIrInstruction(temp);
+                    }
                     ptr += 1;
                 }
                 this.basicBlocks.add(basicBlock);
+            } else if (typeCode == 13) {
+                /* 什么也不做 */
+                ptr += 1;
             } else {
                 System.out.println("ERROR in IrBasicBlockItemBuilder : should not reach here");
             }
@@ -168,6 +178,8 @@ public class IrBasicBlockBuilder {
      * - 9 : StmtReturn
      * - 10 : StmtGetint
      * - 11 : StmtPrint
+     * - 12 : StmtExp
+     * - 13 : StmtNull : 只有分号，不需要处理
      * ---------- 以上应当调用genIrInstruction解析
      */
     private int checkBlockItemEleType(BlockItemEle ele) {
@@ -207,6 +219,10 @@ public class IrBasicBlockBuilder {
                 ret = 10;
             } else if (stmtEle instanceof StmtPrint) {
                 ret = 11;
+            } else if (stmtEle instanceof StmtExp) {
+                ret = 12;
+            } else if (stmtEle instanceof StmtNull) {
+                ret = 13;
             } else {
                 System.out.println("ERROR in IrBasicBlockBuilder : should not reach here");
             }

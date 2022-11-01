@@ -2,6 +2,7 @@ package middle.llvmir.value.instructions;
 
 import frontend.parser.declaration.Decl;
 import frontend.parser.declaration.constant.ConstDecl;
+import frontend.parser.declaration.constant.ConstDef;
 import frontend.parser.declaration.variable.VarDecl;
 import frontend.parser.statement.blockitem.BlockItemEle;
 import frontend.parser.statement.stmt.Stmt;
@@ -9,6 +10,7 @@ import frontend.parser.statement.stmt.StmtAssign;
 import frontend.parser.statement.stmt.StmtBreak;
 import frontend.parser.statement.stmt.StmtContinue;
 import frontend.parser.statement.stmt.StmtEle;
+import frontend.parser.statement.stmt.StmtExp;
 import frontend.parser.statement.stmt.StmtGetint;
 import frontend.parser.statement.stmt.StmtPrint;
 import frontend.parser.statement.stmt.StmtReturn;
@@ -22,9 +24,9 @@ import java.util.ArrayList;
  * LLVM IR 指令生成器
  */
 public class IrInstructionBuilder {
-    private SymbolTable symbolTable;
+    private SymbolTable symbolTable; // 当前符号表
     private IrBasicBlock basicBlock; // 父BasicBlock
-    private BlockItemEle blockItemEle;
+    private BlockItemEle blockItemEle; // 传入的BlockItemEle
     private ArrayList<IrInstruction> instructions;
     /* 以下对象是传入的BlockItem可能的真实类型，如果本对象不是，那么就为null */
     private ConstDecl constDecl = null;
@@ -35,6 +37,7 @@ public class IrInstructionBuilder {
     private StmtReturn stmtReturn = null;
     private StmtGetint stmtGetint = null;
     private StmtPrint stmtPrint = null;
+    private StmtExp stmtExp = null;
 
     public IrInstructionBuilder(SymbolTable symbolTable, IrBasicBlock basicBlock) {
         this.symbolTable = symbolTable;
@@ -88,6 +91,9 @@ public class IrInstructionBuilder {
             } else if (stmtEle instanceof StmtPrint) {
                 this.stmtPrint = (StmtPrint)stmtEle;
                 genIrInstructionFromStmtPrint();
+            } else if (stmtEle instanceof StmtExp) {
+                this.stmtExp = (StmtExp)stmtEle;
+                genIrInstructionFromStmtExp();
             } else {
                 System.out.println("ERROR in IrInstructionBuilder : should not reach here");
             }
@@ -98,6 +104,8 @@ public class IrInstructionBuilder {
     }
 
     private void genIrInstructionFromConstDecl() {
+        ConstDef first = this.constDecl.getFirst();
+
         /* TODO : 待施工 */
     }
 
@@ -126,6 +134,10 @@ public class IrInstructionBuilder {
     }
 
     private void genIrInstructionFromStmtPrint() {
+        /* TODO : 待施工 */
+    }
+
+    private void genIrInstructionFromStmtExp() {
         /* TODO : 待施工 */
     }
 
