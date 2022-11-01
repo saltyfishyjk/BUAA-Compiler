@@ -18,8 +18,8 @@ public class Symbol {
         this.symbolType = symbolType;
     }
 
-    public Symbol(int lineNum, String name, SymbolType symbolType, IrValue value) {
-        this(lineNum, name, symbolType);
+    public Symbol(String name, SymbolType symbolType, IrValue value) {
+        this(0, name, symbolType); // lineNum不重要，在中间代码阶段没有意义
         this.value = value;
     }
 

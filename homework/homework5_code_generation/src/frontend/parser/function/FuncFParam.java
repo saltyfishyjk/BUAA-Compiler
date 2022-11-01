@@ -81,4 +81,8 @@ public class FuncFParam implements SyntaxNode {
             }
         }
     }
+
+    public String getName() {
+        return this.ident.getName();
+    }
 }

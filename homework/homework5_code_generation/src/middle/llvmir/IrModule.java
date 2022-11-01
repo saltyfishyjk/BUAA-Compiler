@@ -27,7 +27,16 @@ public class IrModule implements IrNode {
     public ArrayList<String> irOutput() {
         ArrayList<String> ret = new ArrayList<>();
         for (IrGlobalVariable index : globalVariables) {
-            ret.addAll(index.irOutput());
+            ArrayList<String> temp = index.irOutput();
+            if (temp != null && temp.size() != 0) {
+                ret.addAll(temp);
+            }
+        }
+        for (IrFunction function : functions) {
+            ArrayList<String> temp = function.irOutput();
+            if (temp != null && temp.size() != 0) {
+                ret.addAll(temp);
+            }
         }
         return ret;
     }

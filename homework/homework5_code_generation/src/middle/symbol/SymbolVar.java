@@ -1,5 +1,7 @@
 package middle.symbol;
 
+import middle.llvmir.IrValue;
+
 import java.util.ArrayList;
 
 public class SymbolVar extends Symbol {
@@ -13,6 +15,17 @@ public class SymbolVar extends Symbol {
 
     public SymbolVar(int lineNum, String name, SymbolType symbolType, int dimension) {
         this(lineNum, name, symbolType);
+        this.setDimension(dimension);
+    }
+
+    public SymbolVar(String name, SymbolType symbolType) {
+        super(name, symbolType, null);
+    }
+
+    public SymbolVar(String name, SymbolType symbolType, int dimension, IrValue value) {
+        this(name, symbolType);
+        this.setValue(value);
+        // super(name, symbolType, value);
         this.setDimension(dimension);
     }
 

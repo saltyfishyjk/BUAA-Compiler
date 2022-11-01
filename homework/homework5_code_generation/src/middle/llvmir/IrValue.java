@@ -20,6 +20,11 @@ public class IrValue {
         this.uses = new LinkedList<>();
     }
 
+    public IrValue(IrValueType valueType, String name) {
+        this(valueType);
+        this.name = name;
+    }
+
     public void setValueType(IrValueType valueType) {
         this.valueType = valueType;
     }
@@ -41,6 +46,6 @@ public class IrValue {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 }

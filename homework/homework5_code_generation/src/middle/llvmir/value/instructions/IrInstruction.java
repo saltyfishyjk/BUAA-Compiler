@@ -2,11 +2,14 @@ package middle.llvmir.value.instructions;
 
 import middle.llvmir.IrUser;
 import middle.llvmir.type.IrValueType;
+import middle.llvmir.value.IrNode;
+
+import java.util.ArrayList;
 
 /**
  * LLVM IR Instruction 指令
  */
-public class IrInstruction extends IrUser {
+public class IrInstruction extends IrUser implements IrNode {
     private IrInstructionType instructionType; // 指令类型
     /* TODO : 将指令挂在到Block上 */
 
@@ -32,5 +35,11 @@ public class IrInstruction extends IrUser {
     public boolean isArithmeticBinary() {
         return this.instructionType.ordinal() >= IrInstructionType.Add.ordinal() &&
                 this.instructionType.ordinal() <= IrInstructionType.Div.ordinal();
+    }
+
+    @Override
+    public ArrayList<String> irOutput() {
+        /* TODO : 待施工 */
+        return null;
     }
 }

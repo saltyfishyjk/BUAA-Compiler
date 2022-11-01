@@ -25,7 +25,12 @@ public class IrFunctionType extends IrValueType {
 
     @Override
     public ArrayList<String> irOutput() {
-        /* TODO : 完成函数生成 */
-        return super.irOutput();
+        ArrayList<String> ret = new ArrayList<>();
+        if (this.retType instanceof IrIntegerType) {
+            ret.add("i32");
+        } else if (this.retType instanceof IrVoidType) {
+            ret.add("void");
+        }
+        return ret;
     }
 }
