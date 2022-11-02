@@ -29,4 +29,8 @@ public class UnaryExp implements SyntaxNode, ValNode {
     public int calcNode(SymbolTable symbolTable) {
         return this.unaryExpEle.calcNode(symbolTable);
     }
+
+    public UnaryExpEle getUnaryExpEle() {
+        return unaryExpEle;
+    }
 }

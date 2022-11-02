@@ -33,9 +33,42 @@ public class IrCall extends IrInstruction {
         for (int i = 0; i < len; i++) {
             this.setOperand(args.get(i), i + 1); // 由于函数名置于0位，后续操作数依次后延
         }
+        this.setName(function.getName());
     }
 
     public IrFunction getFunction() {
         return (IrFunction)this.getOperand(0);
+    }
+
+    @Override
+    public ArrayList<String> irOutput() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("call ");
+        if (retVoid) {
+            sb.append("void ");
+        } else {
+            sb.append("i32 ");
+        }
+        sb.append(this.getName());
+        sb.append("(");
+        if (this.getNumOp() > 1) {
+            // 有参数
+            int len = this.getNumOp();
+            for (int i = 1; i < len; i++) {
+                ArrayList<String> arg = this.getOperand(i).irOutput();
+                if (arg == null || arg.size() != 1) {
+                    System.out.println("ERROR in IrCall : should not reach here");
+                }
+                sb.append(arg.get(0));
+                if (i != len - 1) {
+                    sb.append(", ");
+                }
+            }
+        }
+        sb.append(")\n");
+        ArrayList<String> ret = new ArrayList<>();
+        ret.add(sb.toString());
+        return ret;
     }
 }

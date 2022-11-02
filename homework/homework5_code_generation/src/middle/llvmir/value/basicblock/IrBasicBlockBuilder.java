@@ -52,13 +52,17 @@ public class IrBasicBlockBuilder {
     }
 
     // 传入的元素是StmtCond
-    public IrBasicBlockBuilder(SymbolTable symbolTable, StmtCond stmtCond, IrFunctionCnt functionCnt) {
+    public IrBasicBlockBuilder(SymbolTable symbolTable,
+                               StmtCond stmtCond,
+                               IrFunctionCnt functionCnt) {
         this(symbolTable, functionCnt);
         this.stmtCond = stmtCond;
     }
 
     // 传入的元素是StmtWhile
-    public IrBasicBlockBuilder(SymbolTable symbolTable, StmtWhile stmtWhile, IrFunctionCnt functionCnt) {
+    public IrBasicBlockBuilder(SymbolTable symbolTable,
+                               StmtWhile stmtWhile,
+                               IrFunctionCnt functionCnt) {
         this(symbolTable, functionCnt);
         this.stmtWhile = stmtWhile;
     }
@@ -104,13 +108,16 @@ public class IrBasicBlockBuilder {
                 StmtEle stmtEle = stmt.getStmtEle();
                 switch (typeCode) {
                     case 1: // 说明是StmtCond
-                        builder = new IrBasicBlockBuilder(newSymbolTable, (StmtCond)stmtEle, this.functionCnt);
+                        builder = new IrBasicBlockBuilder(newSymbolTable,
+                                (StmtCond)stmtEle, this.functionCnt);
                         break;
                     case 2:
-                        builder = new IrBasicBlockBuilder(newSymbolTable, (StmtWhile)stmtEle, this.functionCnt);
+                        builder = new IrBasicBlockBuilder(newSymbolTable,
+                                (StmtWhile)stmtEle, this.functionCnt);
                         break;
                     case 3:
-                        builder = new IrBasicBlockBuilder(newSymbolTable, (Block)stmtEle, this.functionCnt);
+                        builder = new IrBasicBlockBuilder(newSymbolTable,
+                                (Block)stmtEle, this.functionCnt);
                         break;
                     default:
                         System.out.
@@ -137,7 +144,8 @@ public class IrBasicBlockBuilder {
                                 println("ERROR in IrBasicBlockItemBuilder : should not reach here");
                     }
                     IrInstructionBuilder irInstructionBuilder = new
-                            IrInstructionBuilder(this.symbolTable, basicBlock, curEle, this.functionCnt);
+                            IrInstructionBuilder(this.symbolTable,
+                            basicBlock, curEle, this.functionCnt);
                     ArrayList<IrInstruction> temp = irInstructionBuilder.genIrInstruction();
                     if (temp != null && temp.size() != 0) {
                         basicBlock.addAllIrInstruction(temp);

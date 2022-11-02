@@ -2,6 +2,7 @@ package middle.llvmir;
 
 import middle.llvmir.type.IrValueType;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -14,6 +15,7 @@ public class IrUser extends IrValue {
 
     public IrUser(IrValueType valueType) {
         super(valueType);
+        this.operands = new LinkedList<>();
     }
 
     public IrUser(IrValueType valueType, int numOp) {
@@ -56,5 +58,11 @@ public class IrUser extends IrValue {
         /* 不应当运行到这里 */
         System.out.println("ERROR in IrUser! Should not reach here");
         return null;
+    }
+
+    @Override
+    public ArrayList<String> irOutput() {
+        /* TODO : 待施工 */
+        return super.irOutput();
     }
 }

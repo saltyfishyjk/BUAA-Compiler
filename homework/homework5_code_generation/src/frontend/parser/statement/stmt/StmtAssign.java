@@ -32,4 +32,12 @@ public class StmtAssign implements StmtEle {
         sb.append(this.semicn.syntaxOutput());
         return sb.toString();
     }
+
+    public LVal getLval() {
+        return lval;
+    }
+
+    public Exp getExp() {
+        return exp;
+    }
 }

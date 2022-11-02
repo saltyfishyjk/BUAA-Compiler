@@ -1,13 +1,15 @@
 package middle.llvmir;
 
 import middle.llvmir.type.IrValueType;
+import middle.llvmir.value.IrNode;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
  * 在LLVM IR中，【几乎】所有实体都是Value的子类
  */
-public class IrValue {
+public class IrValue implements IrNode {
     private IrValueType valueType; // Value 类型
     private String name; //
     private boolean needName; // TODO
@@ -47,5 +49,12 @@ public class IrValue {
 
     public String getName() {
         return this.name;
+    }
+
+    @Override
+    public ArrayList<String> irOutput() {
+        ArrayList<String> ret = new ArrayList<>();
+        ret.add(this.name);
+        return ret;
     }
 }

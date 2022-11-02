@@ -37,4 +37,12 @@ public class UnaryExpOp implements UnaryExpEle {
             return 0;
         }
     }
+
+    public UnaryOp getUnaryOp() {
+        return unaryOp;
+    }
+
+    public UnaryExp getUnaryExp() {
+        return unaryExp;
+    }
 }

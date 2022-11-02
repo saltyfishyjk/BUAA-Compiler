@@ -37,4 +37,8 @@ public class PrimaryExpExp implements PrimaryExpEle, ValNode {
     public int calcNode(SymbolTable symbolTable) {
         return this.exp.calcNode(symbolTable);
     }
+
+    public Exp getExp() {
+        return exp;
+    }
 }

@@ -53,4 +53,8 @@ public class FuncRParams implements SyntaxNode {
         }
         return temp;
     }
+
+    public Exp getFirst() {
+        return this.first;
+    }
 }

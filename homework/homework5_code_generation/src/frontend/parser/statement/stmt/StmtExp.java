@@ -23,4 +23,8 @@ public class StmtExp implements StmtEle {
         sb.append(this.semicn.syntaxOutput());
         return sb.toString();
     }
+
+    public Exp getExp() {
+        return this.exp;
+    }
 }

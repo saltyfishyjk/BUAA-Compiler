@@ -18,14 +18,15 @@ public class SymbolVar extends Symbol {
         this.setDimension(dimension);
     }
 
+    /* 生成中间代码时不关心lineNum */
     public SymbolVar(String name, SymbolType symbolType) {
         super(name, symbolType, null);
     }
 
+    /* 生成中间代码时不关心lineNum */
     public SymbolVar(String name, SymbolType symbolType, int dimension, IrValue value) {
         this(name, symbolType);
         this.setValue(value);
-        // super(name, symbolType, value);
         this.setDimension(dimension);
     }
 

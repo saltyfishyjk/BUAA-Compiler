@@ -132,4 +132,8 @@ public class LVal implements PrimaryExpEle {
         }
         return 0;
     }
+
+    public String getName() {
+        return this.ident.getName();
+    }
 }

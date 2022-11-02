@@ -9,76 +9,23 @@ int one = 1, two = 2, three =  55 / 9 - 9 % 6;
 int gvar;
 int x = (THREE + 9) * THREE - TWO* TWO;
 
-
-
-int pm(int z, int x) {
-	const int t = 10;
-	const int w = t + 19;
-    return z + x;
+/*
+int func1() {
+	int a = 123 - 122;
+    return 555;
 }
+*/
 
-void foo(int t, int zz) {
-}
-
-void f()
-{
-    printf("This is f().\n");
-    int a = 4;
-    a = 5;
-    a = a+1;
-    ;
-    {}
-    {
-        a = a+2;
-    }
-    if (1) {
-        ;
-    }
-    if (a) {
-        ;
-    } else {
-        ;
-    }
-    while (a > 0) {
-        a = a-1;
-        if (a == 1) {
-            break;
-        } else {
-            continue;
-        }
-    }
-
-    return;
+void func2() {
+	const int x = ZERO;
+	int yiersan = 456;
+	int y = x;
+    int mAgIc_NuMbEr;
+    mAgIc_NuMbEr = 8456;
+    int a1a11a11 = (mAgIc_NuMbEr - yiersan) / 1000 ;
+	
 }
 
 int main() {
-    const int ONE = 1;
-    const int ABC123 = 2, _ABC = 3, _ABC123 = 4;
-    int one = 1;
-    int abc123 = 2, _abc = 8, _abc123 = 5;
-    int var;
-
-    printf("20373358\n");
-    
-    printf("Some global constants: %d %d %d %d\n", ZERO, ONE, TWO, THREE);
-    printf("Some local constants: %d %d %d %d\n", ONE, ABC123, _ABC, _ABC123);
-    printf("Some global variables: %d %d %d\n", one, two, three);
-    printf("Some local variables: %d %d %d\n", abc123, _abc, _abc123);
-    
-    gvar = getint();
-    var = getint();
-
-    printf("Set global variable as %d\n", gvar);
-    printf("Set local variable as %d\n", var);
-
-    var = (var + 1) * -1;
-    printf("Calculate %d\n", var);
-
-    var = var + 56 - gvar * 9;
-    printf("Calculate %d\n", var);
-
-    var = var + -1;
-    printf("Calculate %d\n", var);
-
     return 0;
 }

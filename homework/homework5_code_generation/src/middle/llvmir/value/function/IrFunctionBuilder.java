@@ -48,6 +48,7 @@ public class IrFunctionBuilder {
         this.mainFuncDef = mainFuncDef;
         this.funcDef = null;
         this.module = module;
+        this.functionCnt = new IrFunctionCnt();
     }
 
     /**
@@ -106,6 +107,8 @@ public class IrFunctionBuilder {
 
         IrFunction irFunction = new IrFunction(irFunctionType, this.module,
                 "@" + this.funcDef.getName(), functionCnt);
+        /* 将函数名加入符号表 */
+        this.symbolFunc.setValue(irFunction);
         /* 解析Block */
         IrBasicBlockBuilder basicBlockBuilder = new IrBasicBlockBuilder(this.symbolTable,
                 funcDef.getBlock(), this.functionCnt);
@@ -121,6 +124,8 @@ public class IrFunctionBuilder {
         ArrayList<IrValueType> paramTypes = new ArrayList<>();
         IrFunctionType irFunctionType = new IrFunctionType(retType, paramTypes);
         IrFunction irFunction = new IrFunction(irFunctionType, this.module);
+        /* 将函数名加入符号表 */
+        this.symbolFunc.setValue(irFunction);
         irFunction.setName("@main");
         /* 解析Block */
         IrBasicBlockBuilder basicBlockBuilder = new IrBasicBlockBuilder(this.symbolTable,

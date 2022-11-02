@@ -72,4 +72,12 @@ public class UnaryExpFunc implements UnaryExpEle {
         System.out.println("ERROR in UnaryExpFunc.calcNode : should not call this func");
         return 0;
     }
+
+    public String getFunctionName() {
+        return this.ident.getName();
+    }
+
+    public FuncRParams getFuncRParams() {
+        return funcRParams;
+    }
 }

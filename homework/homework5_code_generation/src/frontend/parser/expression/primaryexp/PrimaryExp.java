@@ -29,4 +29,8 @@ public class PrimaryExp implements UnaryExpEle {
     public int calcNode(SymbolTable symbolTable) {
         return this.primaryExpEle.calcNode(symbolTable);
     }
+
+    public PrimaryExpEle getPrimaryExpEle() {
+        return primaryExpEle;
+    }
 }

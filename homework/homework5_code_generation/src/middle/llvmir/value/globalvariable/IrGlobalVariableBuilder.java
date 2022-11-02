@@ -96,6 +96,7 @@ public class IrGlobalVariableBuilder {
             IrValueType type = IrIntegerType.get32();
             boolean isConst = true;
             globalVariable = new IrGlobalVariable(name, type, isConst, constantInt);
+            symbol.setValue(globalVariable);
         } else if (dimension == 1) {
             /* TODO : 本次作业不涉及数组 */
             return null;
@@ -140,6 +141,7 @@ public class IrGlobalVariableBuilder {
             IrValueType type = IrIntegerType.get32(); // 32整数
             boolean isConst = false;
             globalVariable = new IrGlobalVariable(name, type, isConst, constantInt);
+            symbol.setValue(globalVariable);
         } else if (dimension == 1) {
             /* TODO : 本次作业不涉及数组 */
             return null;

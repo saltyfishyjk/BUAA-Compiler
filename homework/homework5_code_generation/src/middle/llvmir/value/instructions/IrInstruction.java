@@ -3,6 +3,7 @@ package middle.llvmir.value.instructions;
 import middle.llvmir.IrUser;
 import middle.llvmir.type.IrValueType;
 import middle.llvmir.value.IrNode;
+import middle.llvmir.value.basicblock.IrBasicBlock;
 
 import java.util.ArrayList;
 
@@ -11,13 +12,21 @@ import java.util.ArrayList;
  */
 public class IrInstruction extends IrUser implements IrNode {
     private IrInstructionType instructionType; // 指令类型
-    /* TODO : 将指令挂在到Block上 */
+    private IrBasicBlock basicBlock; // 指令所在基本块
 
     public IrInstruction(IrInstructionType instructionType,
                          IrValueType valueType,
                          int numOp) {
         super(valueType, numOp);
         this.instructionType = instructionType;
+    }
+
+    public IrInstruction(IrInstructionType instructionType,
+                         IrValueType valueType,
+                         int numOp,
+                         IrBasicBlock basicBlock) {
+        this(instructionType, valueType, numOp);
+        this.basicBlock = basicBlock;
     }
 
     public void setInstructionType(IrInstructionType instructionType) {
@@ -42,4 +51,9 @@ public class IrInstruction extends IrUser implements IrNode {
         /* TODO : 待施工 */
         return null;
     }
+
+    public IrInstructionType getInstructionType() {
+        return this.instructionType;
+    }
+
 }

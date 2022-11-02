@@ -47,4 +47,20 @@ public class VarDefNull implements VarDefEle {
     public ArrayList<Token> getLeftBraces() {
         return leftBraces;
     }
+
+    public int getDimension() {
+        if (this.leftBraces == null || this.leftBraces.size() == 0) {
+            return 0;
+        } else if (this.leftBraces.size() == 1) {
+            return 1;
+        } else if (this.leftBraces.size() == 2) {
+            return 2;
+        }
+        System.out.println("ERROR in VarDefNull.getDimension : should not reach here");
+        return -1;
+    }
+
+    public String getName() {
+        return this.ident.getName();
+    }
 }
