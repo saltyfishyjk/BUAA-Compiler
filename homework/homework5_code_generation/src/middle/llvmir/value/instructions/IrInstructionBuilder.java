@@ -544,6 +544,7 @@ public class IrInstructionBuilder {
             String name = "%_LocalVariable" + cnt;
             mulExp.setName(name);
             ret = mulExp;
+            this.instructions.add(mulExp);
         } else if (op.getType().equals(TokenType.NOT)) {
             /* TODO : 本次作业不涉及条件运算 */
         } else {
