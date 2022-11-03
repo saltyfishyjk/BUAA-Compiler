@@ -2,6 +2,7 @@ package middle.llvmir.value.instructions.terminator;
 
 import middle.llvmir.IrValue;
 import middle.llvmir.type.IrFunctionType;
+import middle.llvmir.type.IrIntegerType;
 import middle.llvmir.type.IrVoidType;
 import middle.llvmir.value.function.IrFunction;
 import middle.llvmir.value.instructions.IrInstruction;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
  */
 public class IrCall extends IrInstruction {
     private boolean retVoid; // 返回值是否为void类型
+    private String functionName;
 
     public IrCall(IrFunction function, ArrayList<IrValue> args) {
         super(IrInstructionType.Call,
@@ -33,7 +35,15 @@ public class IrCall extends IrInstruction {
         for (int i = 0; i < len; i++) {
             this.setOperand(args.get(i), i + 1); // 由于函数名置于0位，后续操作数依次后延
         }
-        this.setName(function.getName());
+        this.functionName = function.getName();
+        // this.setName(function.getName());
+    }
+
+    /* 处理getint() */
+    public IrCall(String functionName) {
+        super(IrInstructionType.Call, IrIntegerType.get32(), 0);
+        this.functionName = functionName;
+        this.retVoid = false;
     }
 
     public IrFunction getFunction() {
@@ -42,15 +52,17 @@ public class IrCall extends IrInstruction {
 
     @Override
     public ArrayList<String> irOutput() {
-
         StringBuilder sb = new StringBuilder();
+        if (!this.retVoid) {
+            sb.append(this.getName() + " = ");
+        }
         sb.append("call ");
         if (retVoid) {
             sb.append("void ");
         } else {
             sb.append("i32 ");
         }
-        sb.append(this.getName());
+        sb.append(this.functionName);
         sb.append("(");
         if (this.getNumOp() > 1) {
             // 有参数
@@ -71,4 +83,9 @@ public class IrCall extends IrInstruction {
         ret.add(sb.toString());
         return ret;
     }
+
+    public boolean getVoid() {
+        return this.retVoid;
+    }
+
 }

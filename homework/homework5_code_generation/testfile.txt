@@ -1,7 +1,19 @@
 const int a = 10;
 
+/*
+int foo1() {
+return 10;
+}
+
+int foo2(){
+int a = foo1();
+return a;
+}
+*/
+
 int main() {
-int b = a;
+int b;
+b = getint();
     const int Nqn7m1 = 010;
     int yiersan = 456;
     int mAgIc_NuMbEr;

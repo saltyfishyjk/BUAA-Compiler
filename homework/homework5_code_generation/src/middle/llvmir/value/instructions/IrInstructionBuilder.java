@@ -441,7 +441,7 @@ public class IrInstructionBuilder {
         return ret;
     }
 
-    /* 传入表达式右值中的一个LVal，返回一个IrValue以供调用 */
+    /* 传入表达式中的一个LVal，返回一个IrValue以供调用 */
     private IrValue genIrInstructionFromLVal(LVal lval, boolean isLeft) {
         IrValue ret = null;
         String nameSysy = lval.getName();
@@ -451,7 +451,7 @@ public class IrInstructionBuilder {
             if (!(symbol instanceof SymbolCon || symbol instanceof SymbolVar)) {
                 System.out.println("ERROR in IrInstructionBuilder : should not reach here");
             } else {
-                /* TODO : 和Symbol存在一起的是指针，拿来使用需要生成load语句 */
+                /* 和Symbol存在一起的是指针，拿来使用需要生成load语句 */
                 if (isLeft) {
                     // 左值，说明应当直接取用
                     ret = symbol.getValue();
@@ -465,7 +465,7 @@ public class IrInstructionBuilder {
                     // 变量，需要从内存中读取
                     IrValueType type = IrIntegerType.get32(); // 语句的类型是32位
                     int cnt = this.functionCnt.getCnt();
-                    String retName = "_LocalVariable" + cnt;
+                    String retName = "%_LocalVariable" + cnt;
                     IrLoad irLoad = new IrLoad(type, ptr);
                     irLoad.setName(retName);
                     this.instructions.add(irLoad);
@@ -514,6 +514,11 @@ public class IrInstructionBuilder {
                 args.add(genIrInstructionFromExp(exp));
             }
             call = new IrCall(irFunction, args);
+        }
+        if (!call.getVoid()) {
+            int cnt = this.functionCnt.getCnt();
+            String name = "%_LocalVariable" + cnt;
+            call.setName(name);
         }
         this.instructions.add(call);
         return call;
@@ -579,7 +584,18 @@ public class IrInstructionBuilder {
     }
 
     private void genIrInstructionFromStmtGetint() {
-        /* TODO : 待施工 */
+        LVal lval = this.stmtGetint.getLval();
+        IrValue left = genIrInstructionFromLVal(lval, true);
+        IrCall irCall = new IrCall("getint");
+        int cnt = this.functionCnt.getCnt();
+        String name = "%_LocalVariable" + cnt;
+        // 使用临时变量保存从标准输入流获取的输入
+        irCall.setName(name);
+        this.instructions.add(irCall);
+        // 将输入存回
+        /* left := right */
+        IrStore store = new IrStore(irCall, left);
+        this.instructions.add(store);
     }
 
     private void genIrInstructionFromStmtPrint() {

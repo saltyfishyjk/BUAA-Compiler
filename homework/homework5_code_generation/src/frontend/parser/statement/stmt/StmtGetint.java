@@ -39,4 +39,8 @@ public class StmtGetint implements StmtEle {
         sb.append(this.semicn.syntaxOutput());
         return sb.toString();
     }
+
+    public LVal getLval() {
+        return this.lval;
+    }
 }
