@@ -612,7 +612,7 @@ public class IrInstructionBuilder {
             IrCall irCall;
             if (c == '%') {
                 IrValue value = genIrInstructionFromExp(exps.get(cnt));
-                value.setName("i32 " + value.getName());
+                // value.setName("i32 " + value.getName());
                 irCall = new IrCall("@putint", value);
                 cnt += 1;
                 i += 1;
