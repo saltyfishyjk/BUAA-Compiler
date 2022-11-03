@@ -26,6 +26,10 @@ public class IrModule implements IrNode {
     @Override
     public ArrayList<String> irOutput() {
         ArrayList<String> ret = new ArrayList<>();
+        String s = "declare i32 @getint()\n" +
+                "declare void @putint(i32)\n" +
+                "declare void @putch(i32)\n\n";
+        ret.add(s);
         for (IrGlobalVariable index : globalVariables) {
             ArrayList<String> temp = index.irOutput();
             if (temp != null && temp.size() != 0) {

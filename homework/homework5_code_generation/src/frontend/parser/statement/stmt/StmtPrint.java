@@ -52,4 +52,12 @@ public class StmtPrint implements StmtEle {
         sb.append(this.semicn.syntaxOutput());
         return sb.toString();
     }
+
+    public FormatString getFormatString() {
+        return this.formatString;
+    }
+
+    public ArrayList<Exp> getExps() {
+        return exps;
+    }
 }

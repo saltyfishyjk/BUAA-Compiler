@@ -39,11 +39,29 @@ public class IrCall extends IrInstruction {
         // this.setName(function.getName());
     }
 
-    /* 处理getint() */
+    /* 处理getint */
     public IrCall(String functionName) {
         super(IrInstructionType.Call, IrIntegerType.get32(), 0);
         this.functionName = functionName;
         this.retVoid = false;
+    }
+
+    /* 处理putch(i32)*/
+    public IrCall(String functionName, char c) {
+        super(IrInstructionType.Call, IrVoidType.getVoidType(), 2);
+        this.functionName = functionName;
+        this.retVoid = true;
+        IrValue value = new IrValue(IrIntegerType.get32(), "i32 " + String.valueOf((int)c));
+        this.setOperand(value, 1);
+    }
+
+    /* 处理putint(i32)*/
+    public IrCall(String functionName, IrValue value) {
+        super(IrInstructionType.Call, IrVoidType.getVoidType(), 2);
+        this.functionName = functionName;
+        this.retVoid = true;
+        //  value = new IrValue(IrIntegerType.get32(), String.valueOf(num));
+        this.setOperand(value, 1);
     }
 
     public IrFunction getFunction() {
@@ -68,11 +86,12 @@ public class IrCall extends IrInstruction {
             // 有参数
             int len = this.getNumOp();
             for (int i = 1; i < len; i++) {
-                ArrayList<String> arg = this.getOperand(i).irOutput();
+                /*ArrayList<String> arg = this.getOperand(i).irOutput();
                 if (arg == null || arg.size() != 1) {
                     System.out.println("ERROR in IrCall : should not reach here");
                 }
-                sb.append(arg.get(0));
+                sb.append(arg.get(0));*/
+                sb.append(this.getOperand(i).getName());
                 if (i != len - 1) {
                     sb.append(", ");
                 }

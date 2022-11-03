@@ -40,6 +40,7 @@ import frontend.parser.statement.stmt.StmtPrint;
 import frontend.parser.statement.stmt.StmtReturn;
 import frontend.lexer.TokenType;
 
+import frontend.parser.terminal.FormatString;
 import middle.llvmir.IrValue;
 import middle.llvmir.type.IrIntegerType;
 import middle.llvmir.type.IrValueType;
@@ -586,7 +587,7 @@ public class IrInstructionBuilder {
     private void genIrInstructionFromStmtGetint() {
         LVal lval = this.stmtGetint.getLval();
         IrValue left = genIrInstructionFromLVal(lval, true);
-        IrCall irCall = new IrCall("getint");
+        IrCall irCall = new IrCall("@getint");
         int cnt = this.functionCnt.getCnt();
         String name = "%_LocalVariable" + cnt;
         // 使用临时变量保存从标准输入流获取的输入
@@ -599,7 +600,30 @@ public class IrInstructionBuilder {
     }
 
     private void genIrInstructionFromStmtPrint() {
-        /* TODO : 待施工 */
+        FormatString formatString = this.stmtPrint.getFormatString();
+        ArrayList<Exp> exps = this.stmtPrint.getExps();
+        Token tokenString = formatString.getToken();
+        String string = tokenString.getContent();
+        char[] chars = string.substring(1, string.length() - 1).toCharArray();
+        int len = chars.length;
+        int cnt = 0;
+        for (int i = 0; i < len; i++) {
+            char c = chars[i];
+            IrCall irCall;
+            if (c == '%') {
+                IrValue value = genIrInstructionFromExp(exps.get(cnt));
+                value.setName("i32 " + value.getName());
+                irCall = new IrCall("@putint", value);
+                cnt += 1;
+                i += 1;
+            } else if (c == '\\') {
+                irCall = new IrCall("@putch", '\n');
+                i += 1;
+            } else {
+                irCall = new IrCall("@putch", c);
+            }
+            this.instructions.add(irCall);
+        }
     }
 
     private void genIrInstructionFromStmtExp() {

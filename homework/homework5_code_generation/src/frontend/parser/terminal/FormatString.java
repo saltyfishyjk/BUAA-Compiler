@@ -32,4 +32,8 @@ public class FormatString implements SyntaxNode {
     public int getLineNum() {
         return this.token.getLineNum();
     }
+
+    public Token getToken() {
+        return token;
+    }
 }

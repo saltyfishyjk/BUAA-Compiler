@@ -99,7 +99,7 @@ public class IrFunction extends IrValue implements IrNode {
             /* TODO : 检查正确性 */
             functionName.replace(len - 2, len - 1, "");
         }
-        functionName.append(") {\n");
+        functionName.append(") #0 {\n");
         ArrayList<String> ret = new ArrayList<>();
         ret.add(functionName.toString());
         /* 基本块 */
@@ -112,6 +112,28 @@ public class IrFunction extends IrValue implements IrNode {
         /* 函数结尾大括号 */
         String functionEnd = "}\n";
         ret.add(functionEnd);
+
+        ArrayList<String> temp = new ArrayList<>();
+
+        for (String s : ret) {
+            if (s.contains("dso_local")) {
+                temp.add(s);
+            }
+        }
+
+        for (String s : ret) {
+            if (s.contains("alloca") && !(s.contains("dso_local"))) {
+                temp.add(s);
+            }
+        }
+        for (String s : ret) {
+            if (!s.contains("alloca") && !(s.contains("dso_local"))) {
+                temp.add(s);
+            }
+        }
+
+        ret = temp;
+
         return ret;
     }
 }
