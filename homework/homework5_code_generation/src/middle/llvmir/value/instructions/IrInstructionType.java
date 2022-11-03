@@ -15,6 +15,7 @@ public enum IrInstructionType {
     Sub,// -
     Mul,// *
     Div,// /
+    Mod,// %
     /* Logic Binary */
     Lt, // <
     Le, // <=

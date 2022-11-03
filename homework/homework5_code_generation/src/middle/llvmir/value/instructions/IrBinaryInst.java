@@ -63,6 +63,9 @@ public class IrBinaryInst extends IrInstruction {
             case Div:
                 sb.append("sdiv ");
                 break;
+            case Mod:
+                sb.append("srem ");
+                break;
             default:
                 System.out.println("ERROR in IrBinaryInst : should not reach here");
                 break;
