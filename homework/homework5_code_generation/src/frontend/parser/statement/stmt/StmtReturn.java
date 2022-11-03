@@ -46,4 +46,12 @@ public class StmtReturn implements StmtEle {
     public int getReturnLineNum() {
         return this.returnTk.getLineNum();
     }
+
+    public Exp getExp() {
+        return exp;
+    }
+
+    public boolean hasExp() {
+        return !(this.exp == null);
+    }
 }

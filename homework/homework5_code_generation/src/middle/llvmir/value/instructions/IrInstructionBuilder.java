@@ -47,8 +47,10 @@ import middle.llvmir.value.basicblock.IrBasicBlock;
 import middle.llvmir.value.function.IrFunction;
 import middle.llvmir.value.function.IrFunctionCnt;
 import middle.llvmir.value.instructions.memory.IrAlloca;
+import middle.llvmir.value.instructions.memory.IrLoad;
 import middle.llvmir.value.instructions.memory.IrStore;
 import middle.llvmir.value.instructions.terminator.IrCall;
+import middle.llvmir.value.instructions.terminator.IrRet;
 import middle.symbol.Symbol;
 import middle.symbol.SymbolCon;
 import middle.symbol.SymbolTable;
@@ -428,7 +430,7 @@ public class IrInstructionBuilder {
         IrValue ret = null;
         if (expEle instanceof LVal) {
             LVal lval = (LVal)expEle;
-            ret = genIrInstructionFromLVal(lval);
+            ret = genIrInstructionFromLVal(lval, false);
         } else if (expEle instanceof Number) {
             Number number = (Number)expEle;
             ret = genIrInstructionFromNumber(number);
@@ -440,16 +442,35 @@ public class IrInstructionBuilder {
     }
 
     /* 传入表达式右值中的一个LVal，返回一个IrValue以供调用 */
-    private IrValue genIrInstructionFromLVal(LVal lval) {
+    private IrValue genIrInstructionFromLVal(LVal lval, boolean isLeft) {
         IrValue ret = null;
-        String name = lval.getName();
+        String nameSysy = lval.getName();
         int dimension = lval.getDimension();
         if (dimension == 0) {
-            Symbol symbol = this.symbolTable.getSymbol(name);
+            Symbol symbol = this.symbolTable.getSymbol(nameSysy);
             if (!(symbol instanceof SymbolCon || symbol instanceof SymbolVar)) {
                 System.out.println("ERROR in IrInstructionBuilder : should not reach here");
             } else {
-                ret = symbol.getValue();
+                /* TODO : 和Symbol存在一起的是指针，拿来使用需要生成load语句 */
+                if (isLeft) {
+                    // 左值，说明应当直接取用
+                    ret = symbol.getValue();
+                } else {
+                    // 非左值
+                    // 局部常量，直接变成数字
+                    IrValue ptr = symbol.getValue();
+                    if (!(ptr.getName().contains("%") || ptr.getName().contains("@"))) {
+                        return ptr;
+                    }
+                    // 变量，需要从内存中读取
+                    IrValueType type = IrIntegerType.get32(); // 语句的类型是32位
+                    int cnt = this.functionCnt.getCnt();
+                    String retName = "_LocalVariable" + cnt;
+                    IrLoad irLoad = new IrLoad(type, ptr);
+                    irLoad.setName(retName);
+                    this.instructions.add(irLoad);
+                    return irLoad;
+                }
             }
         } else if (dimension == 1) {
             /* TODO : 本次作业不涉及数组 */
@@ -530,7 +551,7 @@ public class IrInstructionBuilder {
     private void genIrInstructionFromStmtAssign() {
         LVal lval = stmtAssign.getLval();
         Exp exp = stmtAssign.getExp();
-        IrValue left = genIrInstructionFromLVal(lval);
+        IrValue left = genIrInstructionFromLVal(lval, true);
         IrValue right = genIrInstructionFromExp(exp);
         /* left := right */
         IrStore store = new IrStore(right, left);
@@ -546,7 +567,15 @@ public class IrInstructionBuilder {
     }
 
     private void genIrInstructionFromStmtReturn() {
-        /* TODO : 待施工 */
+        IrRet ret;
+        if (this.stmtReturn.hasExp()) {
+            Exp exp = this.stmtReturn.getExp();
+            IrValue retVar = genIrInstructionFromExp(exp);
+            ret = new IrRet(retVar);
+        } else {
+            ret = new IrRet();
+        }
+        this.instructions.add(ret);
     }
 
     private void genIrInstructionFromStmtGetint() {
