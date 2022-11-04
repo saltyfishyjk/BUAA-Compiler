@@ -47,7 +47,7 @@ public class FuncRParams implements SyntaxNode {
 
     public ArrayList<Exp> getExps() {
         ArrayList<Exp> temp = new ArrayList<>();
-        temp.add(this.first);
+        //temp.add(this.first);
         if (this.exps != null) {
             temp.addAll(this.exps);
         }
