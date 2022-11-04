@@ -158,7 +158,7 @@ public class IrFunctionBuilder {
         // 获取当前参数的维度
         int dimension = funcFParam.getDimension();
         if (dimension == 0) {
-            IrValue value = new IrValue(IrIntegerType.get32(), name);
+            IrValue value = new IrValue(IrIntegerType.get32(), name, true);
             SymbolVar symbolVar = new SymbolVar(funcFParam.getName(),
                     SymbolType.VAR, dimension, value);
             this.symbolTable.addSymol(symbolVar);

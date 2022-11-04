@@ -14,6 +14,7 @@ public class IrValue implements IrNode {
     private String name; //
     private boolean needName; // TODO
     private LinkedList<IrUse> uses;
+    boolean isParam = false;
 
     public IrValue(IrValueType valueType) {
         this.valueType = valueType;
@@ -25,6 +26,11 @@ public class IrValue implements IrNode {
     public IrValue(IrValueType valueType, String name) {
         this(valueType);
         this.name = name;
+    }
+
+    public IrValue(IrValueType valueType, String name, boolean isParam) {
+        this(valueType, name);
+        this.isParam = isParam;
     }
 
     public void setValueType(IrValueType valueType) {
@@ -56,5 +62,9 @@ public class IrValue implements IrNode {
         ArrayList<String> ret = new ArrayList<>();
         ret.add(this.name);
         return ret;
+    }
+
+    public boolean isParam() {
+        return this.isParam;
     }
 }

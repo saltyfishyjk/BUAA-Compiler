@@ -323,6 +323,7 @@ public class IrInstructionBuilder {
      * 由于这些临时变量是用完即弃的，所以不会被填入符号表，其传递形式为通过方法返回值
      */
 
+
     private IrValue genIrInstructionFromExp(Exp exp) {
         return genIrInstructionFromAddExp(exp.getAddExp());
     }
@@ -454,7 +455,7 @@ public class IrInstructionBuilder {
             if (!(symbol instanceof SymbolCon || symbol instanceof SymbolVar)) {
                 System.out.println("ERROR in IrInstructionBuilder : should not reach here");
             } else {
-                /* 和Symbol存在一起的是指针，拿来使用需要生成load语句 */
+                /* 和Symbol存在一起的局部变量是指针，拿来使用需要生成load语句 */
                 if (isLeft) {
                     // 左值，说明应当直接取用
                     ret = symbol.getValue();
@@ -465,7 +466,12 @@ public class IrInstructionBuilder {
                     if (!(ptr.getName().contains("%") || ptr.getName().contains("@"))) {
                         return ptr;
                     }
-                    // 变量，需要从内存中读取
+                    // 函数形参，直接返回
+                    if (ptr.isParam()) {
+                        return ptr;
+                    }
+
+                    // 局部变量，需要从内存中读取
                     IrValueType type = IrIntegerType.get32(); // 语句的类型是32位
                     int cnt = this.functionCnt.getCnt();
                     String retName = "%_LocalVariable" + cnt;
