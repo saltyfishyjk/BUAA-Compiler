@@ -42,7 +42,7 @@ public class IrRet extends IrInstruction {
         ArrayList<String> ret = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         if (this.isVoid) {
-            sb.append("ret\n");
+            sb.append("ret void\n");
         } else {
             sb.append("ret i32 " + this.getOperand(0).getName() + "\n");
         }
