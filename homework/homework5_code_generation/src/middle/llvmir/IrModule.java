@@ -44,4 +44,8 @@ public class IrModule implements IrNode {
         }
         return ret;
     }
+
+    public ArrayList<IrFunction> getFunctions() {
+        return functions;
+    }
 }

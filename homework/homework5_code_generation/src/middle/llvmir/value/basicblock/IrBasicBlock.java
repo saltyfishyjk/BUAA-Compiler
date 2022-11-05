@@ -38,4 +38,8 @@ public class IrBasicBlock extends IrValue implements IrNode {
         }
         return ret;
     }
+
+    public ArrayList<IrInstruction> getInstructions() {
+        return this.instructions;
+    }
 }

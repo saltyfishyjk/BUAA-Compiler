@@ -136,4 +136,8 @@ public class IrFunction extends IrValue implements IrNode {
 
         return ret;
     }
+
+    public ArrayList<IrBasicBlock> getBlocks() {
+        return this.blocks;
+    }
 }
