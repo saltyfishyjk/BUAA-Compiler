@@ -14,7 +14,7 @@ public class IrValue implements IrNode {
     private String name; //
     private boolean needName; // TODO
     private LinkedList<IrUse> uses;
-    boolean isParam = false;
+    private boolean isParam = false;
 
     public IrValue(IrValueType valueType) {
         this.valueType = valueType;

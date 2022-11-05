@@ -1,93 +1,22 @@
-// {Decl}
-const int a_c_num_1 = 1;
-const int a_c_num_2 = 2, a_c_num_3 = 3;
-const int a_c_num_4 = 4, a_c_num_5 = 5, a_c_num_6 = 6;
-int a_v_num;
-int a_v_num_1 = 1, a_v_num_2 = 2;
+int a=1;
 
-// {FuncDef}
-/*
-int getint() {
-    int n;
-    scanf("%d", &n);
-    return n;
-}
-*/
-void non_param_func() {
-    {}
-    return ;
+int foo(int b){
+
+    return b;
 }
 
-int one_param_func(int a) {
-    int n;
-    int n1 = 1, n2 = 2;
-    return a + 1;
+int foo2(int a, int b) {
+	return a + b;
 }
 
-int two_param_func(int a1, int a2) {
-    return a1 + a2;
-}
+int main(){
+    int b=2;
 
-int more_than_two_param_func(int a1, int a2, int a3) {
-    return a1 + a2 - a3;
-}
-
-// MainFuncDef
-int main() {
-
-// decl
-    const int m_c_num1 = 1, m_c_num2 = 2;
-    int m_v_num1 = 1;
-    int m_v_num;
-    int m_v_num2;
-    int m_v_num_3 = 3, m_v_num_4 = 4, m_v_num_5 = 5;
-
-// stmt
-
-    // LVal = Exp;
-    m_v_num2 = 2;
-    
-    // Block
-    {
-        // [Exp]
-        ;
-        1-1;
-        non_param_func();
-        more_than_two_param_func(m_v_num_3, m_v_num_4, m_v_num_5);
-    }
-
-
-
-    if (/*Cond*/1) {
-        int if_v_num3 = m_v_num2 + 1;
-        m_v_num = two_param_func(m_c_num1, if_v_num3);
-        if (m_v_num * m_c_num1 == m_c_num1 + if_v_num3 * 1) {
-            non_param_func();
-        } else {
-            a_v_num = a_c_num_1;
-            while (a_v_num <= a_c_num_3) {
-                a_v_num = one_param_func(a_v_num);
-                if (1 && a_v_num == a_c_num_3) {
-                    break;
-                }
-                // Cond
-                if (!0) {
-                    continue;
-                }
-            }
-        }
-    } 
-
-    // exp
-    m_v_num = (1) * one_param_func(a_c_num_1) / (a_c_num_2 + 2) % +-a_c_num_3 - +2 + -3;
-
-    // getint
-    m_v_num = getint();
-
-    // printf
-    printf("20373260\n");
-    printf("a_c_num_1:%d\n", a_c_num_1);
-    printf("a_c_num_2:%d, a_v_num_2:%d\n", a_c_num_2, a_v_num_2);
-
+    printf("hello world");
+    b=foo(a);
+	
+	int x = foo2(b, foo2(43, foo2(b, 2)));
+	
+		
     return 0;
 }

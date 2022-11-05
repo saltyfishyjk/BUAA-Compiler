@@ -323,7 +323,6 @@ public class IrInstructionBuilder {
      * 由于这些临时变量是用完即弃的，所以不会被填入符号表，其传递形式为通过方法返回值
      */
 
-
     private IrValue genIrInstructionFromExp(Exp exp) {
         return genIrInstructionFromAddExp(exp.getAddExp());
     }
