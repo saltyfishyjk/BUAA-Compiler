@@ -1,3 +1,5 @@
+import backend.MipsBuilder;
+import backend.MipsModule;
 import frontend.SourceFileLexer;
 import frontend.lexer.TokenLexer;
 import frontend.parser.CompUnit;
@@ -15,7 +17,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class Compiler {
-    private static int choose = 3; // 3 -> llvm_ir
+    /**
+     * 3 -> llvm_ir
+     * 4 -> mips
+     */
+    private static int choose = 4;
 
     public static void main(String[] args) {
         String inputFileName = "testfile.txt"; // 注意文件路径的书写，是以相对项目而言的
@@ -31,9 +37,12 @@ public class Compiler {
         CompUnit compUnit = compUnitParser.parseCompUnit();
         IrBuilder irBuilder = new IrBuilder(compUnit);
         IrModule irModule = irBuilder.genIrModule();
+        MipsBuilder mipsBuilder = new MipsBuilder(irModule);
+        MipsModule mipsModule = mipsBuilder.genMipsModule();
         //String outputFileName = "output.txt";
         String errorFileName = "error.txt";
         String llvmFileName = "llvm_ir.txt";
+        String mipsFileName = "mips.txt";
         if (choose == 2) {
             try {
                 // OutputStream outputStream = new FileOutputStream(outputFileName);
@@ -51,12 +60,6 @@ public class Compiler {
             }
         } else if (choose == 3) {
             ArrayList<String> irs = irModule.irOutput();
-            /*String ans = "declare i32 @getint()\n" +
-                    "declare i32 @getarray(i32*)\n" +
-                    "declare i32 @getch()\n" +
-                    "declare void @putint(i32)\n" +
-                    "declare void @putch(i32)\n" +
-                    "declare void @putarray(i32,i32*)";*/
             String ans = "";
             for (String s : irs) {
                 ans = ans + s;
@@ -70,6 +73,22 @@ public class Compiler {
                 }
             } catch (FileNotFoundException e) {
                 System.err.println("Can not open " + llvmFileName);
+            }
+        } else if (choose == 4) {
+            ArrayList<String> mips = mipsModule.mipsOutput();
+            String ans = "";
+            for (String index : mips) {
+                ans = ans + index;
+            }
+            try {
+                OutputStream outputStream = new FileOutputStream(mipsFileName);
+                try {
+                    outputStream.write(ans.getBytes());
+                } catch (IOException e) {
+                    System.err.println("Can not write " + mipsFileName);
+                }
+            } catch (FileNotFoundException e) {
+                System.err.println("Can not open " + mipsFileName);
             }
         }
         //System.out.println(tokenLexer.getTokenList());
