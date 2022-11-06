@@ -37,4 +37,8 @@ public class IrParam extends IrValue implements IrNode {
         ret.add(sb.toString());
         return ret;
     }
+
+    public int getRank() {
+        return rank;
+    }
 }

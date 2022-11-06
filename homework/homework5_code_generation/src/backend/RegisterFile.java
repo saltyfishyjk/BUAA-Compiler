@@ -14,13 +14,21 @@ import java.util.Stack;
  */
 public class RegisterFile {
     /* 该寄存器表所在符号表 */
-    MipsSymbolTable table;
+    private MipsSymbolTable table;
     /* 寄存器编号与是否有值的映射，如果为false说明没有有效值，可以直接用 */
     private HashMap<Integer, Boolean> hasValues;
     /* 寄存器编号与MipsSymbol的映射，获取对应符号的具体情况 */
     private HashMap<Integer, MipsSymbol> regs;
     private int regNum = 32;
-    private Stack<Integer> sRegUse = new Stack<>(); // 记录s寄存器的使用先后顺序
+    private Stack<Integer> sregUse = new Stack<>(); // 记录s寄存器的使用先后顺序
+
+    public RegisterFile() {
+        init();
+    }
+
+    public void setTable(MipsSymbolTable table) {
+        this.table = table;
+    }
 
     public RegisterFile(MipsSymbolTable table) {
         this.table = table;
@@ -46,11 +54,36 @@ public class RegisterFile {
         }
     }
 
+    /* 判断是否是$v寄存器 */
+    private boolean isVreg(int index) {
+        if (2 <= index && index <= 3) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /* 判断是否是$a寄存器 */
+    private boolean isAreg(int index) {
+        if (4 <= index && index <= 7) {
+            return  true;
+        } else {
+            return false;
+        }
+    }
+
+    /* 判断是否为$ra寄存器 */
+    private boolean isRareg(int index) {
+        return index == 31;
+    }
+
     /* 初始化 */
     private void init() {
+        this.hasValues = new HashMap<>();
+        this.regs = new HashMap<>();
         for (int i = 0; i < this.regNum; i++) {
-            if (isConReg(i) || isTempReg(i)) {
-                // 可以被程序分配的寄存器
+            if (isConReg(i) || isTempReg(i) || isAreg(i) || isVreg(i) || isRareg(i)) {
+                // 可以被程序分配的寄存器 or 不知道有没有值的寄存器
                 this.hasValues.put(i, false);
             } else {
                 // 不可以被分配的寄存器
@@ -67,7 +100,7 @@ public class RegisterFile {
         int freeReg = hasFreeReg(isTemp);
         if (freeReg != -1) {
             /* 找到了空闲寄存器，将寄存器编号压入use栈 */
-            this.sRegUse.push(freeReg);
+            this.sregUse.push(freeReg);
             /* 修改MipsSymbol状态 */
             symbol.setInReg(true); // 标记该Symbol已经在寄存器中
             symbol.setRegIndex(freeReg); // 记录该Symbol所在寄存器编号
@@ -84,7 +117,7 @@ public class RegisterFile {
                 return -1;
             }
             /* 弹出最旧的$s寄存器 */
-            int oldReg = this.sRegUse.pop();
+            int oldReg = this.sregUse.pop();
             MipsSymbol oldSymbol = this.regs.get(oldReg);
             if (oldSymbol.hasRam()) {
                 /* 已经分配内存 */
@@ -99,7 +132,7 @@ public class RegisterFile {
             oldSymbol.setRegIndex(-1);
             /* 修改寄存器表状态 */
             this.regs.put(oldReg, symbol);
-            this.sRegUse.push(oldReg);
+            this.sregUse.push(oldReg);
             /* 修改新加入符号状态 */
             symbol.setInReg(true);
             symbol.setRegIndex(oldReg);
@@ -119,7 +152,7 @@ public class RegisterFile {
     /* 写回可能是全局变量或局部变量 */
     private void writeBack(MipsSymbol symbol, MipsBasicBlock basicBlock) {
         int rt = symbol.getRegIndex();
-        int base = symbol.getBase(); // 默认以fp为base
+        int base = symbol.getBase(); // base可能为gp或fp
         int offset = symbol.getOffset();
         Sw sw = new Sw(rt, base, offset);
         basicBlock.addInstruction(sw);
@@ -151,5 +184,10 @@ public class RegisterFile {
         return -1; // 说明没有找到可以被直接使用的寄存器
     }
 
+    public void addSymbol(int reg, MipsSymbol symbol) {
+        /* 添加寄存器号到符号的映射 */
+        this.regs.put(reg, symbol);
+        this.hasValues.put(reg, true);
+    }
 
 }

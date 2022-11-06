@@ -12,7 +12,7 @@ public class MipsSymbol {
     private int regIndex; // 当inReg时，标记当前变量所在寄存器位置
     private boolean dirty; // 标记当需要释放该符号所对应的寄存器时，是否需要回写内存
     private boolean hasRam; // 标记当前符号是否拥有合法的offset
-    private int base; // 标记当前符号在内存中的基地址所在的寄存器，具体地，全局变量是gp，局部变量是fp
+    private int base; // gp=28, fp=30 标记当前符号在内存中的基地址所在的寄存器，具体地，全局变量是gp，局部变量是fp
     private int offset; // 标记当前符号在内存中相对于$base的偏移
     private boolean isTemp; // 标记当前符号是否是临时变量
     private boolean used; // 若本符号为临时变量，标记是否被使用过。由于LLVM IR是SSA，因此一旦被使用就可以free，且不用写回内存
@@ -40,6 +40,37 @@ public class MipsSymbol {
         this.dirty = true;
         this.hasRam = true;
         this.isTemp = false;
+    }
+
+    /* 为$a寄存器中的传入参数生成符号 */
+    public MipsSymbol(String name,
+                      int base,
+                      boolean inReg,
+                      int regIndex,
+                      boolean isTemp) {
+        this.name = name;
+        this.base = base;
+        this.inReg = inReg;
+        this.regIndex = regIndex;
+        this.isTemp = isTemp; // 应当为false
+        this.hasRam = false;
+        this.used = false;
+        this.dirty = true; // 需要写回内存
+    }
+
+    /* 为通过内存fp压栈的传入参数生成符号 */
+    public MipsSymbol(String name,
+                      int base,
+                      boolean inReg,
+                      boolean hasRam,
+                      int offset,
+                      boolean isTemp) {
+        this.name = name;
+        this.base = base;
+        this.inReg = inReg;
+        this.hasRam = hasRam;
+        this.offset = offset;
+        this.isTemp = isTemp;
     }
 
     public boolean isInReg() {

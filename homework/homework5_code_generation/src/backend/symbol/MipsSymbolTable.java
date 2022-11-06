@@ -22,7 +22,7 @@ public class MipsSymbolTable {
 
     public MipsSymbolTable(RegisterFile registerFile) {
         this.symbols = new HashMap<>();
-        this.registerFile = new RegisterFile(this);
+        this.registerFile = registerFile;
     }
 
     /* 查询LLVM IR符号是否已加入符号表 */
@@ -42,7 +42,8 @@ public class MipsSymbolTable {
         if (symbol.isInReg()) {
             return symbol.getRegIndex();
         } else {
-            return 1;
+            /* TODO */
+            return -1;
         }
         // return symbol.getRegIndex();
     }
