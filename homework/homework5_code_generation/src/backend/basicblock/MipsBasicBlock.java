@@ -3,16 +3,19 @@ package backend.basicblock;
 import backend.MipsNode;
 import backend.function.MipsFunction;
 import backend.instruction.MipsInstruction;
+import backend.symbol.MipsSymbolTable;
 
 import java.util.ArrayList;
 
 public class MipsBasicBlock implements MipsNode {
     private MipsFunction father; // 父MipsFunction
     private ArrayList<MipsInstruction> instructions;
+    private MipsSymbolTable table;
 
     public MipsBasicBlock(MipsFunction father) {
         this.father = father;
         this.instructions = new ArrayList<>();
+        this.table = this.father.getTable();
     }
 
     @Override
@@ -40,5 +43,9 @@ public class MipsBasicBlock implements MipsNode {
                 this.instructions.add(instruction);
             }
         }
+    }
+
+    public MipsSymbolTable getTable() {
+        return table;
     }
 }

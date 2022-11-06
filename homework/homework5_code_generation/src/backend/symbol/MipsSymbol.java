@@ -17,11 +17,16 @@ public class MipsSymbol {
     private boolean isTemp; // 标记当前符号是否是临时变量
     private boolean used; // 若本符号为临时变量，标记是否被使用过。由于LLVM IR是SSA，因此一旦被使用就可以free，且不用写回内存
 
+    /* 为IrAlloca生成符号 */
     public MipsSymbol(String name, int base) {
         this.name = name;
         this.inReg = false;
         this.regIndex = -1;
         this.base = base;
+        this.hasRam = false;
+        this.offset = 0;
+        this.isTemp = false;
+        this.used = false;
     }
 
     /* 当寄存器充足时，为该符号设置inReg = true, regIndex为对应的寄存器数字编号 */

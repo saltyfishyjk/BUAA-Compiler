@@ -85,4 +85,9 @@ public class MipsFunction implements MipsNode {
         ret.add("# ********** " + this.name + "函数结束 **********\n");
         return ret;
     }
+
+    public MipsSymbolTable getTable() {
+        return table;
+    }
+
 }

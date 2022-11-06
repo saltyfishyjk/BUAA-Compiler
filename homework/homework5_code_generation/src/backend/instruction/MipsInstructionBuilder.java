@@ -1,6 +1,8 @@
 package backend.instruction;
 
 import backend.basicblock.MipsBasicBlock;
+import backend.symbol.MipsSymbol;
+import backend.symbol.MipsSymbolTable;
 import middle.llvmir.value.instructions.IrBinaryInst;
 import middle.llvmir.value.instructions.IrInstruction;
 import middle.llvmir.value.instructions.memory.IrAlloca;
@@ -17,10 +19,12 @@ import java.util.ArrayList;
 public class MipsInstructionBuilder {
     private IrInstruction irInstruction;
     private MipsBasicBlock father; // 父BasicBlock
+    private MipsSymbolTable table;
 
     public MipsInstructionBuilder(MipsBasicBlock father, IrInstruction irInstruction) {
         this.irInstruction = irInstruction;
         this.father = father;
+        this.table = this.father.getTable();
     }
 
     public ArrayList<MipsInstruction> genMipsInstruction() {
@@ -44,8 +48,12 @@ public class MipsInstructionBuilder {
 
     /* IrAlloca -> MipsInstruction */
     private ArrayList<MipsInstruction> genMipsInstructionFromAlloca() {
+        /* alloca是LLVM IR中的变量声明语句，其本意是申请内存空间
+         * 在这里，我们为了提高性能，在alloca时仅将其加入符号表，暂时不为其分配寄存器和内存 */
         IrAlloca alloca = (IrAlloca)irInstruction;
-        /* TODO : 待施工 */
+        String name = alloca.getName();
+        MipsSymbol symbol = new MipsSymbol(name, 30);
+        insertSymbolTable(name, symbol);
         return null;
     }
 
@@ -77,5 +85,9 @@ public class MipsInstructionBuilder {
         IrStore store = (IrStore)irInstruction;
         /* TODO : 待施工 */
         return null;
+    }
+
+    private void insertSymbolTable(String name, MipsSymbol symbol) {
+        this.table.addSymbol(name, symbol);
     }
 }
