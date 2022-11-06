@@ -1,4 +1,5 @@
 int a=1;
+int b = 29;
 
 int foo(int b){
 

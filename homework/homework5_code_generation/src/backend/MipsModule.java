@@ -4,6 +4,7 @@ import backend.function.MipsFunction;
 import backend.instruction.Asciiz;
 import backend.instruction.J;
 import backend.instruction.Li;
+import backend.instruction.MipsInstruction;
 import backend.instruction.Nop;
 
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 public class MipsModule implements MipsNode {
     /* 由于是在遍历LLVM IR的过程中检索并获得.asciiz常量字符串，因此提供public添加方法 */
     private ArrayList<Asciiz> asciizs;
+    // 加载全局变量到内存的指令
+    private ArrayList<MipsInstruction> globals;
     private ArrayList<MipsFunction> functions;
     /* 加载函数运行栈 */
     private Li li;
@@ -32,6 +35,7 @@ public class MipsModule implements MipsNode {
     private void init() {
         this.asciizs = new ArrayList<>();
         this.functions = new ArrayList<>();
+        this.globals = new ArrayList<>();
         initLi();
         initjMain();
     }
@@ -53,6 +57,10 @@ public class MipsModule implements MipsNode {
         this.functions.add(function);
     }
 
+    public void addGlobal(MipsInstruction instruction) {
+        this.globals.add(instruction);
+    }
+
     @Override
     public ArrayList<String> mipsOutput() {
         ArrayList<String> ret = new ArrayList<>();
@@ -65,19 +73,24 @@ public class MipsModule implements MipsNode {
             ret.add(s);
         }
         /* 添加.text段 */
-        ret.add(enter);
-        ret.add("# text代码段\n.text\n");
+        ret.add("\n# text代码段\n.text\n");
         ArrayList<String> temp;
         /* 1. 写入函数运行栈基地址 */
-        ret.add(enter);
-        ret.add("# 写入函数运行栈基地址\n");
+        ret.add("\n# 写入函数运行栈基地址\n");
         temp = this.li.mipsOutput();
         for (String index : temp) {
             ret.add(index);
         }
-        /* TODO : 2. 将全局变量sw到内存 */
-
+        /* 2. 将全局变量sw到内存 */
+        ret.add("\n# 写入全局变量\n");
+        for (MipsInstruction instruction : globals) {
+            temp = instruction.mipsOutput();
+            for (String index : temp) {
+                ret.add(index);
+            }
+        }
         /* 3. 跳转到main函数 */
+        ret.add("\n# 跳转到main函数\n");
         temp = this.jmain.mipsOutput();
         for (String index : temp) {
             ret.add(index);

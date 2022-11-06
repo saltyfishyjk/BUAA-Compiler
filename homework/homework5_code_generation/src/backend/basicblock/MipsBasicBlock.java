@@ -21,6 +21,9 @@ public class MipsBasicBlock implements MipsNode {
         ret.add("\n# New Basic Block\n");
         ArrayList<String> temp;
         for (MipsInstruction instruction : instructions) {
+            if (instruction == null) {
+                continue;
+            }
             temp = instruction.mipsOutput();
             if (temp != null && temp.size() > 0) {
                 for (String index : temp) {

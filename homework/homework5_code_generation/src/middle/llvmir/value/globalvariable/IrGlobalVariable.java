@@ -85,4 +85,10 @@ public class IrGlobalVariable extends IrUser implements IrNode {
         }
         return ret;
     }
+
+    /* 返回i32的初值 */
+    public int getIntInit() {
+        Integer integer = Integer.valueOf(this.init.irOutput().get(0));
+        return integer.intValue();
+    }
 }

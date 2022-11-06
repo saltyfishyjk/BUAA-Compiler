@@ -48,4 +48,8 @@ public class IrModule implements IrNode {
     public ArrayList<IrFunction> getFunctions() {
         return functions;
     }
+
+    public ArrayList<IrGlobalVariable> getGlobalVariables() {
+        return globalVariables;
+    }
 }
