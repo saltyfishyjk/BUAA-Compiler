@@ -139,14 +139,30 @@ public class MipsInstructionBuilder {
     private ArrayList<MipsInstruction> genMipsInstructionFromCall() {
         IrCall call = (IrCall)irInstruction;
         String functionName = call.getFunctionName();
+        ArrayList<MipsInstruction> ret = new ArrayList<>();
         if (functionName.equals("@putint")) {
             // putint
+            Move move = new Move(3, 4);
+            ret.add(move);
+            Li li = new Li(2, 1);
+            ret.add(li);
+            String name = call.getOperand(1).getName();
+            int reg = this.table.getRegIndex(name, this.father);
+            move = new Move(4, reg);
+            ret.add(move);
+            Syscall syscall = new Syscall();
+            ret.add(syscall);
+            move = new Move(4, 3);
+            ret.add(move);
         } else if (functionName.equals("@putch")) {
+            // 不应当进入本分支，因为打印字符串已经在MipsBasicBlockBuilder中处理完了
             System.out.println("ERROR in Mips InstructionBuilder : should not reach here");
+        } else {
+            // 普通函数调用
         }
 
         /* TODO : 待施工 */
-        return null;
+        return ret;
     }
 
     /* IrLoad -> MipsInstruction */

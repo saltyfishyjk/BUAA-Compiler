@@ -71,8 +71,9 @@ public class MipsBasicBlockBuilder {
                     move = new Move(4, 3);
                     output.add(move);
                     block.addInstruction(output);
+                    continue;
                 }
-                continue;
+
             }
             MipsInstructionBuilder builder = new MipsInstructionBuilder(block, instruction);
             block.addInstruction(builder.genMipsInstruction());
