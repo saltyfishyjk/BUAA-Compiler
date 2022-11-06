@@ -32,7 +32,7 @@ int foo3(int a, int b, int c, int d, int e, int f) {
 
 int main(){
     int b=2;
-
+	printf("b = %demmm", b);
     printf("hello world");
     b=foo(a);
 	

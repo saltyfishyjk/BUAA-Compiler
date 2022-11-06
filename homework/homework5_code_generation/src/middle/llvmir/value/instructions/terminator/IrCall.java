@@ -110,4 +110,7 @@ public class IrCall extends IrInstruction {
         return this.retVoid;
     }
 
+    public String getFunctionName() {
+        return functionName;
+    }
 }

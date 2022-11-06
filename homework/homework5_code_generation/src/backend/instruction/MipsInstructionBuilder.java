@@ -138,6 +138,13 @@ public class MipsInstructionBuilder {
 
     private ArrayList<MipsInstruction> genMipsInstructionFromCall() {
         IrCall call = (IrCall)irInstruction;
+        String functionName = call.getFunctionName();
+        if (functionName.equals("@putint")) {
+            // putint
+        } else if (functionName.equals("@putch")) {
+            System.out.println("ERROR in Mips InstructionBuilder : should not reach here");
+        }
+
         /* TODO : 待施工 */
         return null;
     }

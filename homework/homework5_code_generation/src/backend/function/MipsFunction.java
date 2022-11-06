@@ -90,4 +90,7 @@ public class MipsFunction implements MipsNode {
         return table;
     }
 
+    public MipsModule getFather() {
+        return father;
+    }
 }
