@@ -2,6 +2,10 @@ int a=1;
 int b = 29;
 int glob_b = 1;
 
+int foo5() {
+	return 1;
+}
+
 int foo4() {
 	int b = a + 8;
 	// printf("b = %d\n", b); 

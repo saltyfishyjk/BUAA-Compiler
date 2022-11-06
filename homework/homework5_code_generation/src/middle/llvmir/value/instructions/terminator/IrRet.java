@@ -49,4 +49,8 @@ public class IrRet extends IrInstruction {
         ret.add(sb.toString());
         return ret;
     }
+
+    public boolean isVoid() {
+        return isVoid;
+    }
 }

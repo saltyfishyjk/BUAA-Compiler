@@ -19,6 +19,7 @@ public class Jr extends MipsInstruction {
         sb.append(this.getInstName() + " ");
         sb.append(RegisterName.getName(regNum) + "\n");
         ArrayList<String> ret = new ArrayList<>();
+        ret.add(sb.toString());
         return ret;
     }
 }

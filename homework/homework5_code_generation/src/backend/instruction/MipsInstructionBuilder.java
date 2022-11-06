@@ -170,8 +170,26 @@ public class MipsInstructionBuilder {
 
     private ArrayList<MipsInstruction> genMipsInstructionFromRet() {
         IrRet ret = (IrRet)irInstruction;
-        /* TODO : 待施工 */
-        return null;
+        ArrayList<MipsInstruction> ans = new ArrayList<>();
+        if (!ret.isVoid()) {
+            /* 返回值为int的函数需要将返回值存入$v0即$2 */
+            String name = ret.getOperand(0).getName();
+            int reg;
+            if (isConst(name)) {
+                // 常数，需要从寄存器表获取一个$t并使用li将该立即数加载进去
+                // 然后使用move进行赋值
+                // 这里的Symbol不应当被加入符号表
+                reg = this.registerFile.getReg(true, new MipsSymbol("temp", -1), this.father);
+                Li li = new Li(reg, Integer.valueOf(name));
+                ans.add(li);
+            } else {
+                // 变量
+                reg = this.table.getRegIndex(name, this.father);
+            }
+            Move move = new Move(2, reg);
+            ans.add(move);
+        }
+        return ans;
     }
 
     /* IrStore -> MipsInstruction */
@@ -198,7 +216,7 @@ public class MipsInstructionBuilder {
             // 变量
             leftReg = this.table.getRegIndex(rightName, this.father);
         }
-        /* TODO : 获取右操作数的寄存器 */
+        /* TODO : 需要检查 获取右操作数的寄存器 */
         rightReg = this.table.getRegIndex(rightName, this.father);
         /* TODO : 待施工 */
         Move move = new Move(rightReg, leftReg);
