@@ -29,14 +29,23 @@ int foo3(int a, int b, int c, int d, int e, int f) {
 	return ans;
 }
 
+int add(int a, int b) {
+	int c = a + b;
+	return c;
+}
 
 int main(){
     int b=2;
 	printf("b = %demmm\n", b);
     printf("hello world");
+	int i = 1;
+	int j = 2;
+	int k = add(i,j);
+	printf("k=%d\n", k);
     // b=foo(a);
 	
-	int x = foo2(b, foo2(43, foo2(b, 2)));
+	// int x = foo2(b, foo2(43, foo2(b, 2)));
+	// int x = foo2(b,b);
 	
 		
     return 0;

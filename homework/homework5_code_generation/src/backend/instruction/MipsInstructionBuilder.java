@@ -159,9 +159,81 @@ public class MipsInstructionBuilder {
             System.out.println("ERROR in Mips InstructionBuilder : should not reach here");
         } else {
             // 普通函数调用
+            ret = genMipsInstructionFromSelfDefineFunc();
+        }
+        return ret;
+    }
+
+    /* 调用自定义函数 */
+    private ArrayList<MipsInstruction> genMipsInstructionFromSelfDefineFunc() {
+        IrCall call = (IrCall)irInstruction;
+        ArrayList<MipsInstruction> ret = new ArrayList<>();
+        /* TODO : 1. 保存现场到$sp */
+        int spOffset = 0;
+        for (int i = 2; i < 32; i++) {
+            if (26 <= i && i <= 30) {
+                continue;
+            }
+            if (this.registerFile.inReg(i) ||  i == 31) {
+                Sw sw = new Sw(i, 29, spOffset);
+                ret.add(sw);
+                spOffset -= 4;
+            }
+        }
+        /* TODO : 2. 实参存入寄存器与内存（如果有）$fp */
+        ArrayList<IrValue> params = call.getParams();
+        int len = params.size();
+        /* 将子函数fp装入v1 */
+        Addi addi = new Addi(3, 30, this.table.getFpOffset());
+        ret.add(addi);
+        /* TODO : 可能有风险（寄存器表） */
+        for (int i = 0; i < 4 && i < len; i++) {
+            IrValue param = params.get(i);
+            String name = param.getName();
+            int reg = this.table.getRegIndex(name, this.father);
+            Move move = new Move(4 + i, reg);
+            ret.add(move);
+        }
+        int fpOffset = 0;
+        for (int i = 4; i < len; i++) {
+            IrValue param = params.get(i);
+            String name = param.getName();
+            int reg = this.table.getRegIndex(name, this.father);
+            Sw sw = new Sw(reg, 3, fpOffset);
+            ret.add(sw);
+            fpOffset += 4;
         }
 
-        /* TODO : 待施工 */
+        /* TODO : 3. 修改$fp, $sp */
+        /* fp */
+        Move move = new Move(30, 3);
+        ret.add(move);
+        /* sp */
+        addi = new Addi(29, 29, spOffset);
+        ret.add(addi);
+
+
+        /* TODO : 4. jal跳转 */
+        Jal jal = new Jal(call.getFunctionName().substring(1));
+        ret.add(jal);
+
+        /* TODO : 5. 恢复$fp现场，本质上是通过MipsSymbolTable的fpOffset自减 */
+        addi = new Addi(30, 30, -fpOffset);
+        ret.add(addi);
+        /* TODO : 6. 恢复$sp现场，本质上是通过讲$sp自增至原值，将$ra和其他保存寄存器的值恢复 */
+        addi = new Addi(29, 29, -spOffset);
+        ret.add(addi);
+        for (int i = 31; i >= 2; i--) {
+            if (26 <= i && i <= 30) {
+                continue;
+            }
+            if (this.registerFile.inReg(i) || i == 31) {
+                spOffset += 4;
+                Lw lw = new Lw(i, 29, spOffset);
+                ret.add(lw);
+            }
+        }
+
         return ret;
     }
 

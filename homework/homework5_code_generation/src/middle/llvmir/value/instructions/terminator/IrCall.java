@@ -113,4 +113,13 @@ public class IrCall extends IrInstruction {
     public String getFunctionName() {
         return functionName;
     }
+
+    public ArrayList<IrValue> getParams() {
+        int len = this.getNumOp();
+        ArrayList<IrValue> ret = new ArrayList<>();
+        for (int i = 1; i < len; i++) {
+            ret.add(this.getOperand(i));
+        }
+        return  ret;
+    }
 }

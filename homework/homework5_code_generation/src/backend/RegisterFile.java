@@ -197,4 +197,8 @@ public class RegisterFile {
         this.hasValues.put(reg, true);
     }
 
+    public boolean inReg(int regNum) {
+        return this.hasValues.get(regNum);
+    }
+
 }
