@@ -26,8 +26,21 @@ public class Asciiz extends MipsInstruction {
     public ArrayList<String> mipsOutput() {
         ArrayList<String> ret = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
+        this.content = this.content.replaceAll("\n", "\\\\n");
         sb.append(this.name + ": .asciiz \"" + content + "\"\n");
         ret.add(sb.toString());
         return ret;
+    }
+
+    public void setCnt(int cnt) {
+        this.cnt = cnt;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getContent() {
+        return content;
     }
 }

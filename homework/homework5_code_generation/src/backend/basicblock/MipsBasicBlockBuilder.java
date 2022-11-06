@@ -3,7 +3,12 @@ package backend.basicblock;
 import backend.function.MipsFunction;
 import backend.instruction.Asciiz;
 import backend.instruction.AsciizCnt;
+import backend.instruction.La;
+import backend.instruction.Li;
+import backend.instruction.MipsInstruction;
 import backend.instruction.MipsInstructionBuilder;
+import backend.instruction.Move;
+import backend.instruction.Syscall;
 import middle.llvmir.IrValue;
 import middle.llvmir.value.basicblock.IrBasicBlock;
 import middle.llvmir.value.instructions.IrInstruction;
@@ -41,7 +46,7 @@ public class MipsBasicBlockBuilder {
                             ((IrCall) temp).getFunctionName().equals("@putch")) {
                         IrValue value = temp.getOperand(1);
                         sb.append(String.valueOf((char)Integer.valueOf(value.getName()).
-                                intValue()));
+                                    intValue()));
                         i += 1;
                         if (i >= len) {
                             break;
@@ -51,8 +56,23 @@ public class MipsBasicBlockBuilder {
                     i -= 1;
                     int cnt = AsciizCnt.getCnt();
                     Asciiz asciiz = new Asciiz("str_" + cnt, sb.toString());
+                    asciiz.setCnt(cnt);
+                    /* 需要li $v0, 4和la $a0, label，为了安全，将$a0挪到$v1，结束后再挪回来 */
                     this.father.getFather().addAsciiz(asciiz);
+                    ArrayList<MipsInstruction> output = new ArrayList<>();
+                    Move move = new Move(3, 4);
+                    output.add(move);
+                    Li li = new Li(2, 4);
+                    output.add(li);
+                    La la = new La(4, asciiz.getName());
+                    output.add(la);
+                    Syscall syscall = new Syscall();
+                    output.add(syscall);
+                    move = new Move(4, 3);
+                    output.add(move);
+                    block.addInstruction(output);
                 }
+                continue;
             }
             MipsInstructionBuilder builder = new MipsInstructionBuilder(block, instruction);
             block.addInstruction(builder.genMipsInstruction());

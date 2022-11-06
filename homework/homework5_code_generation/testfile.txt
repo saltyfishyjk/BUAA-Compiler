@@ -32,9 +32,9 @@ int foo3(int a, int b, int c, int d, int e, int f) {
 
 int main(){
     int b=2;
-	printf("b = %demmm", b);
+	printf("b = %demmm\n", b);
     printf("hello world");
-    b=foo(a);
+    // b=foo(a);
 	
 	int x = foo2(b, foo2(43, foo2(b, 2)));
 	
