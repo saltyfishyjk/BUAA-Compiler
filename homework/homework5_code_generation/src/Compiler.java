@@ -22,6 +22,7 @@ public class Compiler {
      * 4 -> mips
      */
     private static int choose = 4;
+    private static boolean testllvm = true;
 
     public static void main(String[] args) {
         String inputFileName = "testfile.txt"; // 注意文件路径的书写，是以相对项目而言的
@@ -58,7 +59,7 @@ public class Compiler {
                 // System.err.println("Can not open " + outputFileName);
                 System.err.println("Can not open " + errorFileName);
             }
-        } else if (choose == 3) {
+        } else if (choose == 3 || testllvm) {
             ArrayList<String> irs = irModule.irOutput();
             String ans = "";
             for (String s : irs) {
@@ -74,7 +75,8 @@ public class Compiler {
             } catch (FileNotFoundException e) {
                 System.err.println("Can not open " + llvmFileName);
             }
-        } else if (choose == 4) {
+        }
+        if (choose == 4) {
             ArrayList<String> mips = mipsModule.mipsOutput();
             String ans = "";
             for (String index : mips) {

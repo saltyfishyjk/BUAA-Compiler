@@ -78,6 +78,25 @@ public class MipsSymbol {
         this.isTemp = isTemp;
     }
 
+    /* 万能生成器 */
+    public MipsSymbol(String name,
+                      int base,
+                      boolean inReg,
+                      int regIndex,
+                      boolean hasRam,
+                      int offset,
+                      boolean isTemp,
+                      boolean used) {
+        this.name = name;
+        this.base = base;
+        this.inReg = inReg;
+        this.regIndex = regIndex;
+        this.hasRam = hasRam;
+        this.offset = offset;
+        this.isTemp = isTemp;
+        this.used = used;
+    }
+
     public boolean isInReg() {
         return this.inReg;
     }

@@ -99,4 +99,12 @@ public class IrBinaryInst extends IrInstruction {
         return ret;
     }
 
+    public IrValue getLeft() {
+        return this.getOperand(0);
+    }
+
+    public IrValue getRight() {
+        return this.getOperand(1);
+    }
+
 }

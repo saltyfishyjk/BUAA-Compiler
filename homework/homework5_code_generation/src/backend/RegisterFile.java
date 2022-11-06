@@ -101,8 +101,11 @@ public class RegisterFile {
                       MipsBasicBlock basicBlock) {
         int freeReg = hasFreeReg(isTemp);
         if (freeReg != -1) {
-            /* 找到了空闲寄存器，将寄存器编号压入use栈 */
-            this.sregUse.push(freeReg);
+            if (!isTemp) {
+                /* 找到了空闲寄存器，将寄存器编号压入use栈 */
+                this.sregUse.push(freeReg);
+
+            }
             /* 修改MipsSymbol状态 */
             symbol.setInReg(true); // 标记该Symbol已经在寄存器中
             symbol.setRegIndex(freeReg); // 记录该Symbol所在寄存器编号

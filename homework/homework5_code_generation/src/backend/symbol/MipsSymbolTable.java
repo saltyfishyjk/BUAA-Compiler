@@ -1,6 +1,7 @@
 package backend.symbol;
 
 import backend.RegisterFile;
+import backend.basicblock.MipsBasicBlock;
 import backend.instruction.MipsInstruction;
 import backend.symbol.MipsSymbol;
 
@@ -36,35 +37,23 @@ public class MipsSymbolTable {
     }
 
     /* 获取LLVM IR变量对应的符号的寄存器 */
-    public int getRegIndex(String name) {
+    public int getRegIndex(String name, MipsBasicBlock basicBlock) {
         MipsSymbol symbol = this.symbols.get(name);
         /* 如果MipsSymbol直接在寄存器中，返回 */
         if (symbol.isInReg()) {
             return symbol.getRegIndex();
         } else {
-            /* TODO */
-            return -1;
+            int reg = this.registerFile.getReg(symbol.isTemp(), symbol, basicBlock);
+            return reg;
         }
         // return symbol.getRegIndex();
     }
 
     /* 查询给定LLVM IR符号是否位于寄存器 */
     /* 执行本命令前须判断该符号已位于符号表中 */
-    private boolean inReg(String name) {
+    public boolean inReg(String name) {
         MipsSymbol symbol = this.symbols.get(name);
         return symbol.isInReg();
-    }
-
-    /* 获取一个可用的寄存器编号，可能涉及内存交换等 */
-    private int getFreeRegIndex(boolean isTemp) {
-        /* 如果isTemp，应当在t0-t9即8-15和24-25号寄存器中查找 */
-        if (isTemp) {
-            /* TODO : 待施工 */
-        } else {
-            /* 如果非isTemp，应当在s0-s7即16-23号寄存器中查找 */
-            /* TODO : 待施工 */
-        }
-        return -1; // TODO : 待施工
     }
 
     /* 将LLVM IR符号从内存加载到寄存器中 */
@@ -81,5 +70,18 @@ public class MipsSymbolTable {
 
     public int getFpOffset() {
         return fpOffset;
+    }
+
+    public RegisterFile getRegisterFile() {
+        return registerFile;
+    }
+
+    public MipsSymbol getSymbol(String name) {
+        if (hasSymbol(name)) {
+            return this.symbols.get(name);
+        } else {
+            System.out.println("ERROR in MipsSymbolTable : should not reach here");
+        }
+        return null;
     }
 }

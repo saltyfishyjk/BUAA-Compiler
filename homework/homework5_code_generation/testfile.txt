@@ -1,8 +1,18 @@
 int a=1;
 int b = 29;
+int glob_b = 1;
 
+int foo4() {
+	int b = a + 8;
+	// printf("b = %d\n", b); 
+	int c = 9 - 12;
+	// printf("c = %d\n", c);
+	int d = glob_b + 1;
+	// printf("d = %d\n", d);
+	return a;
+}
 int foo(int b){
-
+	printf("%d", b);
     return b;
 }
 
@@ -12,6 +22,7 @@ int foo2(int a, int b) {
 
 int foo3(int a, int b, int c, int d, int e, int f) {
 	int ans = a+b+c+d+e+f;
+	return ans;
 }
 
 
