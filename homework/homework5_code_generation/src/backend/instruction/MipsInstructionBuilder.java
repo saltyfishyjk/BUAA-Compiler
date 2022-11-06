@@ -1,7 +1,13 @@
 package backend.instruction;
 
 import backend.basicblock.MipsBasicBlock;
+import middle.llvmir.value.instructions.IrBinaryInst;
 import middle.llvmir.value.instructions.IrInstruction;
+import middle.llvmir.value.instructions.memory.IrAlloca;
+import middle.llvmir.value.instructions.memory.IrLoad;
+import middle.llvmir.value.instructions.memory.IrStore;
+import middle.llvmir.value.instructions.terminator.IrCall;
+import middle.llvmir.value.instructions.terminator.IrRet;
 
 /**
  * Mips Instruction Builder : Mips指令生成器
@@ -16,6 +22,56 @@ public class MipsInstructionBuilder {
     }
 
     public MipsInstruction genMipsInstruction() {
+        if (irInstruction instanceof IrAlloca) {
+            return genMipsInstructionFromAlloca();
+        } else if (irInstruction instanceof IrBinaryInst) {
+            return genMipsInstructionFromBinary();
+        } else if (irInstruction instanceof IrCall) {
+            return genMipsInstructionFromCall();
+        } else if (irInstruction instanceof IrLoad) {
+            return genMipsInstructionFromLoad();
+        } else if (irInstruction instanceof IrRet) {
+            return genMipsInstructionFromRet();
+        } else if (irInstruction instanceof IrStore) {
+            return genMipsInstructionFromStore();
+        } else {
+            System.out.println("ERROR in MipsInstructionBuilder : should not reach here");
+        }
+        return null;
+    }
+
+    private MipsInstruction genMipsInstructionFromAlloca() {
+        IrAlloca alloca = (IrAlloca)irInstruction;
+        /* TODO : 待施工 */
+        return null;
+    }
+
+    private MipsInstruction genMipsInstructionFromBinary() {
+        IrBinaryInst inst = (IrBinaryInst)irInstruction;
+        /* TODO : 待施工 */
+        return null;
+    }
+
+    private MipsInstruction genMipsInstructionFromCall() {
+        IrCall call = (IrCall)irInstruction;
+        /* TODO : 待施工 */
+        return null;
+    }
+
+    private MipsInstruction genMipsInstructionFromLoad() {
+        IrLoad load = (IrLoad)irInstruction;
+        /* TODO : 待施工 */
+        return null;
+    }
+
+    private MipsInstruction genMipsInstructionFromRet() {
+        IrRet ret = (IrRet)irInstruction;
+        /* TODO : 待施工 */
+        return null;
+    }
+
+    private MipsInstruction genMipsInstructionFromStore() {
+        IrStore store = (IrStore)irInstruction;
         /* TODO : 待施工 */
         return null;
     }
