@@ -34,7 +34,11 @@ public class MipsBasicBlock implements MipsNode {
         return ret;
     }
 
-    public void addInstruction(MipsInstruction instruction) {
-        this.instructions.add(instruction);
+    public void addInstruction(ArrayList<MipsInstruction> instructions) {
+        if (instructions != null && instructions.size() > 0) {
+            for (MipsInstruction instruction : instructions) {
+                this.instructions.add(instruction);
+            }
+        }
     }
 }

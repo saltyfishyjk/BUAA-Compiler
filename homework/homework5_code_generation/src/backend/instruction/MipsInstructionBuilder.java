@@ -9,6 +9,8 @@ import middle.llvmir.value.instructions.memory.IrStore;
 import middle.llvmir.value.instructions.terminator.IrCall;
 import middle.llvmir.value.instructions.terminator.IrRet;
 
+import java.util.ArrayList;
+
 /**
  * Mips Instruction Builder : Mips指令生成器
  */
@@ -21,7 +23,7 @@ public class MipsInstructionBuilder {
         this.father = father;
     }
 
-    public MipsInstruction genMipsInstruction() {
+    public ArrayList<MipsInstruction> genMipsInstruction() {
         if (irInstruction instanceof IrAlloca) {
             return genMipsInstructionFromAlloca();
         } else if (irInstruction instanceof IrBinaryInst) {
@@ -40,37 +42,38 @@ public class MipsInstructionBuilder {
         return null;
     }
 
-    private MipsInstruction genMipsInstructionFromAlloca() {
+    /* IrAlloca -> MipsInstruction */
+    private ArrayList<MipsInstruction> genMipsInstructionFromAlloca() {
         IrAlloca alloca = (IrAlloca)irInstruction;
         /* TODO : 待施工 */
         return null;
     }
 
-    private MipsInstruction genMipsInstructionFromBinary() {
+    private ArrayList<MipsInstruction> genMipsInstructionFromBinary() {
         IrBinaryInst inst = (IrBinaryInst)irInstruction;
         /* TODO : 待施工 */
         return null;
     }
 
-    private MipsInstruction genMipsInstructionFromCall() {
+    private ArrayList<MipsInstruction> genMipsInstructionFromCall() {
         IrCall call = (IrCall)irInstruction;
         /* TODO : 待施工 */
         return null;
     }
 
-    private MipsInstruction genMipsInstructionFromLoad() {
+    private ArrayList<MipsInstruction> genMipsInstructionFromLoad() {
         IrLoad load = (IrLoad)irInstruction;
         /* TODO : 待施工 */
         return null;
     }
 
-    private MipsInstruction genMipsInstructionFromRet() {
+    private ArrayList<MipsInstruction> genMipsInstructionFromRet() {
         IrRet ret = (IrRet)irInstruction;
         /* TODO : 待施工 */
         return null;
     }
 
-    private MipsInstruction genMipsInstructionFromStore() {
+    private ArrayList<MipsInstruction> genMipsInstructionFromStore() {
         IrStore store = (IrStore)irInstruction;
         /* TODO : 待施工 */
         return null;

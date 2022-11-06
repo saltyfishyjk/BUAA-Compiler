@@ -1,10 +1,12 @@
 package backend;
 
 import backend.basicblock.MipsBasicBlock;
+import backend.instruction.MipsInstruction;
 import backend.instruction.Sw;
 import backend.symbol.MipsSymbol;
 import backend.symbol.MipsSymbolTable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -155,7 +157,9 @@ public class RegisterFile {
         int base = symbol.getBase(); // base可能为gp或fp
         int offset = symbol.getOffset();
         Sw sw = new Sw(rt, base, offset);
-        basicBlock.addInstruction(sw);
+        ArrayList<MipsInstruction> temp = new ArrayList<>();
+        temp.add(sw);
+        basicBlock.addInstruction(temp);
     }
 
     /* 获取一个空闲寄存器编号 */
