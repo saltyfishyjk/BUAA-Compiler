@@ -201,4 +201,8 @@ public class RegisterFile {
         return this.hasValues.get(regNum);
     }
 
+    public MipsSymbol getSymbol(int reg) {
+        return this.regs.get(reg);
+    }
+
 }

@@ -22,7 +22,7 @@ public class Compiler {
      * 4 -> mips
      */
     private static int choose = 4;
-    private static boolean testllvm = true;
+    private static boolean testllvm = false;
 
     public static void main(String[] args) {
         String inputFileName = "testfile.txt"; // 注意文件路径的书写，是以相对项目而言的
@@ -38,8 +38,6 @@ public class Compiler {
         CompUnit compUnit = compUnitParser.parseCompUnit();
         IrBuilder irBuilder = new IrBuilder(compUnit);
         IrModule irModule = irBuilder.genIrModule();
-        MipsBuilder mipsBuilder = new MipsBuilder(irModule);
-        MipsModule mipsModule = mipsBuilder.genMipsModule();
         //String outputFileName = "output.txt";
         String errorFileName = "error.txt";
         String llvmFileName = "llvm_ir.txt";
@@ -77,6 +75,8 @@ public class Compiler {
             }
         }
         if (choose == 4) {
+            MipsBuilder mipsBuilder = new MipsBuilder(irModule);
+            MipsModule mipsModule = mipsBuilder.genMipsModule();
             ArrayList<String> mips = mipsModule.mipsOutput();
             String ans = "";
             for (String index : mips) {

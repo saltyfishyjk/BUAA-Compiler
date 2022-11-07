@@ -73,7 +73,9 @@ public class MipsInstructionBuilder {
         ArrayList<MipsInstruction> ret = new ArrayList<>();
         if (isConst(leftName)) {
             // 是常数
-            leftSymbol = new MipsSymbol("temp", -1);
+            // leftSymbol = new MipsSymbol("temp", -1);
+            leftSymbol = new MipsSymbol("temp", 30, false, -1, false,
+                    -1, true, false);
             leftReg = this.registerFile.getReg(true, leftSymbol, this.father);
             // 找到一个临时寄存器，用li装入
             Li li = new Li(leftReg, Integer.valueOf(leftName));
@@ -89,7 +91,9 @@ public class MipsInstructionBuilder {
         MipsSymbol rightSymbol;
         int rightReg = -1;
         if (isConst(rightName)) {
-            rightSymbol = new MipsSymbol("temp", -1);
+            // rightSymbol = new MipsSymbol("temp", -1);
+            rightSymbol = new MipsSymbol("temp", 30, false, -1, false,
+                    -1, true, false);
             rightReg = this.registerFile.getReg(true, rightSymbol, this.father);
             // 找到一个临时寄存器，用li装入
             Li li = new Li(rightReg, Integer.valueOf(rightName));
@@ -157,10 +161,39 @@ public class MipsInstructionBuilder {
         } else if (functionName.equals("@putch")) {
             // 不应当进入本分支，因为打印字符串已经在MipsBasicBlockBuilder中处理完了
             System.out.println("ERROR in Mips InstructionBuilder : should not reach here");
+        } else if (functionName.equals("@getint")) {
+            // getint
+            ret = genMipsInstructionFromGetIntFunc();
         } else {
             // 普通函数调用
             ret = genMipsInstructionFromSelfDefineFunc();
         }
+        return ret;
+    }
+
+    private ArrayList<MipsInstruction> genMipsInstructionFromGetIntFunc() {
+        IrCall call = (IrCall)irInstruction;
+        ArrayList<MipsInstruction> ret = new ArrayList<>();
+        /* 将$v0移入$v1做保护 */
+        Move move = new Move(3, 2);
+        ret.add(move);
+        /* 将立即数5装入$v0 */
+        Li li = new Li(2, 5);
+        ret.add(li);
+        /* 系统调用 */
+        Syscall syscall = new Syscall();
+        ret.add(syscall);
+        /* 获取被赋值变量的寄存器编号 */
+        // int reg = this.table.getRegIndex(call.getName(), this.father);
+        MipsSymbol symbol = new MipsSymbol(call.getName(), 30, false, -1,
+                false, -1, false, false);
+        insertSymbolTable(symbol.getName(), symbol);
+        int reg = this.table.getRegIndex(symbol.getName(), this.father);
+        move = new Move(reg, 2);
+        ret.add(move);
+        /* 将原$v0的值移回 */
+        move = new Move(2, 3);
+        ret.add(move);
         return ret;
     }
 
@@ -192,6 +225,9 @@ public class MipsInstructionBuilder {
             String name = param.getName();
             int reg = this.table.getRegIndex(name, this.father);
             Move move = new Move(4 + i, reg);
+            if (this.table.hasSymbol(name)) {
+                this.table.getSymbol(name).setUsed(true);
+            }
             ret.add(move);
         }
         int fpOffset = 0;
@@ -200,6 +236,9 @@ public class MipsInstructionBuilder {
             String name = param.getName();
             int reg = this.table.getRegIndex(name, this.father);
             Sw sw = new Sw(reg, 3, fpOffset);
+            if (this.table.hasSymbol(name)) {
+                this.table.getSymbol(name).setUsed(true);
+            }
             ret.add(sw);
             fpOffset += 4;
         }
@@ -233,7 +272,16 @@ public class MipsInstructionBuilder {
                 ret.add(lw);
             }
         }
-
+        /* TODO : 7. 可能会有一个左值赋值 */
+        if (call.getName().length() > 0) {
+            /* 有赋值需求 */
+            MipsSymbol leftSymbol = new MipsSymbol(call.getName(), 30, false, -1, false,
+                    0, true, false);
+            insertSymbolTable(leftSymbol.getName(), leftSymbol);
+            int regLeft = this.table.getRegIndex(call.getName(), this.father);
+            move = new Move(regLeft, 2);
+            ret.add(move);
+        }
         return ret;
     }
 
@@ -304,17 +352,24 @@ public class MipsInstructionBuilder {
             // 常数，需要从寄存器表获取一个$t并使用li将该立即数加载进去
             // 然后使用move进行赋值
             // 这里的Symbol不应当被加入符号表
-            leftReg = this.registerFile.getReg(true, new MipsSymbol("temp", -1), this.father);
+            MipsSymbol tempSymbol = new MipsSymbol("name", 30, false, -1, false,
+                    -1, true, false);
+            leftReg = this.registerFile.getReg(true, tempSymbol, this.father);
             Li li = new Li(leftReg, Integer.valueOf(leftName));
             ret.add(li);
         } else {
             // 变量
-            leftReg = this.table.getRegIndex(rightName, this.father);
+            leftReg = this.table.getRegIndex(leftName, this.father);
         }
         /* TODO : 需要检查 获取右操作数的寄存器 */
         rightReg = this.table.getRegIndex(rightName, this.father);
         /* TODO : 待施工 */
         Move move = new Move(rightReg, leftReg);
+        this.registerFile.getSymbol(leftReg).setUsed(true);
+        /*if (this.table.hasSymbol(leftName)) {
+            this.table.getSymbol(leftName).setUsed(true);
+        }*/
+        this.registerFile.getSymbol(leftReg).setUsed(true);
         ret.add(move);
         return ret;
     }

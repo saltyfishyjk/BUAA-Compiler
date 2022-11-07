@@ -78,7 +78,7 @@ public class MipsSymbol {
         this.isTemp = isTemp;
     }
 
-    /* 万能生成器 */
+    /* 通用构造器 */
     public MipsSymbol(String name,
                       int base,
                       boolean inReg,

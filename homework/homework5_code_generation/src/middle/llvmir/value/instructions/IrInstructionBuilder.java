@@ -255,6 +255,7 @@ public class IrInstructionBuilder {
                         symbolType, dimension, irValue);
                 addVarSymbol(symbolVar);
                 IrAlloca irAlloca = new IrAlloca(IrIntegerType.get32(), irValue);
+                irAlloca.setName(name);
                 this.instructions.add(irAlloca);
             } else if (dimension == 1) {
                 // 一维
