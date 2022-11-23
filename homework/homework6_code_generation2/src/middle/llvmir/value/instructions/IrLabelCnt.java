@@ -10,7 +10,7 @@ public class IrLabelCnt {
     }
 
     /* 不修改cnt */
-    public String cntToName(int num) {
+    public static String cntToName(int num) {
         return "%Label_" + num;
     }
 

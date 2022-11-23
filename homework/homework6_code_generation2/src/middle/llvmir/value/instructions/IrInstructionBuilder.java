@@ -66,6 +66,7 @@ import java.util.ArrayList;
 /**
  * LLVM IR Instruction Builder
  * LLVM IR 指令生成器
+ * 需要注意的是，这里已经排除了StmtCond, StmtWhile, StmtBlock, Stmt
  */
 public class IrInstructionBuilder {
     private SymbolTable symbolTable; // 当前符号表
@@ -83,8 +84,10 @@ public class IrInstructionBuilder {
     private StmtGetint stmtGetint = null;
     private StmtPrint stmtPrint = null;
     private StmtExp stmtExp = null;
-    private StmtCond stmtCond = null;
-    private StmtWhile stmtWhile = null;
+    // private StmtCond stmtCond = null;
+    // private StmtWhile stmtWhile = null;
+    /* 以下对象是传入Stmt时的可能*/
+    private Stmt stmt = null;
 
     public IrInstructionBuilder(SymbolTable symbolTable,
                                 IrBasicBlock basicBlock,
@@ -95,6 +98,7 @@ public class IrInstructionBuilder {
         this.functionCnt = functionCnt;
     }
 
+    /* 待解析元素是BlockItemEle */
     public IrInstructionBuilder(SymbolTable symbolTable,
                                 IrBasicBlock basicBlock,
                                 BlockItemEle blockItemEle,
@@ -103,27 +107,75 @@ public class IrInstructionBuilder {
         this.blockItemEle = blockItemEle;
     }
 
+    /* 待解析元素是Stmt，主要针对if和while */
+    public IrInstructionBuilder(SymbolTable symbolTable,
+                                IrBasicBlock basicBlock,
+                                Stmt stmt,
+                                IrFunctionCnt functionCnt) {
+        this(symbolTable, basicBlock, functionCnt);
+        this.stmt = stmt;
+    }
+
     /**
      * 分发器，分发到合适的private func
      * 主要原理为通过判断BlockItemEle对象的真正类来判断传入的是哪个参数
      */
     public ArrayList<IrInstruction> genIrInstruction() {
-        if (this.blockItemEle instanceof Decl) {
-            Decl decl = (Decl)blockItemEle;
-            if (decl.getDeclEle() instanceof ConstDecl) {
-                // ConstDecl
-                this.constDecl = (ConstDecl)decl.getDeclEle();
-                genIrInstructionFromConstDecl();
-            } else if (decl.getDeclEle() instanceof VarDecl) {
-                // VarDecl
-                this.varDecl = (VarDecl)decl.getDeclEle();
-                genIrInstructionFromVarDecl();
+        /* 传入元素来自于BlockItemEle */
+        if (this.blockItemEle != null) {
+            if (this.blockItemEle instanceof Decl) {
+                Decl decl = (Decl)blockItemEle;
+                if (decl.getDeclEle() instanceof ConstDecl) {
+                    // ConstDecl
+                    this.constDecl = (ConstDecl)decl.getDeclEle();
+                    genIrInstructionFromConstDecl();
+                } else if (decl.getDeclEle() instanceof VarDecl) {
+                    // VarDecl
+                    this.varDecl = (VarDecl)decl.getDeclEle();
+                    genIrInstructionFromVarDecl();
+                } else {
+                    System.out.println("ERROR in IrInstructionBuilder : should not reach here");
+                }
+            } else if (this.blockItemEle instanceof Stmt) {
+                Stmt stmt = (Stmt)this.blockItemEle;
+                StmtEle stmtEle = stmt.getStmtEle();
+                if (stmtEle instanceof StmtAssign) {
+                    this.stmtAssign = (StmtAssign) stmtEle;
+                    genIrInstructionFromStmtAssign();
+                } else if (stmtEle instanceof StmtBreak) {
+                    this.stmtBreak = (StmtBreak)stmtEle;
+                    genIrInstructionFromStmtBreak();
+                } else if (stmtEle instanceof StmtContinue) {
+                    this.stmtContinue = (StmtContinue)stmtEle;
+                    genIrInstructionFromStmtContinue();
+                } else if (stmtEle instanceof StmtReturn) {
+                    this.stmtReturn = (StmtReturn)stmtEle;
+                    genIrInstructionFromStmtReturn();
+                } else if (stmtEle instanceof StmtGetint) {
+                    this.stmtGetint = (StmtGetint)stmtEle;
+                    genIrInstructionFromStmtGetint();
+                } else if (stmtEle instanceof StmtPrint) {
+                    this.stmtPrint = (StmtPrint)stmtEle;
+                    genIrInstructionFromStmtPrint();
+                } else if (stmtEle instanceof StmtExp) {
+                    this.stmtExp = (StmtExp)stmtEle;
+                    genIrInstructionFromStmtExp();
+                /*} else if (stmtEle instanceof StmtCond) {
+                    this.stmtCond = (StmtCond)stmtEle;
+                    genIrInstructionFromStmtCond();
+                } else if (stmtEle instanceof StmtWhile) {
+                    this.stmtWhile = (StmtWhile)stmtEle;
+                    genIrInstructionFromStmtWhile();*/
+                } else {
+                    System.out.println("ERROR in IrInstructionBuilder : should not reach here");
+                }
             } else {
                 System.out.println("ERROR in IrInstructionBuilder : should not reach here");
             }
-        } else if (this.blockItemEle instanceof Stmt) {
-            Stmt stmt = (Stmt)this.blockItemEle;
-            StmtEle stmtEle = stmt.getStmtEle();
+        } else {
+            /* 传入元素来源于StmtIf或StmtWhile */
+            /* TODO : 待施工 */
+            StmtEle stmtEle = this.stmt.getStmtEle();
             if (stmtEle instanceof StmtAssign) {
                 this.stmtAssign = (StmtAssign) stmtEle;
                 genIrInstructionFromStmtAssign();
@@ -145,18 +197,17 @@ public class IrInstructionBuilder {
             } else if (stmtEle instanceof StmtExp) {
                 this.stmtExp = (StmtExp)stmtEle;
                 genIrInstructionFromStmtExp();
-            /*} else if (stmtEle instanceof StmtCond) {
-                this.stmtCond = (StmtCond)stmtEle;
-                genIrInstructionFromStmtCond();
-            } else if (stmtEle instanceof StmtWhile) {
-                this.stmtWhile = (StmtWhile)stmtEle;
-                genIrInstructionFromStmtWhile();*/
+                /*} else if (stmtEle instanceof StmtCond) {
+                    this.stmtCond = (StmtCond)stmtEle;
+                    genIrInstructionFromStmtCond();
+                } else if (stmtEle instanceof StmtWhile) {
+                    this.stmtWhile = (StmtWhile)stmtEle;
+                    genIrInstructionFromStmtWhile();*/
             } else {
                 System.out.println("ERROR in IrInstructionBuilder : should not reach here");
             }
-        } else {
-            System.out.println("ERROR in IrInstructionBuilder : should not reach here");
         }
+
         return this.instructions;
     }
 
@@ -604,8 +655,7 @@ public class IrInstructionBuilder {
         /* TODO : 待施工 条件语句块break */
     }
 
-
-
+    /* 解析return语句 */
     private void genIrInstructionFromStmtReturn() {
         IrRet ret;
         if (this.stmtReturn.hasExp()) {
@@ -618,6 +668,7 @@ public class IrInstructionBuilder {
         this.instructions.add(ret);
     }
 
+    /* 解析输入语句 */
     private void genIrInstructionFromStmtGetint() {
         LVal lval = this.stmtGetint.getLval();
         IrValue left = genIrInstructionFromLVal(lval, true);
@@ -633,6 +684,7 @@ public class IrInstructionBuilder {
         this.instructions.add(store);
     }
 
+    /* 解析输出语句 */
     private void genIrInstructionFromStmtPrint() {
         FormatString formatString = this.stmtPrint.getFormatString();
         ArrayList<Exp> exps = this.stmtPrint.getExps();

@@ -12,8 +12,8 @@ public class StmtCond implements StmtEle {
     private Cond cond;
     private Token rightParent; // ')'
     private Stmt ifStmt;
-    private Token elseTk; // 'else' MAY exist
-    private Stmt elseStmt; // MAY exist
+    private Token elseTk = null; // 'else' MAY exist
+    private Stmt elseStmt = null; // MAY exist
 
     public StmtCond(Token ifTk,
                     Token leftParent,
@@ -52,5 +52,21 @@ public class StmtCond implements StmtEle {
             sb.append(this.elseStmt.syntaxOutput());
         }
         return sb.toString();
+    }
+
+    public boolean hasElse() {
+        return this.elseStmt != null;
+    }
+
+    public Cond getCond() {
+        return this.cond;
+    }
+
+    public Stmt getIfStmt() {
+        return this.ifStmt;
+    }
+
+    public Stmt getElseStmt() {
+        return this.elseStmt;
     }
 }

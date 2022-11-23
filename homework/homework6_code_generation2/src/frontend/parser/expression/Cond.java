@@ -21,4 +21,8 @@ public class Cond implements SyntaxNode {
         sb.append(this.name + "\n");
         return sb.toString();
     }
+
+    public LOrExp getLorExp() {
+        return lorExp;
+    }
 }

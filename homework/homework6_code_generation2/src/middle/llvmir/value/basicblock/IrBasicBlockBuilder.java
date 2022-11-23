@@ -4,6 +4,9 @@ import frontend.parser.declaration.Decl;
 import frontend.parser.declaration.DeclEle;
 import frontend.parser.declaration.constant.ConstDecl;
 import frontend.parser.declaration.variable.VarDecl;
+import frontend.parser.expression.Cond;
+import frontend.parser.expression.multiexp.LAndExp;
+import frontend.parser.expression.multiexp.LOrExp;
 import frontend.parser.statement.Block;
 import frontend.parser.statement.blockitem.BlockItem;
 import frontend.parser.statement.blockitem.BlockItemEle;
@@ -22,6 +25,9 @@ import frontend.parser.statement.stmt.StmtWhile;
 import middle.llvmir.value.function.IrFunctionCnt;
 import middle.llvmir.value.instructions.IrInstruction;
 import middle.llvmir.value.instructions.IrInstructionBuilder;
+import middle.llvmir.value.instructions.IrLabel;
+import middle.llvmir.value.instructions.IrLabelCnt;
+import middle.llvmir.value.instructions.terminator.IrGoto;
 import middle.symbol.SymbolTable;
 
 import java.util.ArrayList;
@@ -167,9 +173,148 @@ public class IrBasicBlockBuilder {
         return this.basicBlocks;
     }
 
+    /**
+     * SysY支持形如if， if-else， if-else if- else等形式的条件语句
+     */
     private ArrayList<IrBasicBlock> genIrBasicBlockFromCond() {
         /* TODO : 待施工 */
+        /* 构造if块标签 */
+        int ifLabelCnt = IrLabelCnt.getCnt();
+        String ifLabelName = IrLabelCnt.cntToName(ifLabelCnt);
+        IrLabel ifLabel = new IrLabel(ifLabelName);
+        /* 预留else块标签 */
+        int elseLabelCnt = -1;
+        String elseLabelName = null;
+        IrLabel elseLabel = null;
+        /* 标记是否有else块 */
+        boolean hasElse = this.stmtCond.hasElse();
+        if (hasElse) {
+            elseLabelCnt = IrLabelCnt.getCnt();
+            elseLabelName = IrLabelCnt.cntToName(elseLabelCnt);
+            elseLabel = new IrLabel(elseLabelName);
+        }
+        /* if-else块结束位置的标签 */
+        int endLabelCnt = IrLabelCnt.getCnt();
+        String endLabelName = IrLabelCnt.cntToName(endLabelCnt);
+        IrLabel endLabel = new IrLabel(endLabelName);
+        /* 处理Cond */
+        Cond cond = this.stmtCond.getCond();
+        if (!hasElse) {
+            this.addAllIrBasicBlocks(genCond(cond, ifLabel, endLabel));
+        } else {
+            this.addAllIrBasicBlocks(genCond(cond, ifLabel, endLabel, elseLabel));
+        }
+        /* 处理if语句块 */
+        /* TODO : 待施工 */
+        Stmt ifStmt = this.stmtCond.getIfStmt();
+        StmtEle ifStmtEle = ifStmt.getStmtEle();
+        IrBasicBlock ifBlock = new IrBasicBlock("If Block");
+        /* 首先添加if语句块的label */
+        ifBlock.addIrInstruction(ifLabel);
+        /* 对于ifStmt, whileStmt, Block这三个情况，需要调用genIrBasicBlock */
+        IrBasicBlockBuilder builder = null;
+        SymbolTable newSymbolTable = new SymbolTable(this.symbolTable);
+        if (ifStmtEle instanceof  StmtCond ||
+                ifStmtEle instanceof StmtWhile ||
+                ifStmtEle instanceof Block) {
+            /* 由于后续内容会解析返回一个IrBasicBlock列表，因此先行将if块的标签打包为IrBasicBlock add进去 */
+            this.basicBlocks.add(ifBlock);
+            if (ifStmtEle instanceof Block) {
+                builder = new IrBasicBlockBuilder(newSymbolTable,
+                        (Block)ifStmtEle, this.functionCnt);
+            } else if (ifStmtEle instanceof StmtCond) {
+                builder = new IrBasicBlockBuilder(newSymbolTable,
+                        (StmtCond)ifStmtEle, this.functionCnt);
+            } else {
+                builder = new IrBasicBlockBuilder(newSymbolTable,
+                        (StmtWhile)ifStmtEle, this.functionCnt);
+            }
+            this.addAllIrBasicBlocks(builder.genIrBasicBlock());
+            /* 将goto endLabel语句包装为一个IrBasicBlock加入其中 */
+            IrGoto irGoto = new IrGoto(endLabel);
+            IrBasicBlock temp = new IrBasicBlock("GOTO IF_END");
+            temp.addIrInstruction(irGoto);
+            this.basicBlocks.add(temp);
+        } else {
+            /* StmtEle不是StmtCond, StmtWhile或Block，使用生成*/
+            IrInstructionBuilder instructionBuilder = new IrInstructionBuilder(this.symbolTable,
+                    ifBlock, ifStmt, this.functionCnt);
+            ArrayList<IrInstruction> temp = instructionBuilder.genIrInstruction();
+            if (temp != null && temp.size() != 0) {
+                ifBlock.addAllIrInstruction(temp);
+            }
+            /* 将goto endLabel添加到ifBlock末尾 */
+            IrGoto irGoto = new IrGoto(endLabel);
+            ifBlock.addIrInstruction(irGoto);
+            this.basicBlocks.add(ifBlock);
+        }
+        /* 处理else语句块 */
+        if (hasElse) {
+            Stmt elseStmt = this.stmtCond.getElseStmt();
+            StmtEle elseStmtEle = elseStmt.getStmtEle();
+            IrBasicBlock elseBlock = new IrBasicBlock("Else Block");
+            /* 添加else块label */
+            elseBlock.addIrInstruction(elseLabel);
+            if (elseStmtEle instanceof  StmtCond ||
+                    elseStmtEle instanceof StmtWhile ||
+                    elseStmtEle instanceof Block) {
+                /* 由于后续内容会解析返回一个IrBasicBlock列表，因此先行将else块的标签打包为IrBasicBlock add进去 */
+                newSymbolTable = new SymbolTable(this.symbolTable);
+                this.basicBlocks.add(elseBlock);
+                if (elseStmtEle instanceof Block) {
+                    builder = new IrBasicBlockBuilder(newSymbolTable,
+                            (Block)elseStmtEle, this.functionCnt);
+                } else if (elseStmtEle instanceof StmtCond) {
+                    builder = new IrBasicBlockBuilder(newSymbolTable,
+                            (StmtCond)elseStmtEle, this.functionCnt);
+                } else {
+                    builder = new IrBasicBlockBuilder(newSymbolTable,
+                            (StmtWhile)elseStmtEle, this.functionCnt);
+                }
+                this.addAllIrBasicBlocks(builder.genIrBasicBlock());
+            } else {
+                /* StmtEle不是StmtCond, StmtWhile或Block，使用生成 */
+                IrInstructionBuilder instructionBuilder = new IrInstructionBuilder(this.symbolTable,
+                        ifBlock, ifStmt, this.functionCnt);
+                ArrayList<IrInstruction> temp = instructionBuilder.genIrInstruction();
+                if (temp != null && temp.size() != 0) {
+                    ifBlock.addAllIrInstruction(temp);
+                }
+                /* 将goto endLabel添加到ifBlock末尾 */
+                IrGoto irGoto = new IrGoto(endLabel);
+                ifBlock.addIrInstruction(irGoto);
+                this.basicBlocks.add(ifBlock);
+            }
+        }
+        /* 将end label 添加到末尾*/
+        IrBasicBlock endBlock = new IrBasicBlock("END LABEL");
+        endBlock.addIrInstruction(endLabel);
+        this.basicBlocks.add(endBlock);
         return this.basicBlocks;
+    }
+
+    /* 处理只有if的条件 */
+    private ArrayList<IrBasicBlock> genCond(Cond cond, IrLabel ifLabel, IrLabel endLabel) {
+        ArrayList<IrBasicBlock> ret = new ArrayList<>();
+        /* 处理Cond */
+        IrBasicBlock condBlock = new IrBasicBlock("Cond IrBasicBlock");
+        /* 条件表达式 */
+        LOrExp lorexp = cond.getLorExp();
+        // 第一个参数 first
+        LAndExp first = lorexp.getFirst();
+        // first || a1 || a2 ...
+        ArrayList<LAndExp> landexps = lorexp.getOperands();
+        return ret;
+    }
+
+    /* 处理有if-else的条件 */
+    private ArrayList<IrBasicBlock> genCond(Cond cond,
+                                            IrLabel ifLabel,
+                                            IrLabel endLabel,
+                                            IrLabel elseLabel) {
+        ArrayList<IrBasicBlock> ret = new ArrayList<>();
+        /* TODO : 待施工 */
+        return ret;
     }
 
     private ArrayList<IrBasicBlock> genIrBasicBlockFromWhile() {
