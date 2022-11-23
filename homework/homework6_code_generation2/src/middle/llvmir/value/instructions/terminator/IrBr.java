@@ -1,11 +1,12 @@
 package middle.llvmir.value.instructions.terminator;
 
+import middle.llvmir.IrValue;
 import middle.llvmir.type.IrLabelType;
-import middle.llvmir.value.basicblock.IrBasicBlock;
 import middle.llvmir.value.instructions.IrInstruction;
 import middle.llvmir.value.instructions.IrInstructionType;
+import middle.llvmir.value.instructions.IrLabel;
 
-/* TODO 待施工 */
+import java.util.ArrayList;
 
 /**
  * Br -> br i1 <cond>, label <iftrue>, label <iffalse> | br label <dest>
@@ -31,16 +32,34 @@ public class IrBr extends IrInstruction {
         this.setOperand(cond, 0);
         this.setOperand(trueBlock, 1);
         this.setOperand(falseBlock, 2);
+    }*/
+
+    public IrBr(IrValue op1, IrValue op2, IrLabel label, IrInstructionType type) {
+        super(type, IrLabelType.getLabelType(), 3);
+        this.setOperand(op1, 0);
+        this.setOperand(op2, 1);
+        this.setOperand(label, 2);
+        this.setName(type.name());
     }
-    */
 
     /**
      * 无条件跳转
      * @param trueBlock : 第0个operand
      */
+    /*
     public IrBr(IrBasicBlock trueBlock) {
         super(IrInstructionType.Br, IrLabelType.getLabelType(), 1);
         setOperand(trueBlock, 0);
     }
+    */
 
+    @Override
+    public ArrayList<String> irOutput() {
+        ArrayList<String> ret = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getName() + " " + this.getOperand(0).getName() +
+                ", " + this.getOperand(1).getName() + ", " + this.getOperand(2).getName() + "\n");
+        ret.add(sb.toString());
+        return ret;
+    }
 }

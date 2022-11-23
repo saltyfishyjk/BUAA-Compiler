@@ -25,6 +25,13 @@ public enum IrInstructionType {
     Ne, // !=
     And,// &
     Or, // |
+    Beq, // IrBeq branch if ==
+    Bne, // IrBne branch if !=
+    Blt, // IrBlt branch if less than <
+    Ble, // IrBle branch if less or equal <=
+    Bgt, // IrBgt branch if greater than >
+    Bge, // IrBge branch if greater or equal >=
+    Goto, // IrGoto
     /* Terminator */
     Br,
     Call,
