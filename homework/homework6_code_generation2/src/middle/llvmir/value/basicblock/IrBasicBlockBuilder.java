@@ -109,14 +109,17 @@ public class IrBasicBlockBuilder {
                 StmtEle stmtEle = stmt.getStmtEle();
                 switch (typeCode) {
                     case 1: // 说明是StmtCond
+                        /* TODO : 待施工 */
                         builder = new IrBasicBlockBuilder(newSymbolTable,
                                 (StmtCond)stmtEle, this.functionCnt);
                         break;
-                    case 2:
+                    case 2: // 说明是StmtWhile
+                        /* TODO : 待施工 */
                         builder = new IrBasicBlockBuilder(newSymbolTable,
                                 (StmtWhile)stmtEle, this.functionCnt);
                         break;
-                    case 3:
+                    case 3: // 说明是Block
+                        /* TODO : 待施工 */
                         builder = new IrBasicBlockBuilder(newSymbolTable,
                                 (Block)stmtEle, this.functionCnt);
                         break;
@@ -165,12 +168,12 @@ public class IrBasicBlockBuilder {
     }
 
     private ArrayList<IrBasicBlock> genIrBasicBlockFromCond() {
-        /* TODO : 本次作业不涉及条件 */
+        /* TODO : 待施工 */
         return this.basicBlocks;
     }
 
     private ArrayList<IrBasicBlock> genIrBasicBlockFromWhile() {
-        /* TODO : 本次作业不涉及循环 */
+        /* TODO : 待施工 */
         return this.basicBlocks;
     }
 

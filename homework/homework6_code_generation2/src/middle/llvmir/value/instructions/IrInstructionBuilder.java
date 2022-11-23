@@ -28,6 +28,7 @@ import frontend.parser.expression.unaryexp.UnaryExpEle;
 import frontend.parser.expression.unaryexp.UnaryExpFunc;
 import frontend.parser.expression.unaryexp.UnaryExpOp;
 import frontend.parser.expression.unaryexp.UnaryOp;
+import frontend.parser.statement.Block;
 import frontend.parser.statement.blockitem.BlockItemEle;
 import frontend.parser.statement.stmt.Stmt;
 import frontend.parser.statement.stmt.StmtAssign;
@@ -144,12 +145,12 @@ public class IrInstructionBuilder {
             } else if (stmtEle instanceof StmtExp) {
                 this.stmtExp = (StmtExp)stmtEle;
                 genIrInstructionFromStmtExp();
-            } else if (stmtEle instanceof StmtCond) {
+            /*} else if (stmtEle instanceof StmtCond) {
                 this.stmtCond = (StmtCond)stmtEle;
                 genIrInstructionFromStmtCond();
             } else if (stmtEle instanceof StmtWhile) {
                 this.stmtWhile = (StmtWhile)stmtEle;
-                genIrInstructionFromStmtWhile();
+                genIrInstructionFromStmtWhile();*/
             } else {
                 System.out.println("ERROR in IrInstructionBuilder : should not reach here");
             }
@@ -583,21 +584,27 @@ public class IrInstructionBuilder {
         this.instructions.add(store);
     }
 
+    /*
     private void genIrInstructionFromStmtCond() {
-        /* TODO : 条件语句if */
+
+    }
+    */
+
+    /*
+    private void genIrInstructionFromStmtWhile() {
+
+    }
+    */
+
+    private void genIrInstructionFromStmtContinue() {
+        /* TODO : 待施工 条件语句块continue */
     }
 
     private void genIrInstructionFromStmtBreak() {
-        /* TODO : 条件语句块break */
+        /* TODO : 待施工 条件语句块break */
     }
 
-    private void genIrInstructionFromStmtContinue() {
-        /* TODO : 条件语句块continue */
-    }
 
-    private void genIrInstructionFromStmtWhile() {
-        /* TODO : 循环语句while */
-    }
 
     private void genIrInstructionFromStmtReturn() {
         IrRet ret;
