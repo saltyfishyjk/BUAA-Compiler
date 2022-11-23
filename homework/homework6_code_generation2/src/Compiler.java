@@ -60,8 +60,23 @@ public class Compiler {
         } else if (choose == 3 || testllvm) {
             ArrayList<String> irs = irModule.irOutput();
             String ans = "";
+            int tableCnt = 0;
             for (String s : irs) {
-                ans = ans + s;
+                if (s.contains("}")) {
+                    tableCnt -= 1;
+                }
+                if (tableCnt > 0) {
+                    String temp = "";
+                    for (int j = 0; j < tableCnt; j++) {
+                        temp = temp + "    ";
+                    }
+                    ans = ans + temp + s;
+                } else {
+                    ans = ans + s;
+                }
+                if (s.contains("{")) {
+                    tableCnt += 1;
+                }
             }
             try {
                 OutputStream outputStream = new FileOutputStream(llvmFileName);
@@ -79,8 +94,27 @@ public class Compiler {
             MipsModule mipsModule = mipsBuilder.genMipsModule();
             ArrayList<String> mips = mipsModule.mipsOutput();
             String ans = "";
+            int tableCnt = 0; // 换行符个数
+            String table = "";
+            String tableSing = "    ";
+            /* 制表符美化mips代码 */
             for (String index : mips) {
-                ans = ans + index;
+                if (index.contains("**********")) {
+                    tableCnt -= 1;
+                    table = "";
+                    for (int j = 0; j < tableCnt; j++) {
+                        table = table + tableSing;
+                    }
+                }
+                if (index.contains(":") && tableCnt > 0) {
+                    ans = ans + table.substring(0, table.length() - 4) + index;
+                } else {
+                    ans = ans + table + index;
+                }
+                if (index.contains("----------")) {
+                    tableCnt += 1;
+                    table = table + tableSing;
+                }
             }
             try {
                 OutputStream outputStream = new FileOutputStream(mipsFileName);

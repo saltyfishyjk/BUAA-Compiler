@@ -1,12 +1,11 @@
 package middle.llvmir.value.instructions.terminator;
 
-import middle.llvmir.IrValue;
 import middle.llvmir.type.IrLabelType;
 import middle.llvmir.value.basicblock.IrBasicBlock;
 import middle.llvmir.value.instructions.IrInstruction;
 import middle.llvmir.value.instructions.IrInstructionType;
 
-/* TODO : 本次作业不涉及跳转（条件和循环） */
+/* TODO 待施工 */
 
 /**
  * Br -> br i1 <cond>, label <iftrue>, label <iffalse> | br label <dest>
@@ -17,6 +16,7 @@ import middle.llvmir.value.instructions.IrInstructionType;
  *      iffalse : 如果cond为假跳转的label
  * - 无条件跳转
  *      dest : 跳转目标
+ * 在本实验中，为了更贴合mips的特性，我们只使用无条件跳转，即，将其作为goto使用
  */
 public class IrBr extends IrInstruction {
     /**
@@ -25,12 +25,14 @@ public class IrBr extends IrInstruction {
      * @param trueBlock 第1个operand
      * @param falseBlock 第2个operand
      */
+    /*
     public IrBr(IrValue cond, IrBasicBlock trueBlock, IrBasicBlock falseBlock) {
         super(IrInstructionType.Br, IrLabelType.getLabelType(), 3);
         this.setOperand(cond, 0);
         this.setOperand(trueBlock, 1);
         this.setOperand(falseBlock, 2);
     }
+    */
 
     /**
      * 无条件跳转

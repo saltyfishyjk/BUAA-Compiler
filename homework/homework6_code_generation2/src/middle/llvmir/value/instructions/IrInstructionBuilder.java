@@ -32,6 +32,7 @@ import frontend.parser.statement.blockitem.BlockItemEle;
 import frontend.parser.statement.stmt.Stmt;
 import frontend.parser.statement.stmt.StmtAssign;
 import frontend.parser.statement.stmt.StmtBreak;
+import frontend.parser.statement.stmt.StmtCond;
 import frontend.parser.statement.stmt.StmtContinue;
 import frontend.parser.statement.stmt.StmtEle;
 import frontend.parser.statement.stmt.StmtExp;
@@ -40,6 +41,7 @@ import frontend.parser.statement.stmt.StmtPrint;
 import frontend.parser.statement.stmt.StmtReturn;
 import frontend.lexer.TokenType;
 
+import frontend.parser.statement.stmt.StmtWhile;
 import frontend.parser.terminal.FormatString;
 import middle.llvmir.IrValue;
 import middle.llvmir.type.IrIntegerType;
@@ -80,6 +82,8 @@ public class IrInstructionBuilder {
     private StmtGetint stmtGetint = null;
     private StmtPrint stmtPrint = null;
     private StmtExp stmtExp = null;
+    private StmtCond stmtCond = null;
+    private StmtWhile stmtWhile = null;
 
     public IrInstructionBuilder(SymbolTable symbolTable,
                                 IrBasicBlock basicBlock,
@@ -140,6 +144,12 @@ public class IrInstructionBuilder {
             } else if (stmtEle instanceof StmtExp) {
                 this.stmtExp = (StmtExp)stmtEle;
                 genIrInstructionFromStmtExp();
+            } else if (stmtEle instanceof StmtCond) {
+                this.stmtCond = (StmtCond)stmtEle;
+                genIrInstructionFromStmtCond();
+            } else if (stmtEle instanceof StmtWhile) {
+                this.stmtWhile = (StmtWhile)stmtEle;
+                genIrInstructionFromStmtWhile();
             } else {
                 System.out.println("ERROR in IrInstructionBuilder : should not reach here");
             }
@@ -573,12 +583,20 @@ public class IrInstructionBuilder {
         this.instructions.add(store);
     }
 
+    private void genIrInstructionFromStmtCond() {
+        /* TODO : 条件语句if */
+    }
+
     private void genIrInstructionFromStmtBreak() {
-        /* TODO : 本次作业不涉及 */
+        /* TODO : 条件语句块break */
     }
 
     private void genIrInstructionFromStmtContinue() {
-        /* TODO : 本次作业不涉及 */
+        /* TODO : 条件语句块continue */
+    }
+
+    private void genIrInstructionFromStmtWhile() {
+        /* TODO : 循环语句while */
     }
 
     private void genIrInstructionFromStmtReturn() {

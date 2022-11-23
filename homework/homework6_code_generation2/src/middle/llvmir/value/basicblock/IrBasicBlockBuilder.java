@@ -85,6 +85,7 @@ public class IrBasicBlockBuilder {
             /* 说明传入元素是StmtCond */
             return genIrBasicBlockFromCond();
         } else if (this.stmtWhile != null) {
+            /* 说明传入的元素是StmtWhile */
             return genIrBasicBlockFromWhile();
         } else {
             System.out.println("ERROR in IrBasicBlockItemBuilder : should not reach here");

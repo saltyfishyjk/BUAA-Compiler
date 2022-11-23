@@ -36,4 +36,6 @@ public enum IrInstructionType {
     GEP, // Get Element Ptr
     Zext,
     Phi,//用于 mem2reg
+    /* label */
+    Label,
 }
