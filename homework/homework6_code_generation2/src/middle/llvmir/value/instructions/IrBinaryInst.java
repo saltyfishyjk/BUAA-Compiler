@@ -66,6 +66,18 @@ public class IrBinaryInst extends IrInstruction {
             case Mod:
                 sb.append("srem ");
                 break;
+            case Lt:
+                sb.append("Lt ");
+                break;
+            case Gt:
+                sb.append("Gt ");
+                break;
+            case Le:
+                sb.append("Le ");
+                break;
+            case Ge:
+                sb.append("Ge ");
+                break;
             default:
                 System.out.println("ERROR in IrBinaryInst : should not reach here");
                 break;

@@ -59,4 +59,13 @@ public class MultiExp<T extends SyntaxNode> implements SyntaxNode, ValNode {
     public ArrayList<Token> getOperators() {
         return operators;
     }
+
+    public ArrayList<T> getAllOperands() {
+        ArrayList<T> ret = new ArrayList<>();
+        ret.add(this.getFirst());
+        if (this.operands != null && this.operands.size() != 0) {
+            ret.addAll(this.operands);
+        }
+        return ret;
+    }
 }

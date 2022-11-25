@@ -31,9 +31,11 @@ public class IrBasicBlock extends IrValue implements IrNode {
     public ArrayList<String> irOutput() {
         ArrayList<String> ret = new ArrayList<>();
         for (IrInstruction instruction : this.instructions) {
-            ArrayList<String> temp = instruction.irOutput();
-            if (temp != null && temp.size() != 0) {
-                ret.addAll(temp);
+            if (instruction != null) {
+                ArrayList<String> temp = instruction.irOutput();
+                if (temp != null && temp.size() != 0) {
+                    ret.addAll(temp);
+                }
             }
         }
         return ret;

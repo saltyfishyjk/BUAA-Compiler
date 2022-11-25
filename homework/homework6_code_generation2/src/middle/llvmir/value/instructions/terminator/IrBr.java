@@ -20,20 +20,6 @@ import java.util.ArrayList;
  * 在本实验中，为了更贴合mips的特性，我们只使用无条件跳转，即，将其作为goto使用
  */
 public class IrBr extends IrInstruction {
-    /**
-     * 有条件跳转
-     * @param cond 第0个operand
-     * @param trueBlock 第1个operand
-     * @param falseBlock 第2个operand
-     */
-    /*
-    public IrBr(IrValue cond, IrBasicBlock trueBlock, IrBasicBlock falseBlock) {
-        super(IrInstructionType.Br, IrLabelType.getLabelType(), 3);
-        this.setOperand(cond, 0);
-        this.setOperand(trueBlock, 1);
-        this.setOperand(falseBlock, 2);
-    }*/
-
     public IrBr(IrValue op1, IrValue op2, IrLabel label, IrInstructionType type) {
         super(type, IrLabelType.getLabelType(), 3);
         this.setOperand(op1, 0);
@@ -41,17 +27,6 @@ public class IrBr extends IrInstruction {
         this.setOperand(label, 2);
         this.setName(type.name());
     }
-
-    /**
-     * 无条件跳转
-     * @param trueBlock : 第0个operand
-     */
-    /*
-    public IrBr(IrBasicBlock trueBlock) {
-        super(IrInstructionType.Br, IrLabelType.getLabelType(), 1);
-        setOperand(trueBlock, 0);
-    }
-    */
 
     @Override
     public ArrayList<String> irOutput() {

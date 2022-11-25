@@ -28,12 +28,10 @@ import frontend.parser.expression.unaryexp.UnaryExpEle;
 import frontend.parser.expression.unaryexp.UnaryExpFunc;
 import frontend.parser.expression.unaryexp.UnaryExpOp;
 import frontend.parser.expression.unaryexp.UnaryOp;
-import frontend.parser.statement.Block;
 import frontend.parser.statement.blockitem.BlockItemEle;
 import frontend.parser.statement.stmt.Stmt;
 import frontend.parser.statement.stmt.StmtAssign;
 import frontend.parser.statement.stmt.StmtBreak;
-import frontend.parser.statement.stmt.StmtCond;
 import frontend.parser.statement.stmt.StmtContinue;
 import frontend.parser.statement.stmt.StmtEle;
 import frontend.parser.statement.stmt.StmtExp;
@@ -42,7 +40,6 @@ import frontend.parser.statement.stmt.StmtPrint;
 import frontend.parser.statement.stmt.StmtReturn;
 import frontend.lexer.TokenType;
 
-import frontend.parser.statement.stmt.StmtWhile;
 import frontend.parser.terminal.FormatString;
 import middle.llvmir.IrValue;
 import middle.llvmir.type.IrIntegerType;
@@ -88,6 +85,13 @@ public class IrInstructionBuilder {
     // private StmtWhile stmtWhile = null;
     /* 以下对象是传入Stmt时的可能*/
     private Stmt stmt = null;
+    /* 以下对象是传入AddExp时的可能 */
+    private AddExp addExp = null;
+    private IrValue left = null;
+
+    public IrInstructionBuilder() {
+
+    }
 
     public IrInstructionBuilder(SymbolTable symbolTable,
                                 IrBasicBlock basicBlock,
@@ -114,6 +118,15 @@ public class IrInstructionBuilder {
                                 IrFunctionCnt functionCnt) {
         this(symbolTable, basicBlock, functionCnt);
         this.stmt = stmt;
+    }
+
+    /* 待解析元素是AddExp，主要针对RelExp的组成部分 */
+    public IrInstructionBuilder(SymbolTable symbolTable,
+                                IrBasicBlock basicBlock,
+                                AddExp addExp,
+                                IrFunctionCnt functionCnt) {
+        this(symbolTable, basicBlock, functionCnt);
+        this.addExp = addExp;
     }
 
     /**
@@ -172,6 +185,8 @@ public class IrInstructionBuilder {
             } else {
                 System.out.println("ERROR in IrInstructionBuilder : should not reach here");
             }
+        } else if (this.addExp != null) {
+            genIrInstructionFromAddExp(addExp);
         } else {
             /* 传入元素来源于StmtIf或StmtWhile */
             /* TODO : 待施工 */
@@ -425,7 +440,12 @@ public class IrInstructionBuilder {
             }
             ret = left;
         }
+        this.left = ret;
         return ret;
+    }
+
+    public IrValue getLeft() {
+        return left;
     }
 
     /* 传入表达式右值中的一个MulExp，返回一个IrValue以供调用 */
@@ -554,7 +574,7 @@ public class IrInstructionBuilder {
     }
 
     /* 传入表达式右值中的一个Number，返回一个IrValue以供调用 */
-    private IrValue genIrInstructionFromNumber(Number number) {
+    public IrValue genIrInstructionFromNumber(Number number) {
         int num = number.calcNode(this.symbolTable);
         IrValue ret = new IrValue(IrIntegerType.get32(), String.valueOf(num));
         return ret;

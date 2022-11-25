@@ -1,12 +1,18 @@
 package middle.llvmir.value.basicblock;
 
+import frontend.lexer.Token;
+import frontend.lexer.TokenType;
 import frontend.parser.declaration.Decl;
 import frontend.parser.declaration.DeclEle;
 import frontend.parser.declaration.constant.ConstDecl;
 import frontend.parser.declaration.variable.VarDecl;
 import frontend.parser.expression.Cond;
+import frontend.parser.expression.multiexp.AddExp;
+import frontend.parser.expression.multiexp.EqExp;
 import frontend.parser.expression.multiexp.LAndExp;
 import frontend.parser.expression.multiexp.LOrExp;
+import frontend.parser.expression.multiexp.RelExp;
+import frontend.parser.expression.primaryexp.Number;
 import frontend.parser.statement.Block;
 import frontend.parser.statement.blockitem.BlockItem;
 import frontend.parser.statement.blockitem.BlockItemEle;
@@ -22,11 +28,18 @@ import frontend.parser.statement.stmt.StmtNull;
 import frontend.parser.statement.stmt.StmtPrint;
 import frontend.parser.statement.stmt.StmtReturn;
 import frontend.parser.statement.stmt.StmtWhile;
+import frontend.parser.terminal.IntConst;
+import middle.llvmir.IrValue;
+import middle.llvmir.type.IrIntegerType;
 import middle.llvmir.value.function.IrFunctionCnt;
+import middle.llvmir.value.instructions.IrBinaryInst;
 import middle.llvmir.value.instructions.IrInstruction;
 import middle.llvmir.value.instructions.IrInstructionBuilder;
+import middle.llvmir.value.instructions.IrInstructionType;
 import middle.llvmir.value.instructions.IrLabel;
 import middle.llvmir.value.instructions.IrLabelCnt;
+import middle.llvmir.value.instructions.memory.IrStore;
+import middle.llvmir.value.instructions.terminator.IrBr;
 import middle.llvmir.value.instructions.terminator.IrGoto;
 import middle.symbol.SymbolTable;
 
@@ -199,13 +212,17 @@ public class IrBasicBlockBuilder {
         IrLabel endLabel = new IrLabel(endLabelName);
         /* 处理Cond */
         Cond cond = this.stmtCond.getCond();
-        if (!hasElse) {
+        /*if (!hasElse) {
             this.addAllIrBasicBlocks(genCond(cond, ifLabel, endLabel));
         } else {
             this.addAllIrBasicBlocks(genCond(cond, ifLabel, endLabel, elseLabel));
+        }*/
+        if (hasElse) {
+            this.addAllIrBasicBlocks(genCond(cond, ifLabel, elseLabel));
+        } else {
+            this.addAllIrBasicBlocks(genCond(cond, ifLabel, endLabel));
         }
         /* 处理if语句块 */
-        /* TODO : 待施工 */
         Stmt ifStmt = this.stmtCond.getIfStmt();
         StmtEle ifStmtEle = ifStmt.getStmtEle();
         IrBasicBlock ifBlock = new IrBasicBlock("If Block");
@@ -250,6 +267,7 @@ public class IrBasicBlockBuilder {
         }
         /* 处理else语句块 */
         if (hasElse) {
+            /* 添加跳转到endLabel的语句 */
             Stmt elseStmt = this.stmtCond.getElseStmt();
             StmtEle elseStmtEle = elseStmt.getStmtEle();
             IrBasicBlock elseBlock = new IrBasicBlock("Else Block");
@@ -295,26 +313,201 @@ public class IrBasicBlockBuilder {
 
     /* 处理只有if的条件 */
     private ArrayList<IrBasicBlock> genCond(Cond cond, IrLabel ifLabel, IrLabel endLabel) {
-        ArrayList<IrBasicBlock> ret = new ArrayList<>();
         /* 处理Cond */
         IrBasicBlock condBlock = new IrBasicBlock("Cond IrBasicBlock");
         /* 条件表达式 */
         LOrExp lorexp = cond.getLorExp();
-        // 第一个参数 first
-        LAndExp first = lorexp.getFirst();
-        // first || a1 || a2 ...
-        ArrayList<LAndExp> landexps = lorexp.getOperands();
+        /* TODO ：待施工 */
+        /* 将所有LAndExp放在一起 */
+        ArrayList<LAndExp> landExps = lorexp.getAllOperands();
+        int len = landExps.size();
+        for (int i = 0; i < len; i++) {
+            IrLabel nextLabel = genIrInstructionFromLandExp(landExps.get(i), ifLabel);
+            if (nextLabel != null) {
+                IrBasicBlock temp = new IrBasicBlock("TEMP");
+                temp.addIrInstruction(nextLabel);
+                this.basicBlocks.add(temp);
+            }
+        }
+        IrGoto irGoto = new IrGoto(endLabel);
+        condBlock.addIrInstruction(irGoto);
+        this.basicBlocks.add(condBlock);
+        ArrayList<IrBasicBlock> ret = new ArrayList<>();
         return ret;
     }
 
-    /* 处理有if-else的条件 */
-    private ArrayList<IrBasicBlock> genCond(Cond cond,
-                                            IrLabel ifLabel,
-                                            IrLabel endLabel,
-                                            IrLabel elseLabel) {
-        ArrayList<IrBasicBlock> ret = new ArrayList<>();
-        /* TODO : 待施工 */
+    /*  */
+    private IrLabel genIrInstructionFromLandExp(LAndExp landexp, IrLabel label) {
+        ArrayList<EqExp> eqexps = landexp.getAllOperands();
+        ArrayList<Token> operators = landexp.getOperators();
+        IrBasicBlock block = null;
+        int len = eqexps.size();
+        IrBinaryInst inst;
+        /* 如果有多于1个EqExp，则返回null，否则返回下一组EqExp的label */
+        IrLabel ret = null;
+        if (len == 1) {
+            /* 只有一个EqExp说明没有 && */
+            /* 说明等价于 EqExp != 0 */
+            IrInstructionBuilder builder = new IrInstructionBuilder();
+            IrValue zero = builder.genIrInstructionFromNumber(new Number(new IntConst("0", -1)));
+            genIrInstructionFromEqExp(eqexps.get(0), label, true);
+            /* == 0时跳转到label，即，由短路求值直接跳转到下一个LandExp的label或else label或 end label */
+            //IrBr br = new IrBr(genIrInstructionFromEqExp(eqexps.get(0)),
+            // zero, label, IrInstructionType.Bne);
+            //block = new IrBasicBlock("LANDEXP");
+            //block.addIrInstruction(br);
+            //this.basicBlocks.add(block);
+        } else {
+            /* 有2个及以上的EqExp说明有 && */
+            IrValue operand1 = null;
+            IrValue operand2 = null;
+            int retCnt = IrLabelCnt.getCnt();
+            String retName = IrLabelCnt.cntToName(retCnt);
+            ret = new IrLabel(retName);
+            for (int i = 0; i < len; i++) {
+                genIrInstructionFromEqExp(eqexps.get(i), ret, false);
+                /*if (i == 0) {*/
+                /* 第一个EqExp需要生成IrValue */
+                /*operand1 = genIrInstructionFromEqExp(eqexps.get(i));*/
+                /*}*/
+                /*operand2 = genIrInstructionFromEqExp(eqexps.get(i + 1));
+                IrBr br = null;
+                if (operators.get(0).getType().equals(TokenType.EQL)) {
+                    br = new IrBr(operand1, operand2, label, IrInstructionType.Bne);
+                } else if (operators.get(i).getType().equals(TokenType.NEQ)) {
+                    br = new IrBr(operand1, operand2, label, IrInstructionType.Beq);
+                }
+                block = new IrBasicBlock("LANDEXP");
+                block.addIrInstruction(br);
+                this.basicBlocks.add(block);
+                operand1 = operand2;*/
+
+            }
+            block = new IrBasicBlock("NEXT LANDEXP");
+            IrGoto irGoto = new IrGoto(label);
+            block.addIrInstruction(irGoto);
+            this.basicBlocks.add(block);
+            //IrGoto irGoto = new IrGoto(label);
+            //block = new IrBasicBlock("GOTO NEXT EQEXP");
+            //block.addIrInstruction(irGoto);
+            //block.addIrInstruction(ret);
+            //this.basicBlocks.add(block);
+        }
         return ret;
+    }
+
+    /* 生成br指令 */
+    private void genIrInstructionFromEqExp(EqExp eqexp, IrLabel label, boolean pos) {
+        ArrayList<RelExp> relExps = eqexp.getAllOperands();
+        ArrayList<Token> operators = eqexp.getOperators();
+        /* 初始左操作数 */
+        IrValue left = genIrInstructionFromRelExp(relExps.get(0));
+        IrValue right = null;
+        int len = relExps.size();
+        for (int i = 1; i < len - 1; i++) {
+            /* 当前右操作数 */
+            right = genIrInstructionFromRelExp(relExps.get(i));
+            /* 相等性运算表达式 */
+            IrBinaryInst inst;
+            if (operators.get(i - 1).getType().equals(TokenType.EQL)) {
+                inst = new IrBinaryInst(IrIntegerType.get32(),
+                        IrInstructionType.Eq, left, right);
+            } else {
+                inst = new IrBinaryInst(IrIntegerType.get32(),
+                        IrInstructionType.Ne, left, right);
+            }
+            inst.setName(left.getName());
+            int cnt = this.functionCnt.getCnt();
+            String leftName = "%_LocalVariable" + cnt;
+            left = new IrValue(IrIntegerType.get32(), leftName);
+            IrStore store = new IrStore(inst, left);
+            IrBasicBlock basicBlock = new IrBasicBlock("EqExp");
+            basicBlock.addIrInstruction(inst);
+            basicBlock.addIrInstruction(store);
+            this.basicBlocks.add(basicBlock);
+        }
+        if (len > 1) {
+            right = genIrInstructionFromRelExp(relExps.get(len - 1));
+        }
+        IrBr br;
+        if (pos) {
+            /* 正常br */
+            if (operators.size() == 0) {
+                /* 说明该EqExp只有1个RelExp */
+                IrInstructionBuilder builder = new IrInstructionBuilder();
+                IrValue zero = builder.genIrInstructionFromNumber(new Number(new IntConst("0", -1)));
+                br = new IrBr(left, zero, label, IrInstructionType.Bne);
+            } else if (operators.get(operators.size() - 1).getType().equals(TokenType.EQL)) {
+                br = new IrBr(left, right, label, IrInstructionType.Beq);
+            } else {
+                br = new IrBr(left, right, label, IrInstructionType.Bne);
+            }
+        } else {
+            /* 取反br */
+            if (operators.size() == 0) {
+                /* 说明该EqExp只有1个RelExp */
+                IrInstructionBuilder builder = new IrInstructionBuilder();
+                IrValue zero = builder.genIrInstructionFromNumber(new Number(new IntConst("0", -1)));
+                br = new IrBr(left, zero, label, IrInstructionType.Beq);
+            } else if (operators.get(operators.size() - 1).getType().equals(TokenType.EQL)) {
+                br = new IrBr(left, right, label, IrInstructionType.Bne);
+            } else {
+                br = new IrBr(left, right, label, IrInstructionType.Beq);
+            }
+        }
+        IrBasicBlock block = new IrBasicBlock("Temp");
+
+        block.addIrInstruction(br);
+        this.basicBlocks.add(block);
+        // return left;
+    }
+
+    private IrValue genIrInstructionFromRelExp(RelExp relExp) {
+        ArrayList<AddExp> addExps = relExp.getAllOperands();
+        ArrayList<Token> operators = relExp.getOperators();
+        int len = addExps.size();
+        IrInstructionBuilder builder = new IrInstructionBuilder(this.symbolTable,
+                new IrBasicBlock("TEMP"), addExps.get(0), this.functionCnt);
+        IrBasicBlock basicBlock = new IrBasicBlock("RelExp");
+        ArrayList<IrInstruction> instructions = builder.genIrInstruction();
+        basicBlock.addAllIrInstruction(instructions);
+        IrValue left = builder.getLeft();
+        IrValue right;
+        for (int i = 1; i < len; i++) {
+            builder = new IrInstructionBuilder(this.symbolTable,
+                    new IrBasicBlock("TEMP"), addExps.get(i), this.functionCnt);
+            instructions = builder.genIrInstruction();
+            basicBlock.addAllIrInstruction(instructions);
+            right = builder.getLeft();
+            /* 关系表达式 */
+            IrBinaryInst inst = null;
+            Token operator = operators.get(i - 1);
+            if (operator.getType().equals(TokenType.LSS)) {
+                /* < */
+                inst = new IrBinaryInst(IrIntegerType.get32(), IrInstructionType.Lt, left, right);
+            } else if (operator.getType().equals(TokenType.GRE)) {
+                /* > */
+                inst = new IrBinaryInst(IrIntegerType.get32(), IrInstructionType.Gt, left, right);
+            } else if (operator.getType().equals(TokenType.LEQ)) {
+                /* <= */
+                inst = new IrBinaryInst(IrIntegerType.get32(), IrInstructionType.Le, left, right);
+            } else if (operator.getType().equals(TokenType.GEQ)) {
+                /* >= */
+                inst = new IrBinaryInst(IrIntegerType.get32(), IrInstructionType.Ge, left, right);
+            } else {
+                System.out.println("ERROR In IrBasicBlockBuilder : should not reach here!");
+            }
+
+            int cnt = this.functionCnt.getCnt();
+            String name = "%_LocalVariable" + cnt;
+            left = new IrValue(IrIntegerType.get32(), name);
+            inst.setName(name);
+            // IrStore store = new IrStore(inst, left);
+            basicBlock.addIrInstruction(inst);
+            // basicBlock.addIrInstruction(store);
+        }
+        this.basicBlocks.add(basicBlock);
+        return left;
     }
 
     private ArrayList<IrBasicBlock> genIrBasicBlockFromWhile() {
