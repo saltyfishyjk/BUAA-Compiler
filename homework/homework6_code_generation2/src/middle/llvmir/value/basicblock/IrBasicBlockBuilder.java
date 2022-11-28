@@ -128,7 +128,6 @@ public class IrBasicBlockBuilder {
                 StmtEle stmtEle = stmt.getStmtEle();
                 switch (typeCode) {
                     case 1: // 说明是StmtCond
-                        /* TODO : 待施工 */
                         builder = new IrBasicBlockBuilder(newSymbolTable,
                                 (StmtCond)stmtEle, this.functionCnt);
                         break;
@@ -138,7 +137,6 @@ public class IrBasicBlockBuilder {
                                 (StmtWhile)stmtEle, this.functionCnt);
                         break;
                     case 3: // 说明是Block
-                        /* TODO : 待施工 */
                         builder = new IrBasicBlockBuilder(newSymbolTable,
                                 (Block)stmtEle, this.functionCnt);
                         break;
@@ -481,6 +479,73 @@ public class IrBasicBlockBuilder {
 
     private ArrayList<IrBasicBlock> genIrBasicBlockFromWhile() {
         /* TODO : 待施工 */
+        Cond cond = this.stmtWhile.getCond();
+        Stmt stmt = this.stmtWhile.getStmt();
+        int whileLabelCnt = IrLabelCnt.getCnt();
+        String whileLabelName = IrLabelCnt.cntToName(whileLabelCnt);
+        /* 生成whileLabel，标记while条件语句开始的标记 */
+        IrLabel whileLabel = new IrLabel(whileLabelName);
+        IrBasicBlock basicBlock = new IrBasicBlock("TEMP");
+        basicBlock.addIrInstruction(whileLabel);
+        this.basicBlocks.add(basicBlock);
+        /* 生成ifLabel */
+        int ifLabelCnt = IrLabelCnt.getCnt();
+        String ifLabelName = IrLabelCnt.cntToName(ifLabelCnt);
+        IrLabel ifLabel = new IrLabel(ifLabelName);
+        /* 生成endLabel */
+        int endLabelCnt = IrLabelCnt.getCnt();
+        String endLabelName = IrLabelCnt.cntToName(endLabelCnt);
+        IrLabel endLabel = new IrLabel(endLabelName);
+        /* while的处理逻辑类似if，唯一区别在于whileStmt末尾应当跳转回whileLabel */
+        genCond(cond, ifLabel, endLabel);
+
+        /* 处理whileStmt语句块 */
+        StmtEle stmtEle = stmt.getStmtEle();
+        IrBasicBlock ifBlock = new IrBasicBlock("If Block");
+        /* 首先添加while语句块的label */
+        ifBlock.addIrInstruction(ifLabel);
+        /* 对于ifStmt, whileStmt, Block这三个情况，需要调用genIrBasicBlock */
+        IrBasicBlockBuilder builder = null;
+        SymbolTable newSymbolTable = new SymbolTable(this.symbolTable);
+        if (stmtEle instanceof  StmtCond ||
+                stmtEle instanceof StmtWhile ||
+                stmtEle instanceof Block) {
+            /* 由于后续内容会解析返回一个IrBasicBlock列表，因此先行将if块的标签打包为IrBasicBlock add进去 */
+            this.basicBlocks.add(ifBlock);
+            if (stmtEle instanceof Block) {
+                builder = new IrBasicBlockBuilder(newSymbolTable,
+                        (Block)stmtEle, this.functionCnt);
+            } else if (stmtEle instanceof StmtCond) {
+                builder = new IrBasicBlockBuilder(newSymbolTable,
+                        (StmtCond)stmtEle, this.functionCnt);
+            } else {
+                builder = new IrBasicBlockBuilder(newSymbolTable,
+                        (StmtWhile)stmtEle, this.functionCnt);
+            }
+            this.addAllIrBasicBlocks(builder.genIrBasicBlock());
+            /* 将goto whileLabel语句包装为一个IrBasicBlock加入其中 */
+            IrGoto irGoto = new IrGoto(whileLabel);
+            IrBasicBlock temp = new IrBasicBlock("GOTO WhileBegin");
+            temp.addIrInstruction(irGoto);
+            this.basicBlocks.add(temp);
+        } else {
+            /* StmtEle不是StmtCond, StmtWhile或Block，使用生成*/
+            IrInstructionBuilder instructionBuilder = new IrInstructionBuilder(this.symbolTable,
+                    ifBlock, stmt, this.functionCnt);
+            ArrayList<IrInstruction> temp = instructionBuilder.genIrInstruction();
+            if (temp != null && temp.size() != 0) {
+                ifBlock.addAllIrInstruction(temp);
+            }
+            /* 将goto whileLabel添加到ifBlock末尾 */
+            IrGoto irGoto = new IrGoto(whileLabel);
+            ifBlock.addIrInstruction(irGoto);
+            this.basicBlocks.add(ifBlock);
+        }
+
+        /* 将end label 添加到末尾*/
+        IrBasicBlock endBlock = new IrBasicBlock("END LABEL");
+        endBlock.addIrInstruction(endLabel);
+        this.basicBlocks.add(endBlock);
         return this.basicBlocks;
     }
 

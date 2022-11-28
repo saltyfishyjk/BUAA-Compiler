@@ -35,4 +35,12 @@ public class StmtWhile implements StmtEle {
         sb.append(this.stmt.syntaxOutput());
         return sb.toString();
     }
+
+    public Cond getCond() {
+        return this.cond;
+    }
+
+    public Stmt getStmt() {
+        return this.stmt;
+    }
 }
