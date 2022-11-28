@@ -42,7 +42,10 @@ public class IrBinaryInst extends IrInstruction {
         /* 设置左操作数 */
         this.setOperand(left, 0);
         /* 设置右操作数 */
-        this.setOperand(right, 1);
+        if (right != null) {
+            this.setOperand(right, 1);
+        }
+
     }
 
     @Override
@@ -78,6 +81,9 @@ public class IrBinaryInst extends IrInstruction {
             case Ge:
                 sb.append("Ge ");
                 break;
+            case Not:
+                sb.append("Not ");
+                break;
             default:
                 System.out.println("ERROR in IrBinaryInst : should not reach here");
                 break;
@@ -103,8 +109,10 @@ public class IrBinaryInst extends IrInstruction {
         */
 
         sb.append(this.getOperand(0).getName());
-        sb.append(", ");
-        sb.append(this.getOperand(1).getName());
+        if (this.getOperand(1) != null) {
+            sb.append(", ");
+            sb.append(this.getOperand(1).getName());
+        }
         sb.append("\n");
         ArrayList<String> ret = new ArrayList<>();
         ret.add(sb.toString());

@@ -212,12 +212,6 @@ public class IrInstructionBuilder {
             } else if (stmtEle instanceof StmtExp) {
                 this.stmtExp = (StmtExp)stmtEle;
                 genIrInstructionFromStmtExp();
-                /*} else if (stmtEle instanceof StmtCond) {
-                    this.stmtCond = (StmtCond)stmtEle;
-                    genIrInstructionFromStmtCond();
-                } else if (stmtEle instanceof StmtWhile) {
-                    this.stmtWhile = (StmtWhile)stmtEle;
-                    genIrInstructionFromStmtWhile();*/
             } else {
                 System.out.println("ERROR in IrInstructionBuilder : should not reach here");
             }
@@ -501,7 +495,8 @@ public class IrInstructionBuilder {
             UnaryExpFunc unaryExpFunc = (UnaryExpFunc)expEle;
             ret = genIrInstructionFromUnaryExpFunc(unaryExpFunc);
         } else if (expEle instanceof UnaryExpOp) {
-            // '+' / '-' UnaryExp
+            // '+' / '-' / '!' UnaryExp
+            // '!'只可能出现在Cond中
             UnaryExpOp unaryExpOp = (UnaryExpOp)expEle;
             ret = genIrInstructionFromUnaryExpOp(unaryExpOp);
         } else {
@@ -622,7 +617,7 @@ public class IrInstructionBuilder {
         UnaryExp unaryExp = expOp.getUnaryExp();
         Token op = unaryOp.getToken();
         if (op.getType().equals(TokenType.PLUS)) {
-            return genIrInstructionFromUnaryExp(unaryExp);
+            ret = genIrInstructionFromUnaryExp(unaryExp);
         } else if (op.getType().equals(TokenType.MINU)) {
             /* TODO : 这里处理的是i32，暂时没有考虑别的情况 */
             IrValue left = new IrValue(IrIntegerType.get32(), "-1");
@@ -634,7 +629,14 @@ public class IrInstructionBuilder {
             ret = mulExp;
             this.instructions.add(mulExp);
         } else if (op.getType().equals(TokenType.NOT)) {
-            /* TODO : 本次作业不涉及条件运算 */
+            /* 处理Not运算 */
+            IrBinaryInst notExp = new IrBinaryInst(IrIntegerType.get32(), IrInstructionType.Not,
+                    genIrInstructionFromUnaryExp(unaryExp), null);
+            int cnt = this.functionCnt.getCnt();
+            String name = "%_LocalVariable" + cnt;
+            notExp.setName(name);
+            ret = notExp;
+            this.instructions.add(notExp);
         } else {
             System.out.println("ERROR in IrInstructionBuilder : should not reach here");
         }
@@ -668,11 +670,11 @@ public class IrInstructionBuilder {
     */
 
     private void genIrInstructionFromStmtContinue() {
-        /* TODO : 待施工 条件语句块continue */
+        /* TODO : 待施工 循环语句块continue */
     }
 
     private void genIrInstructionFromStmtBreak() {
-        /* TODO : 待施工 条件语句块break */
+        /* TODO : 待施工 循环语句块break */
     }
 
     /* 解析return语句 */

@@ -25,6 +25,7 @@ public enum IrInstructionType {
     Ne, // !=
     And,// &
     Or, // |
+    Not, // ! ONLY ONE PARAM
     Beq, // IrBeq branch if ==
     Bne, // IrBne branch if !=
     Blt, // IrBlt branch if less than <

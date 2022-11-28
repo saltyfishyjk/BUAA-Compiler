@@ -190,7 +190,6 @@ public class IrBasicBlockBuilder {
      * SysY支持形如if， if-else， if-else if- else等形式的条件语句
      */
     private ArrayList<IrBasicBlock> genIrBasicBlockFromCond() {
-        /* TODO : 待施工 */
         /* 构造if块标签 */
         int ifLabelCnt = IrLabelCnt.getCnt();
         String ifLabelName = IrLabelCnt.cntToName(ifLabelCnt);
@@ -212,11 +211,6 @@ public class IrBasicBlockBuilder {
         IrLabel endLabel = new IrLabel(endLabelName);
         /* 处理Cond */
         Cond cond = this.stmtCond.getCond();
-        /*if (!hasElse) {
-            this.addAllIrBasicBlocks(genCond(cond, ifLabel, endLabel));
-        } else {
-            this.addAllIrBasicBlocks(genCond(cond, ifLabel, endLabel, elseLabel));
-        }*/
         if (hasElse) {
             this.addAllIrBasicBlocks(genCond(cond, ifLabel, elseLabel));
         } else {
@@ -351,12 +345,6 @@ public class IrBasicBlockBuilder {
             IrInstructionBuilder builder = new IrInstructionBuilder();
             IrValue zero = builder.genIrInstructionFromNumber(new Number(new IntConst("0", -1)));
             genIrInstructionFromEqExp(eqexps.get(0), label, true);
-            /* == 0时跳转到label，即，由短路求值直接跳转到下一个LandExp的label或else label或 end label */
-            //IrBr br = new IrBr(genIrInstructionFromEqExp(eqexps.get(0)),
-            // zero, label, IrInstructionType.Bne);
-            //block = new IrBasicBlock("LANDEXP");
-            //block.addIrInstruction(br);
-            //this.basicBlocks.add(block);
         } else {
             /* 有2个及以上的EqExp说明有 && */
             IrValue operand1 = null;
@@ -366,32 +354,11 @@ public class IrBasicBlockBuilder {
             ret = new IrLabel(retName);
             for (int i = 0; i < len; i++) {
                 genIrInstructionFromEqExp(eqexps.get(i), ret, false);
-                /*if (i == 0) {*/
-                /* 第一个EqExp需要生成IrValue */
-                /*operand1 = genIrInstructionFromEqExp(eqexps.get(i));*/
-                /*}*/
-                /*operand2 = genIrInstructionFromEqExp(eqexps.get(i + 1));
-                IrBr br = null;
-                if (operators.get(0).getType().equals(TokenType.EQL)) {
-                    br = new IrBr(operand1, operand2, label, IrInstructionType.Bne);
-                } else if (operators.get(i).getType().equals(TokenType.NEQ)) {
-                    br = new IrBr(operand1, operand2, label, IrInstructionType.Beq);
-                }
-                block = new IrBasicBlock("LANDEXP");
-                block.addIrInstruction(br);
-                this.basicBlocks.add(block);
-                operand1 = operand2;*/
-
             }
             block = new IrBasicBlock("NEXT LANDEXP");
             IrGoto irGoto = new IrGoto(label);
             block.addIrInstruction(irGoto);
             this.basicBlocks.add(block);
-            //IrGoto irGoto = new IrGoto(label);
-            //block = new IrBasicBlock("GOTO NEXT EQEXP");
-            //block.addIrInstruction(irGoto);
-            //block.addIrInstruction(ret);
-            //this.basicBlocks.add(block);
         }
         return ret;
     }
@@ -435,7 +402,8 @@ public class IrBasicBlockBuilder {
             if (operators.size() == 0) {
                 /* 说明该EqExp只有1个RelExp */
                 IrInstructionBuilder builder = new IrInstructionBuilder();
-                IrValue zero = builder.genIrInstructionFromNumber(new Number(new IntConst("0", -1)));
+                IrValue zero = builder.genIrInstructionFromNumber(new
+                        Number(new IntConst("0", -1)));
                 br = new IrBr(left, zero, label, IrInstructionType.Bne);
             } else if (operators.get(operators.size() - 1).getType().equals(TokenType.EQL)) {
                 br = new IrBr(left, right, label, IrInstructionType.Beq);
@@ -447,7 +415,8 @@ public class IrBasicBlockBuilder {
             if (operators.size() == 0) {
                 /* 说明该EqExp只有1个RelExp */
                 IrInstructionBuilder builder = new IrInstructionBuilder();
-                IrValue zero = builder.genIrInstructionFromNumber(new Number(new IntConst("0", -1)));
+                IrValue zero = builder.genIrInstructionFromNumber(new
+                        Number(new IntConst("0", -1)));
                 br = new IrBr(left, zero, label, IrInstructionType.Beq);
             } else if (operators.get(operators.size() - 1).getType().equals(TokenType.EQL)) {
                 br = new IrBr(left, right, label, IrInstructionType.Bne);
@@ -519,7 +488,7 @@ public class IrBasicBlockBuilder {
      * 判断给定的BlockItemEle的具体类型
      * @param ele : BlockItemEle对象
      * @return TypeCode : 对象的具体类别，用以判断如何处理
-     * - 1 : StmtCond : TODO : 本次作业不涉及条件
+     * - 1 : StmtCond :
      * - 2 : StmtWhile : TODO : 本次作业不涉及循环
      * - 3 : Block
      * ---------- 以上应当调用genIrBasicBlock解析 ----------
