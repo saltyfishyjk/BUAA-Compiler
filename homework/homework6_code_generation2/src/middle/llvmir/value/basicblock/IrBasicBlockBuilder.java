@@ -480,7 +480,7 @@ public class IrBasicBlockBuilder {
     private ArrayList<IrBasicBlock> genIrBasicBlockFromWhile() {
         /* TODO : 待施工 */
         Cond cond = this.stmtWhile.getCond();
-        Stmt stmt = this.stmtWhile.getStmt();
+
         int whileLabelCnt = IrLabelCnt.getCnt();
         String whileLabelName = IrLabelCnt.cntToName(whileLabelCnt);
         /* 生成whileLabel，标记while条件语句开始的标记 */
@@ -500,6 +500,7 @@ public class IrBasicBlockBuilder {
         genCond(cond, ifLabel, endLabel);
 
         /* 处理whileStmt语句块 */
+        Stmt stmt = this.stmtWhile.getStmt();
         StmtEle stmtEle = stmt.getStmtEle();
         IrBasicBlock ifBlock = new IrBasicBlock("If Block");
         /* 首先添加while语句块的label */
@@ -554,7 +555,7 @@ public class IrBasicBlockBuilder {
      * @param ele : BlockItemEle对象
      * @return TypeCode : 对象的具体类别，用以判断如何处理
      * - 1 : StmtCond :
-     * - 2 : StmtWhile : TODO : 本次作业不涉及循环
+     * - 2 : StmtWhile :
      * - 3 : Block
      * ---------- 以上应当调用genIrBasicBlock解析 ----------
      * - 4 : ConstDecl

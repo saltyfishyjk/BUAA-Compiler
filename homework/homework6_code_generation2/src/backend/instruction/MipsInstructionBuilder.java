@@ -8,10 +8,13 @@ import middle.llvmir.IrValue;
 import middle.llvmir.value.instructions.IrBinaryInst;
 import middle.llvmir.value.instructions.IrInstruction;
 import middle.llvmir.value.instructions.IrInstructionType;
+import middle.llvmir.value.instructions.IrLabel;
 import middle.llvmir.value.instructions.memory.IrAlloca;
 import middle.llvmir.value.instructions.memory.IrLoad;
 import middle.llvmir.value.instructions.memory.IrStore;
+import middle.llvmir.value.instructions.terminator.IrBr;
 import middle.llvmir.value.instructions.terminator.IrCall;
+import middle.llvmir.value.instructions.terminator.IrGoto;
 import middle.llvmir.value.instructions.terminator.IrRet;
 
 import java.util.ArrayList;
@@ -45,6 +48,12 @@ public class MipsInstructionBuilder {
             return genMipsInstructionFromRet();
         } else if (irInstruction instanceof IrStore) {
             return genMipsInstructionFromStore();
+        } else if (irInstruction instanceof IrGoto) {
+            return genMipsInstructionFromGoto();
+        } else if (irInstruction instanceof IrLabel) {
+            return genMipsInstructionFromLabel();
+        } else if (irInstruction instanceof IrBr) {
+            return genMipsInstructionFromBr();
         } else {
             System.out.println("ERROR in MipsInstructionBuilder : should not reach here");
         }
@@ -130,6 +139,20 @@ public class MipsInstructionBuilder {
             ret.add(div);
             Mfhi mfhi = new Mfhi(ansReg);
             ret.add(mfhi);
+        } else if (inst.getInstructionType().equals(IrInstructionType.Lt)) {
+            /* TODO : < */
+        } else if (inst.getInstructionType().equals(IrInstructionType.Le)) {
+            /* TODO : <= */
+        } else if (inst.getInstructionType().equals(IrInstructionType.Gt)) {
+            /* TODO : > */
+        } else if (inst.getInstructionType().equals(IrInstructionType.Ge)) {
+            /* TODO : >= */
+        } else if (inst.getInstructionType().equals(IrInstructionType.Eq)) {
+            /* TODO : ==*/
+        } else if (inst.getInstructionType().equals(IrInstructionType.Ne)) {
+            /* TODO : != */
+        } else if (inst.getInstructionType().equals(IrInstructionType.Not)) {
+            /* TODO : ! */
         } else {
             System.out.println("ERROR in MipsInstructionBuilder : should not reach here");
         }
@@ -385,5 +408,30 @@ public class MipsInstructionBuilder {
         } else {
             return false;
         }
+    }
+
+    /* IrGoto -> Mips j */
+    private ArrayList<MipsInstruction> genMipsInstructionFromGoto() {
+        IrGoto irGoto = (IrGoto)irInstruction;
+        IrLabel irLabel = (IrLabel) irGoto.getOperand(0);
+        J j = new J(irLabel.getName());
+        ArrayList<MipsInstruction> ret = new ArrayList<>();
+        ret.add(j);
+        return ret;
+    }
+
+    /* IrLabel -> Mips Label */
+    private ArrayList<MipsInstruction> genMipsInstructionFromLabel() {
+        IrLabel irLabel = (IrLabel)irInstruction;
+        Label mipsLabel = new Label(irLabel.getName());
+        ArrayList<MipsInstruction> ret = new ArrayList<>();
+        ret.add(mipsLabel);
+        return ret;
+    }
+
+    private ArrayList<MipsInstruction> genMipsInstructionFromBr() {
+        ArrayList<MipsInstruction> ret = new ArrayList<>();
+        /* TODO : 待施工 */
+        return ret;
     }
 }
