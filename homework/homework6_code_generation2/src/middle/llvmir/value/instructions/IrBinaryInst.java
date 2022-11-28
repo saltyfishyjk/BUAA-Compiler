@@ -93,20 +93,6 @@ public class IrBinaryInst extends IrInstruction {
         } else  {
             /* TODO : 待施工 */
         }
-        /*
-        ArrayList<String> lefts = this.getOperand(0).irOutput();
-        if (lefts == null || lefts.size() != 1) {
-            System.out.println("ERROR in IrBinaryInst : should not reach here");
-        }
-        String leftStr = lefts.get(0);
-        sb.append(leftStr + ", ");
-        ArrayList<String> rights = this.getOperand(1).irOutput();
-        if (rights == null || rights.size() != 1) {
-            System.out.println("ERROR in IrBinaryInst : should not reach here");
-        }
-        String rightStr = rights.get(0);
-        sb.append(rightStr + "\n");
-        */
 
         sb.append(this.getOperand(0).getName());
         if (this.getOperand(1) != null) {

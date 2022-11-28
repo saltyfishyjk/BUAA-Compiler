@@ -414,7 +414,7 @@ public class MipsInstructionBuilder {
     private ArrayList<MipsInstruction> genMipsInstructionFromGoto() {
         IrGoto irGoto = (IrGoto)irInstruction;
         IrLabel irLabel = (IrLabel) irGoto.getOperand(0);
-        J j = new J(irLabel.getName());
+        J j = new J(irLabel.getName().substring(1));
         ArrayList<MipsInstruction> ret = new ArrayList<>();
         ret.add(j);
         return ret;
@@ -423,15 +423,62 @@ public class MipsInstructionBuilder {
     /* IrLabel -> Mips Label */
     private ArrayList<MipsInstruction> genMipsInstructionFromLabel() {
         IrLabel irLabel = (IrLabel)irInstruction;
-        Label mipsLabel = new Label(irLabel.getName());
+        Label mipsLabel = new Label(irLabel.getName().substring(1));
         ArrayList<MipsInstruction> ret = new ArrayList<>();
         ret.add(mipsLabel);
         return ret;
     }
 
     private ArrayList<MipsInstruction> genMipsInstructionFromBr() {
+        IrBr inst = (IrBr)irInstruction;
+        /* 获取左操作数所在寄存器 */
+        IrValue left = inst.getLeft();
+        String leftName = left.getName();
+        int leftReg = -1;
+        MipsSymbol leftSymbol;
         ArrayList<MipsInstruction> ret = new ArrayList<>();
-        /* TODO : 待施工 */
+        if (isConst(leftName)) {
+            // 是常数
+            // leftSymbol = new MipsSymbol("temp", -1);
+            leftSymbol = new MipsSymbol("temp", 30, false, -1, false,
+                    -1, true, false);
+            leftReg = this.registerFile.getReg(true, leftSymbol, this.father);
+            // 找到一个临时寄存器，用li装入
+            Li li = new Li(leftReg, Integer.valueOf(leftName));
+            ret.add(li);
+        } else {
+            // 是变量
+            leftReg = this.table.getRegIndex(leftName, this.father);
+            leftSymbol = this.table.getSymbol(leftName);
+        }
+        /* 获取右操作数所在寄存器 */
+        IrValue right = inst.getRight();
+        String rightName = right.getName();
+        MipsSymbol rightSymbol;
+        int rightReg = -1;
+        if (isConst(rightName)) {
+            // rightSymbol = new MipsSymbol("temp", -1);
+            rightSymbol = new MipsSymbol("temp", 30, false, -1, false,
+                    -1, true, false);
+            rightReg = this.registerFile.getReg(true, rightSymbol, this.father);
+            // 找到一个临时寄存器，用li装入
+            Li li = new Li(rightReg, Integer.valueOf(rightName));
+            ret.add(li);
+        } else {
+            rightReg = this.table.getRegIndex(rightName, this.father);
+            rightSymbol = this.table.getSymbol(rightName);
+        }
+        IrLabel label = (IrLabel)inst.getLabel();
+        if (inst.getInstructionType().equals(IrInstructionType.Beq)) {
+            Beq beq = new Beq(leftReg, rightReg, label.getName().substring(1));
+            ret.add(beq);
+        } else {
+            Bne bne = new Bne(leftReg, rightReg, label.getName().substring(1));
+            ret.add(bne);
+        }
+        /* 将左右操作数标记为已使用，方便释放寄存器 */
+        leftSymbol.setUsed(true);
+        rightSymbol.setUsed(true);
         return ret;
     }
 }

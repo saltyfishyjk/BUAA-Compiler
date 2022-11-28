@@ -37,4 +37,16 @@ public class IrBr extends IrInstruction {
         ret.add(sb.toString());
         return ret;
     }
+
+    public IrValue getLeft() {
+        return this.getOperand(0);
+    }
+
+    public IrValue getRight() {
+        return this.getOperand(1);
+    }
+
+    public IrValue getLabel() {
+        return this.getOperand(2);
+    }
 }
