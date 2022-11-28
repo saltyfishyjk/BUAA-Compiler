@@ -22,6 +22,7 @@ public class Beq extends MipsInstruction {
         sb.append(RegisterName.getName(this.right) + ", ");
         sb.append(this.label + "\n");
         ArrayList<String> ret = new ArrayList<>();
+        ret.add(sb.toString());
         return ret;
     }
 }
