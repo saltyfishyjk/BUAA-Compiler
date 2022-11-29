@@ -165,6 +165,7 @@ public class MipsInstructionBuilder {
             ret.add(sne);
         } else if (inst.getInstructionType().equals(IrInstructionType.Not)) {
             /* TODO : ! */
+
         } else {
             System.out.println("ERROR in MipsInstructionBuilder : should not reach here");
         }
@@ -336,12 +337,11 @@ public class MipsInstructionBuilder {
                 -1, false, -1, true, false);
         insertSymbolTable(leftName, leftSymbol);
         int leftReg = this.registerFile.getReg(true, leftSymbol, this.father);
+        ArrayList<MipsInstruction> ret = new ArrayList<>();
         /* 获取右部变量 */
         MipsSymbol rightSymbol = this.table.getSymbol(rightName);
-        // int rightReg = this.registerFile.getReg(rightSymbol.isTemp(), rightSymbol, this.father);
         int rightReg = this.table.getRegIndex(rightName, this.father);
         Move move = new Move(leftReg, rightReg);
-        ArrayList<MipsInstruction> ret = new ArrayList<>();
         ret.add(move);
         return ret;
     }
@@ -398,17 +398,19 @@ public class MipsInstructionBuilder {
         }
         /* TODO : 需要检查 获取右操作数的寄存器 */
         rightReg = this.table.getRegIndex(rightName, this.father);
-        /* TODO : 待施工 */
+        MipsSymbol rightSymbol = this.table.getSymbol(rightName);
         Move move = new Move(rightReg, leftReg);
         this.registerFile.getSymbol(leftReg).setUsed(true);
-        /*if (this.table.hasSymbol(leftName)) {
-            this.table.getSymbol(leftName).setUsed(true);
-        }*/
-        this.registerFile.getSymbol(leftReg).setUsed(true);
         ret.add(move);
+        /* 如果是全局变量，则需要立刻写回内存 */
+        if (rightName.contains("Global")) {
+            MipsInstruction temp = this.registerFile.writeBackPublic(rightSymbol);
+            rightSymbol.setUsed(true);
+            rightSymbol.setInReg(false);
+            ret.add(temp);
+        }
         return ret;
     }
-    /* TODO : 有bug还没改完 */
 
     private void insertSymbolTable(String name, MipsSymbol symbol) {
         this.table.addSymbol(name, symbol);

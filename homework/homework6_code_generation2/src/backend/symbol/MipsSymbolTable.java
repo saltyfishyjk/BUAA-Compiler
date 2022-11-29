@@ -2,10 +2,8 @@ package backend.symbol;
 
 import backend.RegisterFile;
 import backend.basicblock.MipsBasicBlock;
-import backend.instruction.MipsInstruction;
 import backend.symbol.MipsSymbol;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -47,21 +45,6 @@ public class MipsSymbolTable {
             return reg;
         }
         // return symbol.getRegIndex();
-    }
-
-    /* 查询给定LLVM IR符号是否位于寄存器 */
-    /* 执行本命令前须判断该符号已位于符号表中 */
-    public boolean inReg(String name) {
-        MipsSymbol symbol = this.symbols.get(name);
-        return symbol.isInReg();
-    }
-
-    /* 将LLVM IR符号从内存加载到寄存器中 */
-    /* 执行本命令前须判断该符号位于内存且不位于寄存器中 */
-    private ArrayList<MipsInstruction> loadInReg(String name) {
-        MipsSymbol symbol = this.symbols.get(name);
-        /* TODO : 待施工 */
-        return null;
     }
 
     public void addOffset(int delta) {

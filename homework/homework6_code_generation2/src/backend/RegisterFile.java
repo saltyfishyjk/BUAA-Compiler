@@ -105,7 +105,6 @@ public class RegisterFile {
             if (!isTemp) {
                 /* 找到了空闲寄存器，将寄存器编号压入use栈 */
                 this.sregUse.push(freeReg);
-
             }
             /* 修改MipsSymbol状态 */
             symbol.setInReg(true); // 标记该Symbol已经在寄存器中
@@ -115,6 +114,10 @@ public class RegisterFile {
             this.regs.put(freeReg, symbol);
             symbol.setInReg(true);
             symbol.setRegIndex(freeReg);
+            /* 写入寄存器 */
+            if (symbol.hasRam()) {
+                readBack(freeReg, symbol, basicBlock);
+            }
             return freeReg;
         } else {
             /* 没有找到空闲寄存器，说明需要将某个寄存器写入内存或做其他操作 */
@@ -168,6 +171,14 @@ public class RegisterFile {
         ArrayList<MipsInstruction> temp = new ArrayList<>();
         temp.add(sw);
         basicBlock.addInstruction(temp);
+    }
+
+    public MipsInstruction writeBackPublic(MipsSymbol symbol) {
+        int rt = symbol.getRegIndex();
+        int base = symbol.getBase(); // base可能为gp或fp
+        int offset = symbol.getOffset();
+        Sw sw = new Sw(rt, base, offset);
+        return sw;
     }
 
     /* 从内存中读取变量 */

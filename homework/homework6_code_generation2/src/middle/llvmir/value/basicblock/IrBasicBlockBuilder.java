@@ -149,7 +149,6 @@ public class IrBasicBlockBuilder {
                                 this.whileLabel, this.endLabel);
                         break;
                     case 2: // 说明是StmtWhile
-                        /* TODO : 待施工 */
                         builder = new IrBasicBlockBuilder(newSymbolTable,
                                 (StmtWhile)stmtEle, this.functionCnt,
                                 this.whileLabel, this.endLabel);
@@ -496,9 +495,7 @@ public class IrBasicBlockBuilder {
             String name = "%_LocalVariable" + cnt;
             left = new IrValue(IrIntegerType.get32(), name);
             inst.setName(name);
-            // IrStore store = new IrStore(inst, left);
             basicBlock.addIrInstruction(inst);
-            // basicBlock.addIrInstruction(store);
         }
         this.basicBlocks.add(basicBlock);
         return left;

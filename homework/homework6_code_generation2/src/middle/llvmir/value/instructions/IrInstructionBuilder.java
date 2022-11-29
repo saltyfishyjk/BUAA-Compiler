@@ -196,8 +196,6 @@ public class IrInstructionBuilder {
         } else if (this.addExp != null) {
             genIrInstructionFromAddExp(addExp);
         } else {
-            /* 传入元素来源于StmtIf或StmtWhile */
-            /* TODO : 待施工 */
             StmtEle stmtEle = this.stmt.getStmtEle();
             if (stmtEle instanceof StmtAssign) {
                 this.stmtAssign = (StmtAssign) stmtEle;
@@ -666,13 +664,13 @@ public class IrInstructionBuilder {
     }
 
     private void genIrInstructionFromStmtContinue() {
-        /* TODO : 待施工 循环语句块continue */
+        /* 循环语句块continue */
         IrGoto irGoto = new IrGoto(this.whileLabel);
         this.instructions.add(irGoto);
     }
 
     private void genIrInstructionFromStmtBreak() {
-        /* TODO : 待施工 循环语句块break */
+        /* 循环语句块break */
         IrGoto irGoto = new IrGoto(this.endLabel);
         this.instructions.add(irGoto);
     }
