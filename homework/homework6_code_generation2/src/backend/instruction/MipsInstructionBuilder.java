@@ -187,9 +187,15 @@ public class MipsInstructionBuilder {
             Li li = new Li(2, 1);
             ret.add(li);
             String name = call.getOperand(1).getName();
-            int reg = this.table.getRegIndex(name, this.father);
-            move = new Move(4, reg);
-            ret.add(move);
+            if (this.table.hasSymbol(name)) {
+                int reg = this.table.getRegIndex(name, this.father);
+                move = new Move(4, reg);
+                ret.add(move);
+            } else {
+                /* 说明要打印的是立即数 */
+                li = new Li(4, Integer.valueOf(name));
+                ret.add(li);
+            }
             Syscall syscall = new Syscall();
             ret.add(syscall);
             move = new Move(4, 3);
