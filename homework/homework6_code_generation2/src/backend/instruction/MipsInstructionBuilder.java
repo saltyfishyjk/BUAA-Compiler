@@ -242,7 +242,7 @@ public class MipsInstructionBuilder {
         /* 获取被赋值变量的寄存器编号 */
         // int reg = this.table.getRegIndex(call.getName(), this.father);
         MipsSymbol symbol = new MipsSymbol(call.getName(), 30, false, -1,
-                false, -1, false, false);
+                false, -1, true, false);
         insertSymbolTable(symbol.getName(), symbol);
         int reg = this.table.getRegIndex(symbol.getName(), this.father);
         move = new Move(reg, 2);
@@ -361,19 +361,27 @@ public class MipsInstructionBuilder {
         IrLoad left = (IrLoad)irInstruction;
         /* TODO : 待施工 */
         String leftName = left.getName();
-        IrValue right = left.getOperand(0);
-        String rightName = right.getName();
         /* 生成左部临时变量符号 */
         MipsSymbol leftSymbol = new MipsSymbol(leftName, 30, false,
                 -1, false, -1, true, false);
         insertSymbolTable(leftName, leftSymbol);
         int leftReg = this.registerFile.getReg(true, leftSymbol, this.father);
+        /* 标记当前变量在寄存器中 */
+        leftSymbol.setInReg(true);
+        /* 标记当前变量所在寄存器 */
+        leftSymbol.setRegIndex(leftReg);
         ArrayList<MipsInstruction> ret = new ArrayList<>();
         /* 获取右部变量 */
+        IrValue right = left.getOperand(0);
+        String rightName = right.getName();
         MipsSymbol rightSymbol = this.table.getSymbol(rightName);
         int rightReg = this.table.getRegIndex(rightName, this.father);
         Move move = new Move(leftReg, rightReg);
         ret.add(move);
+        if (rightName.contains("Global")) {
+            /* 将全局变量标记为不在寄存器中 */
+            rightSymbol.setInReg(false);
+        }
         return ret;
     }
 

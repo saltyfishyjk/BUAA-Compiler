@@ -24,6 +24,7 @@ public class RegisterFile {
     private HashMap<Integer, MipsSymbol> regs;
     private int regNum = 32;
     private Stack<Integer> sregUse = new Stack<>(); // 记录s寄存器的使用先后顺序
+    private int tempPtr = 8; //指向最旧的寄存器的指针
 
     public RegisterFile() {
         init();
@@ -122,34 +123,49 @@ public class RegisterFile {
         } else {
             /* 没有找到空闲寄存器，说明需要将某个寄存器写入内存或做其他操作 */
             if (isTemp) {
-                System.out.println("ERROR in RegisterFile : UNEXPECTED!");
-                return -1;
-            }
-            /* 弹出最旧的$s寄存器 */
-            int oldReg = this.sregUse.pop();
-            MipsSymbol oldSymbol = this.regs.get(oldReg);
-            if (oldSymbol.hasRam()) {
-                /* 已经分配内存 */
-                writeBack(oldSymbol, basicBlock);
+                // System.out.println("ERROR in RegisterFile : UNEXPECTED!");
+                /* 找到一个最旧的t寄存器 */
+                int ret = getOldTempReg(basicBlock);
+                /* 修改MipsSymbol状态 */
+                symbol.setInReg(true); // 标记该Symbol已经在寄存器中
+                symbol.setRegIndex(ret); // 记录该Symbol所在寄存器编号
+                /* 修改寄存器表状态 */
+                this.hasValues.put(ret, true);
+                this.regs.put(ret, symbol);
+                symbol.setInReg(true);
+                symbol.setRegIndex(ret);
+                /* 写入寄存器 */
+                /*if (symbol.hasRam()) {
+                    readBack(ret, symbol, basicBlock);
+                }*/
+                return ret;
             } else {
-                /* 须分配内存 */
-                allocRam(oldSymbol);
-                writeBack(oldSymbol, basicBlock);
+                /* 弹出最旧的$s寄存器 */
+                int oldReg = this.sregUse.pop();
+                MipsSymbol oldSymbol = this.regs.get(oldReg);
+                if (oldSymbol.hasRam()) {
+                    /* 已经分配内存 */
+                    writeBack(oldSymbol, basicBlock);
+                } else {
+                    /* 须分配内存 */
+                    allocRam(oldSymbol);
+                    writeBack(oldSymbol, basicBlock);
+                }
+                /* 修改被弹出符号状态 */
+                oldSymbol.setInReg(false);
+                oldSymbol.setRegIndex(-1);
+                /* 修改寄存器表状态 */
+                this.regs.put(oldReg, symbol);
+                this.sregUse.push(oldReg);
+                /* 修改新加入符号状态 */
+                symbol.setInReg(true);
+                symbol.setRegIndex(oldReg);
+                /* 如果新加入符号在内存有数据，则应读回 */
+                if (symbol.hasRam()) {
+                    readBack(oldReg, symbol, basicBlock);
+                }
+                return oldReg;
             }
-            /* 修改被弹出符号状态 */
-            oldSymbol.setInReg(false);
-            oldSymbol.setRegIndex(-1);
-            /* 修改寄存器表状态 */
-            this.regs.put(oldReg, symbol);
-            this.sregUse.push(oldReg);
-            /* 修改新加入符号状态 */
-            symbol.setInReg(true);
-            symbol.setRegIndex(oldReg);
-            /* 如果新加入符号在内存有数据，则应读回 */
-            if (symbol.hasRam()) {
-                readBack(oldReg, symbol, basicBlock);
-            }
-            return oldReg;
         }
     }
 
@@ -227,6 +243,26 @@ public class RegisterFile {
 
     public MipsSymbol getSymbol(int reg) {
         return this.regs.get(reg);
+    }
+
+    private int getOldTempReg(MipsBasicBlock basicBlock) {
+        /* 进入该方法说明已经没有闲置寄存器了 */
+        while (true) {
+            /* 为临时变量寻找寄存器 */
+            if (this.isTempReg(this.tempPtr)) {
+                MipsSymbol symbol = this.regs.get(this.tempPtr);
+                if (!symbol.hasRam()) {
+                    /* 没有对应内存空间需要先申请 */
+                    allocRam(symbol);
+                }
+                writeBack(symbol, basicBlock);
+                symbol.setInReg(false);
+                this.tempPtr = (this.tempPtr + 1 + 32) % 32;
+                return symbol.getRegIndex();
+            } else {
+                this.tempPtr = (this.tempPtr + 1 + 32) % 32;
+            }
+        }
     }
 
 }
