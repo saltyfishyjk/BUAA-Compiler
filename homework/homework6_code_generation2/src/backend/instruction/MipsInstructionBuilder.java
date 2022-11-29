@@ -405,6 +405,10 @@ public class MipsInstructionBuilder {
             }
             Move move = new Move(2, reg);
             ans.add(move);
+            if (!this.father.getFather().getIsMain()) {
+                Jr jr = new Jr(31);
+                ans.add(jr);
+            }
         }
         return ans;
     }

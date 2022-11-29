@@ -59,15 +59,7 @@ public class MipsFunction implements MipsNode {
             }
             ret.add("\n");
         }
-        /* 当非main函数的时候，需要打印跳回指令 */
-        if (!this.isMain) {
-            /* $31 = $ra */
-            Jr jr = new Jr(31);
-            temp = jr.mipsOutput();
-            for (String index : temp) {
-                ret.add(index);
-            }
-        } else {
+        if (this.isMain) {
             /* 当main函数时，需要结束程序 */
             /* 将10装入$v0即$2 */
             Li li = new Li(2, 10);
@@ -81,6 +73,12 @@ public class MipsFunction implements MipsNode {
             for (String index : temp) {
                 ret.add(index);
             }
+        } else {
+            Jr jr = new Jr(31);
+            temp = jr.mipsOutput();
+            for (String index : temp) {
+                ret.add(index);
+            }
         }
         ret.add("# ********** " + this.name + "函数结束 **********\n");
         return ret;
@@ -91,6 +89,14 @@ public class MipsFunction implements MipsNode {
     }
 
     public MipsModule getFather() {
-        return father;
+        return this.father;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public boolean getIsMain() {
+        return this.isMain;
     }
 }

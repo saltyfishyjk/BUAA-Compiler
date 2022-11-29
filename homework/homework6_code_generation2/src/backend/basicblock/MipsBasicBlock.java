@@ -48,4 +48,8 @@ public class MipsBasicBlock implements MipsNode {
     public MipsSymbolTable getTable() {
         return table;
     }
+
+    public MipsFunction getFather() {
+        return this.father;
+    }
 }
