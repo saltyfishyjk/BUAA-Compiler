@@ -57,15 +57,27 @@ public class IrBasicBlockBuilder {
     private StmtWhile stmtWhile = null;
     private ArrayList<BlockItem> blockItems = null;
     private ArrayList<IrBasicBlock> basicBlocks = new ArrayList<>();
+    /* 以下为while服务 */
+    private IrLabel whileLabel = null;
+    private IrLabel endLabel = null;
 
-    public IrBasicBlockBuilder(SymbolTable symbolTable, IrFunctionCnt functionCnt) {
+    public IrBasicBlockBuilder(SymbolTable symbolTable,
+                               IrFunctionCnt functionCnt,
+                               IrLabel whileLabel,
+                               IrLabel endLabel) {
         this.symbolTable = symbolTable;
         this.functionCnt = functionCnt;
+        this.whileLabel = whileLabel;
+        this.endLabel = endLabel;
     }
 
     // 传入的元素是Block
-    public IrBasicBlockBuilder(SymbolTable symbolTable, Block block, IrFunctionCnt functionCnt) {
-        this(symbolTable, functionCnt);
+    public IrBasicBlockBuilder(SymbolTable symbolTable,
+                               Block block,
+                               IrFunctionCnt functionCnt,
+                               IrLabel whileLabel,
+                               IrLabel endLabel) {
+        this(symbolTable, functionCnt, whileLabel, endLabel);
         this.block = block;
         this.blockItems = this.block.getBlockItems();
     }
@@ -73,16 +85,20 @@ public class IrBasicBlockBuilder {
     // 传入的元素是StmtCond
     public IrBasicBlockBuilder(SymbolTable symbolTable,
                                StmtCond stmtCond,
-                               IrFunctionCnt functionCnt) {
-        this(symbolTable, functionCnt);
+                               IrFunctionCnt functionCnt,
+                               IrLabel whileLabel,
+                               IrLabel endLabel) {
+        this(symbolTable, functionCnt, whileLabel, endLabel);
         this.stmtCond = stmtCond;
     }
 
     // 传入的元素是StmtWhile
     public IrBasicBlockBuilder(SymbolTable symbolTable,
                                StmtWhile stmtWhile,
-                               IrFunctionCnt functionCnt) {
-        this(symbolTable, functionCnt);
+                               IrFunctionCnt functionCnt,
+                               IrLabel whileLabel,
+                               IrLabel endLabel) {
+        this(symbolTable, functionCnt, whileLabel, endLabel);
         this.stmtWhile = stmtWhile;
     }
 
@@ -129,16 +145,19 @@ public class IrBasicBlockBuilder {
                 switch (typeCode) {
                     case 1: // 说明是StmtCond
                         builder = new IrBasicBlockBuilder(newSymbolTable,
-                                (StmtCond)stmtEle, this.functionCnt);
+                                (StmtCond)stmtEle, this.functionCnt,
+                                this.whileLabel, this.endLabel);
                         break;
                     case 2: // 说明是StmtWhile
                         /* TODO : 待施工 */
                         builder = new IrBasicBlockBuilder(newSymbolTable,
-                                (StmtWhile)stmtEle, this.functionCnt);
+                                (StmtWhile)stmtEle, this.functionCnt,
+                                this.whileLabel, this.endLabel);
                         break;
                     case 3: // 说明是Block
                         builder = new IrBasicBlockBuilder(newSymbolTable,
-                                (Block)stmtEle, this.functionCnt);
+                                (Block)stmtEle, this.functionCnt,
+                                this.whileLabel, this.endLabel);
                         break;
                     default:
                         System.out.
@@ -166,7 +185,7 @@ public class IrBasicBlockBuilder {
                     }
                     IrInstructionBuilder irInstructionBuilder = new
                             IrInstructionBuilder(this.symbolTable,
-                            basicBlock, curEle, this.functionCnt);
+                            basicBlock, curEle, this.functionCnt, whileLabel, endLabel);
                     ArrayList<IrInstruction> temp = irInstructionBuilder.genIrInstruction();
                     if (temp != null && temp.size() != 0) {
                         basicBlock.addAllIrInstruction(temp);
@@ -230,13 +249,16 @@ public class IrBasicBlockBuilder {
             this.basicBlocks.add(ifBlock);
             if (ifStmtEle instanceof Block) {
                 builder = new IrBasicBlockBuilder(newSymbolTable,
-                        (Block)ifStmtEle, this.functionCnt);
+                        (Block)ifStmtEle, this.functionCnt,
+                        this.whileLabel, this.endLabel);
             } else if (ifStmtEle instanceof StmtCond) {
                 builder = new IrBasicBlockBuilder(newSymbolTable,
-                        (StmtCond)ifStmtEle, this.functionCnt);
+                        (StmtCond)ifStmtEle, this.functionCnt,
+                        this.whileLabel, this.endLabel);
             } else {
                 builder = new IrBasicBlockBuilder(newSymbolTable,
-                        (StmtWhile)ifStmtEle, this.functionCnt);
+                        (StmtWhile)ifStmtEle, this.functionCnt,
+                        this.whileLabel, this.endLabel);
             }
             this.addAllIrBasicBlocks(builder.genIrBasicBlock());
             /* 将goto endLabel语句包装为一个IrBasicBlock加入其中 */
@@ -247,7 +269,7 @@ public class IrBasicBlockBuilder {
         } else {
             /* StmtEle不是StmtCond, StmtWhile或Block，使用生成*/
             IrInstructionBuilder instructionBuilder = new IrInstructionBuilder(this.symbolTable,
-                    ifBlock, ifStmt, this.functionCnt);
+                    ifBlock, ifStmt, this.functionCnt, this.whileLabel, this.endLabel);
             ArrayList<IrInstruction> temp = instructionBuilder.genIrInstruction();
             if (temp != null && temp.size() != 0) {
                 ifBlock.addAllIrInstruction(temp);
@@ -273,19 +295,22 @@ public class IrBasicBlockBuilder {
                 this.basicBlocks.add(elseBlock);
                 if (elseStmtEle instanceof Block) {
                     builder = new IrBasicBlockBuilder(newSymbolTable,
-                            (Block)elseStmtEle, this.functionCnt);
+                            (Block)elseStmtEle, this.functionCnt,
+                            this.whileLabel, this.endLabel);
                 } else if (elseStmtEle instanceof StmtCond) {
                     builder = new IrBasicBlockBuilder(newSymbolTable,
-                            (StmtCond)elseStmtEle, this.functionCnt);
+                            (StmtCond)elseStmtEle, this.functionCnt,
+                            this.whileLabel, this.endLabel);
                 } else {
                     builder = new IrBasicBlockBuilder(newSymbolTable,
-                            (StmtWhile)elseStmtEle, this.functionCnt);
+                            (StmtWhile)elseStmtEle, this.functionCnt,
+                            this.whileLabel, this.endLabel);
                 }
                 this.addAllIrBasicBlocks(builder.genIrBasicBlock());
             } else {
                 /* StmtEle不是StmtCond, StmtWhile或Block，使用生成 */
                 IrInstructionBuilder instructionBuilder = new IrInstructionBuilder(this.symbolTable,
-                        ifBlock, ifStmt, this.functionCnt);
+                        ifBlock, ifStmt, this.functionCnt, this.whileLabel, this.endLabel);
                 ArrayList<IrInstruction> temp = instructionBuilder.genIrInstruction();
                 if (temp != null && temp.size() != 0) {
                     ifBlock.addAllIrInstruction(temp);
@@ -434,7 +459,8 @@ public class IrBasicBlockBuilder {
         ArrayList<Token> operators = relExp.getOperators();
         int len = addExps.size();
         IrInstructionBuilder builder = new IrInstructionBuilder(this.symbolTable,
-                new IrBasicBlock("TEMP"), addExps.get(0), this.functionCnt);
+                new IrBasicBlock("TEMP"), addExps.get(0), this.functionCnt,
+                this.whileLabel, this.endLabel);
         IrBasicBlock basicBlock = new IrBasicBlock("RelExp");
         ArrayList<IrInstruction> instructions = builder.genIrInstruction();
         basicBlock.addAllIrInstruction(instructions);
@@ -442,7 +468,8 @@ public class IrBasicBlockBuilder {
         IrValue right;
         for (int i = 1; i < len; i++) {
             builder = new IrInstructionBuilder(this.symbolTable,
-                    new IrBasicBlock("TEMP"), addExps.get(i), this.functionCnt);
+                    new IrBasicBlock("TEMP"), addExps.get(i), this.functionCnt,
+                    this.whileLabel, this.endLabel);
             instructions = builder.genIrInstruction();
             basicBlock.addAllIrInstruction(instructions);
             right = builder.getLeft();
@@ -515,13 +542,13 @@ public class IrBasicBlockBuilder {
             this.basicBlocks.add(ifBlock);
             if (stmtEle instanceof Block) {
                 builder = new IrBasicBlockBuilder(newSymbolTable,
-                        (Block)stmtEle, this.functionCnt);
+                        (Block)stmtEle, this.functionCnt, whileLabel, endLabel);
             } else if (stmtEle instanceof StmtCond) {
                 builder = new IrBasicBlockBuilder(newSymbolTable,
-                        (StmtCond)stmtEle, this.functionCnt);
+                        (StmtCond)stmtEle, this.functionCnt, whileLabel, endLabel);
             } else {
                 builder = new IrBasicBlockBuilder(newSymbolTable,
-                        (StmtWhile)stmtEle, this.functionCnt);
+                        (StmtWhile)stmtEle, this.functionCnt, whileLabel, endLabel);
             }
             this.addAllIrBasicBlocks(builder.genIrBasicBlock());
             /* 将goto whileLabel语句包装为一个IrBasicBlock加入其中 */
@@ -532,7 +559,7 @@ public class IrBasicBlockBuilder {
         } else {
             /* StmtEle不是StmtCond, StmtWhile或Block，使用生成*/
             IrInstructionBuilder instructionBuilder = new IrInstructionBuilder(this.symbolTable,
-                    ifBlock, stmt, this.functionCnt);
+                    ifBlock, stmt, this.functionCnt, whileLabel, endLabel);
             ArrayList<IrInstruction> temp = instructionBuilder.genIrInstruction();
             if (temp != null && temp.size() != 0) {
                 ifBlock.addAllIrInstruction(temp);

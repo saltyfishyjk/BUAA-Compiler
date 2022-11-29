@@ -140,27 +140,27 @@ public class MipsInstructionBuilder {
             Mfhi mfhi = new Mfhi(ansReg);
             ret.add(mfhi);
         } else if (inst.getInstructionType().equals(IrInstructionType.Lt)) {
-            /* TODO : < */
+            /* < */
             Slt slt = new Slt(ansReg, leftReg, rightReg);
             ret.add(slt);
         } else if (inst.getInstructionType().equals(IrInstructionType.Le)) {
-            /* TODO : <= */
+            /* <= */
             Sle sle = new Sle(ansReg, leftReg, rightReg);
             ret.add(sle);
         } else if (inst.getInstructionType().equals(IrInstructionType.Gt)) {
-            /* TODO : > */
+            /* > */
             Sgt sgt = new Sgt(ansReg, leftReg, rightReg);
             ret.add(sgt);
         } else if (inst.getInstructionType().equals(IrInstructionType.Ge)) {
-            /* TODO : >= */
+            /* >= */
             Sge sge = new Sge(ansReg, leftReg, rightReg);
             ret.add(sge);
         } else if (inst.getInstructionType().equals(IrInstructionType.Eq)) {
-            /* TODO : ==*/
+            /* ==*/
             Seq seq = new Seq(ansReg, leftReg, rightReg);
             ret.add(seq);
         } else if (inst.getInstructionType().equals(IrInstructionType.Ne)) {
-            /* TODO : != */
+            /* != */
             Sne sne = new Sne(ansReg, leftReg, rightReg);
             ret.add(sne);
         } else if (inst.getInstructionType().equals(IrInstructionType.Not)) {

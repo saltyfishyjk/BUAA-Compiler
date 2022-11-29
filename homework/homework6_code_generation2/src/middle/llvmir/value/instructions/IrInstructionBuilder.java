@@ -51,6 +51,7 @@ import middle.llvmir.value.instructions.memory.IrAlloca;
 import middle.llvmir.value.instructions.memory.IrLoad;
 import middle.llvmir.value.instructions.memory.IrStore;
 import middle.llvmir.value.instructions.terminator.IrCall;
+import middle.llvmir.value.instructions.terminator.IrGoto;
 import middle.llvmir.value.instructions.terminator.IrRet;
 import middle.symbol.Symbol;
 import middle.symbol.SymbolCon;
@@ -88,6 +89,9 @@ public class IrInstructionBuilder {
     /* 以下对象是传入AddExp时的可能 */
     private AddExp addExp = null;
     private IrValue left = null;
+    /* 以下用于处理continue和break */
+    private IrLabel whileLabel = null;
+    private IrLabel endLabel = null;
 
     public IrInstructionBuilder() {
 
@@ -95,19 +99,25 @@ public class IrInstructionBuilder {
 
     public IrInstructionBuilder(SymbolTable symbolTable,
                                 IrBasicBlock basicBlock,
-                                IrFunctionCnt functionCnt) {
+                                IrFunctionCnt functionCnt,
+                                IrLabel whileLabel,
+                                IrLabel endLabel) {
         this.symbolTable = symbolTable;
         this.basicBlock = basicBlock;
         this.instructions = new ArrayList<>();
         this.functionCnt = functionCnt;
+        this.whileLabel = whileLabel;
+        this.endLabel = endLabel;
     }
 
     /* 待解析元素是BlockItemEle */
     public IrInstructionBuilder(SymbolTable symbolTable,
                                 IrBasicBlock basicBlock,
                                 BlockItemEle blockItemEle,
-                                IrFunctionCnt functionCnt) {
-        this(symbolTable, basicBlock, functionCnt);
+                                IrFunctionCnt functionCnt,
+                                IrLabel whileLabel,
+                                IrLabel endLabel) {
+        this(symbolTable, basicBlock, functionCnt, whileLabel, endLabel);
         this.blockItemEle = blockItemEle;
     }
 
@@ -115,8 +125,10 @@ public class IrInstructionBuilder {
     public IrInstructionBuilder(SymbolTable symbolTable,
                                 IrBasicBlock basicBlock,
                                 Stmt stmt,
-                                IrFunctionCnt functionCnt) {
-        this(symbolTable, basicBlock, functionCnt);
+                                IrFunctionCnt functionCnt,
+                                IrLabel whileLabel,
+                                IrLabel endLabel) {
+        this(symbolTable, basicBlock, functionCnt, whileLabel, endLabel);
         this.stmt = stmt;
     }
 
@@ -124,8 +136,10 @@ public class IrInstructionBuilder {
     public IrInstructionBuilder(SymbolTable symbolTable,
                                 IrBasicBlock basicBlock,
                                 AddExp addExp,
-                                IrFunctionCnt functionCnt) {
-        this(symbolTable, basicBlock, functionCnt);
+                                IrFunctionCnt functionCnt,
+                                IrLabel whileLabel,
+                                IrLabel endLabel) {
+        this(symbolTable, basicBlock, functionCnt, whileLabel, endLabel);
         this.addExp = addExp;
     }
 
@@ -173,12 +187,6 @@ public class IrInstructionBuilder {
                 } else if (stmtEle instanceof StmtExp) {
                     this.stmtExp = (StmtExp)stmtEle;
                     genIrInstructionFromStmtExp();
-                /*} else if (stmtEle instanceof StmtCond) {
-                    this.stmtCond = (StmtCond)stmtEle;
-                    genIrInstructionFromStmtCond();
-                } else if (stmtEle instanceof StmtWhile) {
-                    this.stmtWhile = (StmtWhile)stmtEle;
-                    genIrInstructionFromStmtWhile();*/
                 } else {
                     System.out.println("ERROR in IrInstructionBuilder : should not reach here");
                 }
@@ -657,24 +665,16 @@ public class IrInstructionBuilder {
         this.instructions.add(store);
     }
 
-    /*
-    private void genIrInstructionFromStmtCond() {
-
-    }
-    */
-
-    /*
-    private void genIrInstructionFromStmtWhile() {
-
-    }
-    */
-
     private void genIrInstructionFromStmtContinue() {
         /* TODO : 待施工 循环语句块continue */
+        IrGoto irGoto = new IrGoto(this.whileLabel);
+        this.instructions.add(irGoto);
     }
 
     private void genIrInstructionFromStmtBreak() {
         /* TODO : 待施工 循环语句块break */
+        IrGoto irGoto = new IrGoto(this.endLabel);
+        this.instructions.add(irGoto);
     }
 
     /* 解析return语句 */
