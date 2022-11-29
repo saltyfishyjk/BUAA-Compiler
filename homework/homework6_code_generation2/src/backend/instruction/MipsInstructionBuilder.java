@@ -259,23 +259,34 @@ public class MipsInstructionBuilder {
         for (int i = 0; i < 4 && i < len; i++) {
             IrValue param = params.get(i);
             String name = param.getName();
-            int reg = this.table.getRegIndex(name, this.father);
-            Move move = new Move(4 + i, reg);
             if (this.table.hasSymbol(name)) {
+                int reg = this.table.getRegIndex(name, this.father);
+                Move move = new Move(4 + i, reg);
                 this.table.getSymbol(name).setUsed(true);
+                ret.add(move);
+            } else {
+                /* 进入此说明参数是一个常数*/
+                Li li = new Li(4 + i, Integer.valueOf(name));
+                ret.add(li);
             }
-            ret.add(move);
         }
         int fpOffset = 0;
         for (int i = 4; i < len; i++) {
             IrValue param = params.get(i);
             String name = param.getName();
-            int reg = this.table.getRegIndex(name, this.father);
-            Sw sw = new Sw(reg, 3, fpOffset);
             if (this.table.hasSymbol(name)) {
+                int reg = this.table.getRegIndex(name, this.father);
+                Sw sw = new Sw(reg, 3, fpOffset);
                 this.table.getSymbol(name).setUsed(true);
+                ret.add(sw);
+            } else {
+                /* 进入此说明参数是一个常数 */
+                /* 由于已经保存完了寄存器现场，因此可以直接拿一个寄存器来用 */
+                Li li = new Li(8, Integer.valueOf(name));
+                Sw sw = new Sw(8, 3, fpOffset);
+                ret.add(li);
+                ret.add(sw);
             }
-            ret.add(sw);
             fpOffset += 4;
         }
 
