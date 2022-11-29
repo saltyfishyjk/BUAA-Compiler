@@ -94,22 +94,31 @@ public class MipsInstructionBuilder {
             leftReg = this.table.getRegIndex(leftName, this.father);
             leftSymbol = this.table.getSymbol(leftName);
         }
-        /* 获取右操作数所在寄存器 */
+        /* 处理右操作数*/
         IrValue right = inst.getRight();
-        String rightName = right.getName();
-        MipsSymbol rightSymbol;
         int rightReg = -1;
-        if (isConst(rightName)) {
-            // rightSymbol = new MipsSymbol("temp", -1);
-            rightSymbol = new MipsSymbol("temp", 30, false, -1, false,
-                    -1, true, false);
-            rightReg = this.registerFile.getReg(true, rightSymbol, this.father);
-            // 找到一个临时寄存器，用li装入
-            Li li = new Li(rightReg, Integer.valueOf(rightName));
-            ret.add(li);
+        MipsSymbol rightSymbol = null;
+        /* 获取右操作数所在寄存器 */
+        if (right != null) {
+            String rightName = right.getName();
+            if (isConst(rightName)) {
+                // rightSymbol = new MipsSymbol("temp", -1);
+                rightSymbol = new MipsSymbol("temp", 30, false, -1, false,
+                        -1, true, false);
+                rightReg = this.registerFile.getReg(true, rightSymbol, this.father);
+                // 找到一个临时寄存器，用li装入
+                Li li = new Li(rightReg, Integer.valueOf(rightName));
+                ret.add(li);
+            } else {
+                rightReg = this.table.getRegIndex(rightName, this.father);
+                rightSymbol = this.table.getSymbol(rightName);
+            }
         } else {
-            rightReg = this.table.getRegIndex(rightName, this.father);
-            rightSymbol = this.table.getSymbol(rightName);
+            if (inst.getInstructionType().equals(IrInstructionType.Not)) {
+                /* 右操作数为null，说明为Not语句 */
+            } else {
+                System.out.println("ERROR IN MipsInstructionBuilder : should not reach here");
+            }
         }
         String ansName = inst.getName();
         /* 生成答案临时变量符号 */
@@ -165,14 +174,19 @@ public class MipsInstructionBuilder {
             ret.add(sne);
         } else if (inst.getInstructionType().equals(IrInstructionType.Not)) {
             /* TODO : ! */
-
+            Li li = new Li(3, 0);
+            Seq seq = new Seq(ansReg, leftReg, 3);
+            ret.add(li);
+            ret.add(seq);
         } else {
             System.out.println("ERROR in MipsInstructionBuilder : should not reach here");
         }
 
         /* 将左右操作数标记为已使用，方便释放寄存器 */
         leftSymbol.setUsed(true);
-        rightSymbol.setUsed(true);
+        if (rightSymbol != null) {
+            rightSymbol.setUsed(true);
+        }
         return ret;
     }
 
