@@ -84,6 +84,12 @@ public class IrBinaryInst extends IrInstruction {
             case Not:
                 sb.append("Not ");
                 break;
+            case Ne:
+                sb.append("Ne ");
+                break;
+            case Eq:
+                sb.append("Eq ");
+                break;
             default:
                 System.out.println("ERROR in IrBinaryInst : should not reach here");
                 break;

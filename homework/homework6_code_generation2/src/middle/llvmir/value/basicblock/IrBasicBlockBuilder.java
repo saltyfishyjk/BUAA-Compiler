@@ -405,10 +405,11 @@ public class IrBasicBlockBuilder {
                 inst = new IrBinaryInst(IrIntegerType.get32(),
                         IrInstructionType.Ne, left, right);
             }
-            inst.setName(left.getName());
+            // inst.setName(left.getName());
             int cnt = this.functionCnt.getCnt();
             String leftName = "%_LocalVariable" + cnt;
             left = new IrValue(IrIntegerType.get32(), leftName);
+            inst.setName(left.getName());
             IrStore store = new IrStore(inst, left);
             IrBasicBlock basicBlock = new IrBasicBlock("EqExp");
             basicBlock.addIrInstruction(inst);
@@ -450,7 +451,6 @@ public class IrBasicBlockBuilder {
 
         block.addIrInstruction(br);
         this.basicBlocks.add(block);
-        // return left;
     }
 
     private IrValue genIrInstructionFromRelExp(RelExp relExp) {
