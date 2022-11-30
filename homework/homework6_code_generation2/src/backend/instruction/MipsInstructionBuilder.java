@@ -409,6 +409,9 @@ public class MipsInstructionBuilder {
                 Jr jr = new Jr(31);
                 ans.add(jr);
             }
+        } else {
+            Jr jr = new Jr(31);
+            ans.add(jr);
         }
         return ans;
     }
