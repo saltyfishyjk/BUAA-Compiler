@@ -309,15 +309,15 @@ public class IrBasicBlockBuilder {
             } else {
                 /* StmtEle不是StmtCond, StmtWhile或Block，使用生成 */
                 IrInstructionBuilder instructionBuilder = new IrInstructionBuilder(this.symbolTable,
-                        ifBlock, ifStmt, this.functionCnt, this.whileLabel, this.endLabel);
+                        elseBlock, elseStmt, this.functionCnt, this.whileLabel, this.endLabel);
                 ArrayList<IrInstruction> temp = instructionBuilder.genIrInstruction();
                 if (temp != null && temp.size() != 0) {
-                    ifBlock.addAllIrInstruction(temp);
+                    elseBlock.addAllIrInstruction(temp);
                 }
                 /* 将goto endLabel添加到ifBlock末尾 */
                 IrGoto irGoto = new IrGoto(endLabel);
-                ifBlock.addIrInstruction(irGoto);
-                this.basicBlocks.add(ifBlock);
+                elseBlock.addIrInstruction(irGoto);
+                this.basicBlocks.add(elseBlock);
             }
         }
         /* 将end label 添加到末尾*/
