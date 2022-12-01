@@ -95,7 +95,10 @@ public class MipsInstructionBuilder {
             leftSymbol = this.table.getSymbol(leftName);
         }
         /* 处理右操作数*/
-        IrValue right = inst.getRight();
+        IrValue right = null;
+        if (inst.getInstructionType() != IrInstructionType.Not) {
+            right = inst.getRight();
+        }
         int rightReg = -1;
         MipsSymbol rightSymbol = null;
         /* 获取右操作数所在寄存器 */

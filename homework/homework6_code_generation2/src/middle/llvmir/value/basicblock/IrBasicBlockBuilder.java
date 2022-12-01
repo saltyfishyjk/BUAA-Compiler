@@ -264,7 +264,7 @@ public class IrBasicBlockBuilder {
             IrBasicBlock temp = new IrBasicBlock("GOTO IF_END");
             temp.addIrInstruction(irGoto);
             this.basicBlocks.add(temp);
-        } else {
+        } else if (!(ifStmtEle instanceof StmtNull)) {
             /* StmtEle不是StmtCond, StmtWhile或Block，使用生成*/
             IrInstructionBuilder instructionBuilder = new IrInstructionBuilder(this.symbolTable,
                     ifBlock, ifStmt, this.functionCnt, this.whileLabel, this.endLabel);
@@ -275,6 +275,8 @@ public class IrBasicBlockBuilder {
             /* 将goto endLabel添加到ifBlock末尾 */
             IrGoto irGoto = new IrGoto(endLabel);
             ifBlock.addIrInstruction(irGoto);
+            this.basicBlocks.add(ifBlock);
+        } else {
             this.basicBlocks.add(ifBlock);
         }
         /* 处理else语句块 */
@@ -305,7 +307,7 @@ public class IrBasicBlockBuilder {
                             this.whileLabel, this.endLabel);
                 }
                 this.addAllIrBasicBlocks(builder.genIrBasicBlock());
-            } else {
+            } else if (!(elseStmtEle instanceof StmtNull)) {
                 /* StmtEle不是StmtCond, StmtWhile或Block，使用生成 */
                 IrInstructionBuilder instructionBuilder = new IrInstructionBuilder(this.symbolTable,
                         elseBlock, elseStmt, this.functionCnt, this.whileLabel, this.endLabel);
@@ -316,6 +318,8 @@ public class IrBasicBlockBuilder {
                 /* 将goto endLabel添加到ifBlock末尾 */
                 IrGoto irGoto = new IrGoto(endLabel);
                 elseBlock.addIrInstruction(irGoto);
+                this.basicBlocks.add(elseBlock);
+            } else {
                 this.basicBlocks.add(elseBlock);
             }
         }

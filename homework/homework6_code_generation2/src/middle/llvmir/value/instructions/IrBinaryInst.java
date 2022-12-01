@@ -101,7 +101,7 @@ public class IrBinaryInst extends IrInstruction {
         }
 
         sb.append(this.getOperand(0).getName());
-        if (this.getOperand(1) != null) {
+        if (this.getOperand(1) != null && this.getInstructionType() != IrInstructionType.Not) {
             sb.append(", ");
             sb.append(this.getOperand(1).getName());
         }
