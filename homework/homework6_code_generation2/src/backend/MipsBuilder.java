@@ -25,7 +25,6 @@ public class MipsBuilder {
     /* 生成MipsModule */
     public MipsModule genMipsModule() {
         MipsModule mipsModule = new MipsModule();
-        /* TODO : 生成MipsModule */
         /* 加载全局变量 */
         /* 对于每个符号表而言，其初始状态都应当将全局变量加载进去并可以访问 */
         /* 根据我们的寄存器约定，使用$24即$t8不断li和sw */

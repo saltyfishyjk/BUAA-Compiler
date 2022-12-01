@@ -91,7 +91,7 @@ public class MipsInstructionBuilder {
             ret.add(li);
         } else {
             // 是变量
-            leftReg = this.table.getRegIndex(leftName, this.father);
+            leftReg = this.table.getRegIndex(leftName, this.father, false);
             leftSymbol = this.table.getSymbol(leftName);
         }
         /* 处理右操作数*/
@@ -113,7 +113,7 @@ public class MipsInstructionBuilder {
                 Li li = new Li(rightReg, Integer.valueOf(rightName));
                 ret.add(li);
             } else {
-                rightReg = this.table.getRegIndex(rightName, this.father);
+                rightReg = this.table.getRegIndex(rightName, this.father, false);
                 rightSymbol = this.table.getSymbol(rightName);
             }
         } else {
@@ -128,7 +128,7 @@ public class MipsInstructionBuilder {
         MipsSymbol ansSymbol = new MipsSymbol(ansName, 30, false,
                 -1, false, -1, true, false);
         insertSymbolTable(ansName, ansSymbol);
-        int ansReg = this.table.getRegIndex(ansName, this.father);
+        int ansReg = this.table.getRegIndex(ansName, this.father, false);
         if (inst.getInstructionType().equals(IrInstructionType.Add)) {
             // +
             Add add = new Add(ansReg, leftReg, rightReg);
@@ -176,7 +176,7 @@ public class MipsInstructionBuilder {
             Sne sne = new Sne(ansReg, leftReg, rightReg);
             ret.add(sne);
         } else if (inst.getInstructionType().equals(IrInstructionType.Not)) {
-            /* TODO : ! */
+            /* ! */
             Li li = new Li(3, 0);
             Seq seq = new Seq(ansReg, leftReg, 3);
             ret.add(li);
@@ -205,7 +205,7 @@ public class MipsInstructionBuilder {
             ret.add(li);
             String name = call.getOperand(1).getName();
             if (this.table.hasSymbol(name)) {
-                int reg = this.table.getRegIndex(name, this.father);
+                int reg = this.table.getRegIndex(name, this.father, true);
                 move = new Move(4, reg);
                 ret.add(move);
             } else {
@@ -247,7 +247,7 @@ public class MipsInstructionBuilder {
         MipsSymbol symbol = new MipsSymbol(call.getName(), 30, false, -1,
                 false, -1, true, false);
         insertSymbolTable(symbol.getName(), symbol);
-        int reg = this.table.getRegIndex(symbol.getName(), this.father);
+        int reg = this.table.getRegIndex(symbol.getName(), this.father, false);
         move = new Move(reg, 2);
         ret.add(move);
         /* 将原$v0的值移回 */
@@ -259,7 +259,7 @@ public class MipsInstructionBuilder {
     /* 调用自定义函数 */
     private ArrayList<MipsInstruction> genMipsInstructionFromSelfDefineFunc() {
         ArrayList<MipsInstruction> ret = new ArrayList<>();
-        /* TODO : 1. 保存现场到$sp */
+        /* 1. 保存现场到$sp */
         int spOffset = 0;
         for (int i = 2; i < 32; i++) {
             if (26 <= i && i <= 30) {
@@ -271,13 +271,12 @@ public class MipsInstructionBuilder {
                 spOffset -= 4;
             }
         }
-        /* TODO : 2. 实参存入寄存器与内存（如果有）$fp */
+        /* 实参存入寄存器与内存（如果有）$fp */
         /* 将子函数fp装入v1 */
         Addi addi = new Addi(3, 30, this.table.getFpOffset());
         ret.add(addi);
-        /* TODO : 可能有风险（寄存器表） */
         /* 应当建立新表 */
-        /* TODO : 需要深拷贝 */
+        /* 深拷贝 */
         RegisterFile newRegisterFile = new RegisterFile();
         MipsSymbolTable newTable = new MipsSymbolTable(newRegisterFile);
         newTable.setSymbols(this.table.cloneSymbols());
@@ -293,13 +292,9 @@ public class MipsInstructionBuilder {
         for (int i = 0; i < 4 && i < len; i++) {
             IrValue param = params.get(i);
             String name = param.getName();
-            // newTable.setSymbols(this.table.getSymbols());
-            // if (this.table.hasSymbol(name)) {
             if (newTable.hasSymbol(name)) {
-                // int reg = this.table.getRegIndex(name, this.father);
-                int reg = newTable.getRegIndex(name, this.father);
+                int reg = newTable.getRegIndex(name, this.father, true);
                 Move move = new Move(4 + i, reg);
-                // this.table.getSymbol(name).setUsed(true);
                 newTable.getSymbol(name).setUsed(true);
                 ret.add(move);
             } else {
@@ -312,10 +307,8 @@ public class MipsInstructionBuilder {
         for (int i = 4; i < len; i++) {
             IrValue param = params.get(i);
             String name = param.getName();
-            // if (this.table.hasSymbol(name)) {
             if (newTable.hasSymbol(name)) {
-                // int reg = this.table.getRegIndex(name, this.father);
-                int reg = newTable.getRegIndex(name, this.father);
+                int reg = newTable.getRegIndex(name, this.father, true);
                 Sw sw = new Sw(reg, 3, fpOffset);
                 this.table.getSymbol(name).setUsed(true);
                 ret.add(sw);
@@ -330,7 +323,7 @@ public class MipsInstructionBuilder {
             fpOffset += 4;
         }
 
-        /* TODO : 3. 修改$fp, $sp */
+        /* 3. 修改$fp, $sp */
         /* fp */
         Move move = new Move(30, 3);
         ret.add(move);
@@ -339,15 +332,15 @@ public class MipsInstructionBuilder {
         ret.add(addi);
 
 
-        /* TODO : 4. jal跳转 */
+        /* 4. jal跳转 */
         Jal jal = new Jal(call.getFunctionName().substring(1));
         ret.add(jal);
 
-        /* TODO : 5. 恢复$fp现场，本质上是通过MipsSymbolTable的fpOffset自减 */
+        /* 5. 恢复$fp现场，本质上是通过MipsSymbolTable的fpOffset自减 */
         // addi = new Addi(30, 30, -fpOffset);
         addi = new Addi(30, 30, -this.table.getFpOffset());
         ret.add(addi);
-        /* TODO : 6. 恢复$sp现场，本质上是通过讲$sp自增至原值，将$ra和其他保存寄存器的值恢复 */
+        /* 6. 恢复$sp现场，本质上是通过讲$sp自增至原值，将$ra和其他保存寄存器的值恢复 */
         addi = new Addi(29, 29, -spOffset);
         ret.add(addi);
         for (int i = 31; i >= 2; i--) {
@@ -360,13 +353,13 @@ public class MipsInstructionBuilder {
                 ret.add(lw);
             }
         }
-        /* TODO : 7. 可能会有一个左值赋值 */
+        /* 7. 可能会有一个左值赋值 */
         if (call.getName().length() > 0) {
             /* 有赋值需求 */
             MipsSymbol leftSymbol = new MipsSymbol(call.getName(), 30, false, -1, false,
                     0, true, false);
             insertSymbolTable(leftSymbol.getName(), leftSymbol);
-            int regLeft = this.table.getRegIndex(call.getName(), this.father);
+            int regLeft = this.table.getRegIndex(call.getName(), this.father, false);
             move = new Move(regLeft, 2);
             ret.add(move);
         }
@@ -396,7 +389,7 @@ public class MipsInstructionBuilder {
         IrValue right = left.getOperand(0);
         String rightName = right.getName();
         MipsSymbol rightSymbol = this.table.getSymbol(rightName);
-        int rightReg = this.table.getRegIndex(rightName, this.father);
+        int rightReg = this.table.getRegIndex(rightName, this.father, true);
         Move move = new Move(leftReg, rightReg);
         ret.add(move);
         if (rightName.contains("Global")) {
@@ -422,7 +415,7 @@ public class MipsInstructionBuilder {
                 ans.add(li);
             } else {
                 // 变量
-                reg = this.table.getRegIndex(name, this.father);
+                reg = this.table.getRegIndex(name, this.father, true);
             }
             Move move = new Move(2, reg);
             ans.add(move);
@@ -461,10 +454,9 @@ public class MipsInstructionBuilder {
             ret.add(li);
         } else {
             // 变量
-            leftReg = this.table.getRegIndex(leftName, this.father);
+            leftReg = this.table.getRegIndex(leftName, this.father, true);
         }
-        /* TODO : 需要检查 获取右操作数的寄存器 */
-        rightReg = this.table.getRegIndex(rightName, this.father);
+        rightReg = this.table.getRegIndex(rightName, this.father, false);
         MipsSymbol rightSymbol = this.table.getSymbol(rightName);
         Move move = new Move(rightReg, leftReg);
         this.registerFile.getSymbol(leftReg).setUsed(true);
@@ -539,7 +531,7 @@ public class MipsInstructionBuilder {
             ret.add(li);
         } else {
             // 是变量
-            leftReg = this.table.getRegIndex(leftName, this.father);
+            leftReg = this.table.getRegIndex(leftName, this.father, true);
             leftSymbol = this.table.getSymbol(leftName);
         }
         /* 获取右操作数所在寄存器 */
@@ -556,7 +548,7 @@ public class MipsInstructionBuilder {
             Li li = new Li(rightReg, Integer.valueOf(rightName));
             ret.add(li);
         } else {
-            rightReg = this.table.getRegIndex(rightName, this.father);
+            rightReg = this.table.getRegIndex(rightName, this.father, true);
             rightSymbol = this.table.getSymbol(rightName);
         }
         IrLabel label = (IrLabel)inst.getLabel();
