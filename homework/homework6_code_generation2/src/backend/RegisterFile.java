@@ -26,6 +26,38 @@ public class RegisterFile {
     private Stack<Integer> sregUse = new Stack<>(); // 记录s寄存器的使用先后顺序
     private int tempPtr = 8; //指向最旧的寄存器的指针
 
+    public HashMap<Integer, Boolean> cloneHasValues() {
+        HashMap<Integer, Boolean> newHasValues = new HashMap<>();
+        for (Integer index : this.hasValues.keySet()) {
+            newHasValues.put(index, this.hasValues.get(index));
+        }
+        return newHasValues;
+    }
+
+    public HashMap<Integer, MipsSymbol> cloneRegs() {
+        HashMap<Integer, MipsSymbol> newRegs = new HashMap<>();
+        for (Integer index : this.regs.keySet()) {
+            newRegs.put(index, this.regs.get(index).cloneMipsSymbol());
+        }
+        return newRegs;
+    }
+
+    public int getRegNum() {
+        return this.regNum;
+    }
+
+    public void setHasValues(HashMap<Integer, Boolean> hasValues) {
+        this.hasValues = hasValues;
+    }
+
+    public void setRegs(HashMap<Integer, MipsSymbol> regs) {
+        this.regs = regs;
+    }
+
+    public void setRegNum(int regNum) {
+        this.regNum = regNum;
+    }
+
     public RegisterFile() {
         init();
     }
@@ -263,6 +295,71 @@ public class RegisterFile {
                 this.tempPtr = (this.tempPtr + 1 + 32) % 32;
             }
         }
+    }
+
+    /**
+     * 将寄存器中的值全部存回内存
+     * 主要用于跳转语句的跳转行为不一定执行带来的寄存器视图的差别
+     */
+    public ArrayList<MipsInstruction> writeBackAll() {
+        ArrayList<MipsInstruction> instructions = new ArrayList<>();
+        for (int i = 0; i < this.regNum; i++) {
+            /* t寄存器 */
+            if (this.isTempReg(i)) {
+                if (this.hasValues.get(i)) {
+                    /* t寄存器内有值 */
+                    MipsSymbol symbol = this.regs.get(i);
+                    if (!symbol.isTemp() ||
+                            (symbol.isTemp() && !symbol.isUsed())) {
+                        /* t寄存器内的值不是临时变量 */
+                        /* 或t寄存器内的值是临时变量但还没用过 */
+                        /* 此时应当写回内存 */
+                        if (!symbol.hasRam()) {
+                            /* 如果该变量没有内存中对应的空间，应当先为其申请 */
+                            allocRam(symbol);
+                        }
+                        Sw sw = new Sw(i, symbol.getBase(), symbol.getOffset());
+                        symbol.setInReg(false);
+                        symbol.setRegIndex(-1);
+                        instructions.add(sw);
+                    }
+                    this.hasValues.put(i, false);
+                }
+            } else if (this.isConReg(i)) {
+                /* s寄存器 */
+                if (this.hasValues.get(i)) {
+                    /* s寄存器内有值 */
+                    MipsSymbol symbol = this.regs.get(i);
+                    if (!symbol.hasRam()) {
+                        allocRam(symbol);
+                    }
+                    Sw sw = new Sw(i, symbol.getBase(), symbol.getOffset());
+                    symbol.setInReg(false);
+                    symbol.setRegIndex(-1);
+                    instructions.add(sw);
+                }
+                this.hasValues.put(i, false);
+            } else if (this.isVreg(i) ||
+                    this.isRareg(i) ||
+                    this.isAreg(i)) {
+                if (this.hasValues.get(i)) {
+                    MipsSymbol symbol = this.regs.get(i);
+                    if (!symbol.hasRam()) {
+                        allocRam(symbol);
+                    }
+                    Sw sw = new Sw(i, symbol.getBase(), symbol.getOffset());
+                    symbol.setInReg(false);
+                    symbol.setRegIndex(-1);
+                    instructions.add(sw);
+                }
+                this.hasValues.put(i, false);
+            }
+        }
+        while (!this.sregUse.empty()) {
+            this.sregUse.pop();
+        }
+        this.tempPtr = 8;
+        return instructions;
     }
 
 }

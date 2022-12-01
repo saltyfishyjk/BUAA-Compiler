@@ -1,164 +1,123 @@
-
+/*
+// Created by emilyu on 2022/9/6.
+// C
+*/
 #include <stdio.h>
 
-/*BEGIN*/
+const int Mod = 389, N = 100005;
+int a_to_the_a, cnt = 0;
+int n;
 
-/* global constant values */
-
-const int con_dec_1 = 0;
-const int con_dec_2 = 1, con_dec_3 = 2;
-const int con_dec_4 = 3, con_dec_5 = 4, con_dec_6 = 5;
-
-const int con_dec_7[1] = {1};
-const int con_dec_8[2][2] = {{1, 2}, {3, 4}};
-
-/* global variable values */
-int var_dec_1;
-int var_dec_2 = 1;
-int var_dec_3 = 3, var_dec_4 = 4;
-int var_dec_5 = 5, var_dec_6 = 6, var_dec_7 = 7;
-int var_dec_8[1] = {1};
-int var_dec_9[1][1] = {{1}};
-int var_dec_10[1][1][1] = {{{1}}};
-
-
-/* self_define functions */
-
-void func1() {
+int getint() {
     int a;
-    return;
-}
-
-int func2() {
-    return 1;
-}
-
-int func3(int a) {
+    scanf("%d", &a);
     return a;
 }
 
-int func4(int a, int b) {
-    return a + b;
+void move(int a, int b) {                           // void func with params
+    cnt = cnt + 1;
+    if (cnt % Mod == 0) {
+        printf("funcTest: move disk from %d to %d\n", a, b);
+    }
 }
 
-int func5(int a, int b, int c) {
-    return a + b + c;
+void hanoi(int n, int a, int b, int c) {            // void recursion
+    if (n == 1) {
+        move(a, c);
+        return;
+    }
+    hanoi(n - 1, a, c, b);
+    move(a, c);
+    hanoi(n - 1, b, a, c);
 }
 
-int func6(int a[], int b[][1], int c[][1][2]) {
-    return 1;
+int qpow(int a, int b) {                            // int func with params
+    int ans = 1;
+
+    while (b) {
+        b = b / 2;
+        a = (a * a) % Mod;
+        if (b % 2) {
+            ans = (ans * a) % Mod;
+        }
+    }
+
+    return ans;
 }
 
-
-/*END*/
-
-int getint() {
-    int n;
-    scanf("%d", &n);
-    return n;
+int gcd(int a, int b) {                             // int recursion
+    if (!b) {
+        return a;
+    }
+    return gcd(b, a % b);
 }
-/*BEGIN*/
+
+int testExp() {                                     // int func without param
+    a_to_the_a = n * n;
+    int k = N / n;                                  // Exp
+    n * n / n + n - n;                              // single exp without using its value;
+
+    int b = a_to_the_a + 1;
+    int c = - + - +2147483647, d = -1 - c;          // extreme nums
+    int t = (((1 - + -a_to_the_a) * b / 3 - 2 + N) % Mod);      // useless braces
+    int e = qpow(a_to_the_a, b);
+
+    {                                               // block
+        b = 10;
+        c = 0;
+        {
+            b = 7;
+            c = 8;
+            printf("blockTest: 7 == %d, 8 == %d\n", b, c);
+        }
+
+        int i = 0;
+        while (1) {
+            i = i + 1;
+            if (i % 2 != 0) {
+                continue;
+            }
+            if (i >= b) {
+                break;
+            } else {
+                if (c < 10) {
+                    c = c + i;
+                } else {
+                    c = c - i;
+                }
+            }
+        }
+        printf("blockTest: 5 == %d, 12 == %d\n", b, c);
+    }
+
+    int f = n, g = 0;
+    if (f < 0) {
+        g = 10;
+    } else {
+        if (f > 10) {
+            g = 20;
+        } else {
+            if (f == n) {
+                g = 30;
+            }
+        }
+    }
+    if (f <= 10) {
+        g = g + f;
+    }
+
+    printf("Exptest: %d %d %d %d %d", a_to_the_a, b, c, d, e);  // no \n
+    printf(" %d %d %d\n", f, g, t);
+
+    return gcd(f, g);                                    // a stmt not simplified
+}
 
 int main() {
-    /*END*/
-    // freopen("output1.txt", "w", stdout);
-    /*BEGIN*/
-    int a;
-    /* getint() */
-    a = getint();
-    /* if */
-    if (a > 10 ) {
-        a = 11;
-    }
-    if (a == 11) {
-        a = 12;
-    } else {
-        a = 13;
-    }
-    if (a >= 0) {
-        a = 0;
-    }
-    if (a < 0) {
-        a = 0;
-    }
-    if (a <= 0) {
-        a = 0;
-    }
-    if (a != 0) {
-        a = 0;
-    }
-    if (a == 0 && a >= 0) {
-        a = 0;
-    }
-    if (a == 1 || a == 2) {
-        a = 0;
-    }
+    printf("20373569 the mafia~\n");
 
-    a = 10;
-    /* while */
-    while (a < 10) {
-        a = a - 1;
-        if (a == 2) {
-            continue;
-        }
-        if (a == 3) {
-            break;
-        }
-    }
+    n = getint();
+    hanoi(n, 1, 2, 3);
 
-    /* + - * / */
-    a = a + a;
-    a = a - a + 1;
-    a = a * 10;
-    a = a / 10;
-    a = a % 10;
-
-    /* call functions */
-    func1();
-    a = func2();
-    func3(1);
-    func4(1, 1);
-    func5(a, 1, a);
-    int arr1[1];
-    int arr2[1][1];
-    int arr3[1][1][2];
-    func6(arr1, arr2, arr3);
-    func6(arr2[0], arr2, arr3);
-
-    printf("20373673\n");
-
-    /* Block */
-    {
-        int a = 10;
-        a = 11;
-        a = +12;
-        a = -13;
-        // a = !1;
-        if (!a) {
-            a = 0;
-        }
-        a = (1 + 1);
-        ;
-        int b[1];
-        b[0] = 1;
-        int c[1][2];
-        c[0][1] = 2;
-    }
-
-    {
-
-    }
-
-
-    printf("%d\n", a);
-    printf("%d\n", a);
-    printf("%d\n", a);
-    printf("%d\n", a);
-    printf("%d\n", a);
-    printf("%d\n", a);
-    printf("%d\n", a);
-    printf("%d\n", a);
-    printf("%d\n", a);
+    printf("Exptest: %d\n", testExp());
     return 0;
 }
-/*END*/

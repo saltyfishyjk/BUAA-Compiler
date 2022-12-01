@@ -713,12 +713,19 @@ public class IrInstructionBuilder {
         char[] chars = string.substring(1, string.length() - 1).toCharArray();
         int len = chars.length;
         int cnt = 0;
+
+        ArrayList<IrValue> values = new ArrayList<>();
+        /* 首先将exps处理出来 */
+        int expSize = exps.size();
+        for (int i = 0; i < expSize; i++) {
+            values.add(genIrInstructionFromExp(exps.get(i)));
+        }
         for (int i = 0; i < len; i++) {
             char c = chars[i];
             IrCall irCall;
             if (c == '%') {
-                IrValue value = genIrInstructionFromExp(exps.get(cnt));
-                // value.setName("i32 " + value.getName());
+                // IrValue value = genIrInstructionFromExp(exps.get(cnt));
+                IrValue value = values.get(cnt);
                 irCall = new IrCall("@putint", value);
                 cnt += 1;
                 i += 1;

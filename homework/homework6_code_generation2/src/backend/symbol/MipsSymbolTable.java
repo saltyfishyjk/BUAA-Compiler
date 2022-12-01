@@ -24,6 +24,14 @@ public class MipsSymbolTable {
         this.registerFile = registerFile;
     }
 
+    public HashMap<String, MipsSymbol> cloneSymbols() {
+        HashMap<String, MipsSymbol> newSymbols = new HashMap<>();
+        for (String index : this.symbols.keySet()) {
+            newSymbols.put(index, this.symbols.get(index).cloneMipsSymbol());
+        }
+        return newSymbols;
+    }
+
     /* 查询LLVM IR符号是否已加入符号表 */
     public boolean hasSymbol(String name) {
         return this.symbols.containsKey(name);
@@ -66,5 +74,17 @@ public class MipsSymbolTable {
             System.out.println("ERROR in MipsSymbolTable : should not reach here");
         }
         return null;
+    }
+
+    public HashMap<String, MipsSymbol> getSymbols() {
+        return symbols;
+    }
+
+    public void setFpOffset(int fpOffset) {
+        this.fpOffset = fpOffset;
+    }
+
+    public void setSymbols(HashMap<String, MipsSymbol> symbols) {
+        this.symbols = symbols;
     }
 }

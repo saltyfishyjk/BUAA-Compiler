@@ -38,7 +38,6 @@ import middle.llvmir.value.instructions.IrInstructionBuilder;
 import middle.llvmir.value.instructions.IrInstructionType;
 import middle.llvmir.value.instructions.IrLabel;
 import middle.llvmir.value.instructions.IrLabelCnt;
-import middle.llvmir.value.instructions.memory.IrStore;
 import middle.llvmir.value.instructions.terminator.IrBr;
 import middle.llvmir.value.instructions.terminator.IrGoto;
 import middle.symbol.SymbolTable;
@@ -405,15 +404,15 @@ public class IrBasicBlockBuilder {
                 inst = new IrBinaryInst(IrIntegerType.get32(),
                         IrInstructionType.Ne, left, right);
             }
-            // inst.setName(left.getName());
+            /* 为==或!=计算结果生成新中间变量用以保存 */
             int cnt = this.functionCnt.getCnt();
             String leftName = "%_LocalVariable" + cnt;
             left = new IrValue(IrIntegerType.get32(), leftName);
             inst.setName(left.getName());
-            IrStore store = new IrStore(inst, left);
+            // IrStore store = new IrStore(inst, left);
             IrBasicBlock basicBlock = new IrBasicBlock("EqExp");
             basicBlock.addIrInstruction(inst);
-            basicBlock.addIrInstruction(store);
+            // basicBlock.addIrInstruction(store);
             this.basicBlocks.add(basicBlock);
         }
         if (len > 1) {
@@ -578,15 +577,15 @@ public class IrBasicBlockBuilder {
      * 判断给定的BlockItemEle的具体类型
      * @param ele : BlockItemEle对象
      * @return TypeCode : 对象的具体类别，用以判断如何处理
-     * - 1 : StmtCond :
-     * - 2 : StmtWhile :
+     * - 1 : StmtCond
+     * - 2 : StmtWhile
      * - 3 : Block
      * ---------- 以上应当调用genIrBasicBlock解析 ----------
      * - 4 : ConstDecl
      * - 5 : VarDecl
      * - 6 : StmtAssign
-     * - 7 : StmtBreak : TODO : 本次作业不涉及循环
-     * - 8 : StmtContinue : TODO : 本次作业不涉及循环
+     * - 7 : StmtBreak
+     * - 8 : StmtContinue
      * - 9 : StmtReturn
      * - 10 : StmtGetint
      * - 11 : StmtPrint

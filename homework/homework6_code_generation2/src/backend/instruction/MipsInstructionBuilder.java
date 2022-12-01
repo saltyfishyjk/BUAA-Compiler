@@ -255,7 +255,6 @@ public class MipsInstructionBuilder {
 
     /* 调用自定义函数 */
     private ArrayList<MipsInstruction> genMipsInstructionFromSelfDefineFunc() {
-        IrCall call = (IrCall)irInstruction;
         ArrayList<MipsInstruction> ret = new ArrayList<>();
         /* TODO : 1. 保存现场到$sp */
         int spOffset = 0;
@@ -270,19 +269,35 @@ public class MipsInstructionBuilder {
             }
         }
         /* TODO : 2. 实参存入寄存器与内存（如果有）$fp */
-        ArrayList<IrValue> params = call.getParams();
-        int len = params.size();
         /* 将子函数fp装入v1 */
         Addi addi = new Addi(3, 30, this.table.getFpOffset());
         ret.add(addi);
         /* TODO : 可能有风险（寄存器表） */
+        /* 应当建立新表 */
+        /* TODO : 需要深拷贝 */
+        RegisterFile newRegisterFile = new RegisterFile();
+        MipsSymbolTable newTable = new MipsSymbolTable(newRegisterFile);
+        newTable.setSymbols(this.table.cloneSymbols());
+        newTable.setFpOffset(this.table.getFpOffset());
+        newRegisterFile.setTable(newTable);
+        newRegisterFile.setHasValues(this.registerFile.cloneHasValues());
+        newRegisterFile.setRegNum(this.registerFile.getRegNum());
+        newRegisterFile.setRegs(this.registerFile.cloneRegs());
+        /**/
+        IrCall call = (IrCall)irInstruction;
+        ArrayList<IrValue> params = call.getParams();
+        int len = params.size();
         for (int i = 0; i < 4 && i < len; i++) {
             IrValue param = params.get(i);
             String name = param.getName();
-            if (this.table.hasSymbol(name)) {
-                int reg = this.table.getRegIndex(name, this.father);
+            // newTable.setSymbols(this.table.getSymbols());
+            // if (this.table.hasSymbol(name)) {
+            if (newTable.hasSymbol(name)) {
+                // int reg = this.table.getRegIndex(name, this.father);
+                int reg = newTable.getRegIndex(name, this.father);
                 Move move = new Move(4 + i, reg);
-                this.table.getSymbol(name).setUsed(true);
+                // this.table.getSymbol(name).setUsed(true);
+                newTable.getSymbol(name).setUsed(true);
                 ret.add(move);
             } else {
                 /* 进入此说明参数是一个常数*/
@@ -294,8 +309,10 @@ public class MipsInstructionBuilder {
         for (int i = 4; i < len; i++) {
             IrValue param = params.get(i);
             String name = param.getName();
-            if (this.table.hasSymbol(name)) {
-                int reg = this.table.getRegIndex(name, this.father);
+            // if (this.table.hasSymbol(name)) {
+            if (newTable.hasSymbol(name)) {
+                // int reg = this.table.getRegIndex(name, this.father);
+                int reg = newTable.getRegIndex(name, this.father);
                 Sw sw = new Sw(reg, 3, fpOffset);
                 this.table.getSymbol(name).setUsed(true);
                 ret.add(sw);
@@ -324,7 +341,8 @@ public class MipsInstructionBuilder {
         ret.add(jal);
 
         /* TODO : 5. 恢复$fp现场，本质上是通过MipsSymbolTable的fpOffset自减 */
-        addi = new Addi(30, 30, -fpOffset);
+        // addi = new Addi(30, 30, -fpOffset);
+        addi = new Addi(30, 30, -this.table.getFpOffset());
         ret.add(addi);
         /* TODO : 6. 恢复$sp现场，本质上是通过讲$sp自增至原值，将$ra和其他保存寄存器的值恢复 */
         addi = new Addi(29, 29, -spOffset);
@@ -396,7 +414,7 @@ public class MipsInstructionBuilder {
                 // 常数，需要从寄存器表获取一个$t并使用li将该立即数加载进去
                 // 然后使用move进行赋值
                 // 这里的Symbol不应当被加入符号表
-                reg = this.registerFile.getReg(true, new MipsSymbol("temp", -1), this.father);
+                reg = this.registerFile.getReg(true, new MipsSymbol("temp", 30), this.father);
                 Li li = new Li(reg, Integer.valueOf(name));
                 ans.add(li);
             } else {
@@ -476,15 +494,25 @@ public class MipsInstructionBuilder {
         IrLabel irLabel = (IrLabel) irGoto.getOperand(0);
         J j = new J(irLabel.getName().substring(1));
         ArrayList<MipsInstruction> ret = new ArrayList<>();
+        /* 写回内存 */
+        ArrayList<MipsInstruction> sws = this.registerFile.writeBackAll();
+        if (sws != null && sws.size() > 0) {
+            ret.addAll(sws);
+        }
         ret.add(j);
         return ret;
     }
 
     /* IrLabel -> Mips Label */
     private ArrayList<MipsInstruction> genMipsInstructionFromLabel() {
+        /* 写回内存 */
+        ArrayList<MipsInstruction> ret = new ArrayList<>();
+        ArrayList<MipsInstruction> sws = this.registerFile.writeBackAll();
+        if (sws != null && sws.size() > 0) {
+            ret.addAll(sws);
+        }
         IrLabel irLabel = (IrLabel)irInstruction;
         Label mipsLabel = new Label(irLabel.getName().substring(1));
-        ArrayList<MipsInstruction> ret = new ArrayList<>();
         ret.add(mipsLabel);
         return ret;
     }
@@ -529,6 +557,14 @@ public class MipsInstructionBuilder {
             rightSymbol = this.table.getSymbol(rightName);
         }
         IrLabel label = (IrLabel)inst.getLabel();
+        /* 将左右操作数标记为已使用，方便释放寄存器 */
+        leftSymbol.setUsed(true);
+        rightSymbol.setUsed(true);
+        /* 写回内存 */
+        ArrayList<MipsInstruction> sws = this.registerFile.writeBackAll();
+        if (sws != null && sws.size() > 0) {
+            ret.addAll(sws);
+        }
         if (inst.getInstructionType().equals(IrInstructionType.Beq)) {
             Beq beq = new Beq(leftReg, rightReg, label.getName().substring(1));
             ret.add(beq);
@@ -536,9 +572,7 @@ public class MipsInstructionBuilder {
             Bne bne = new Bne(leftReg, rightReg, label.getName().substring(1));
             ret.add(bne);
         }
-        /* 将左右操作数标记为已使用，方便释放寄存器 */
-        leftSymbol.setUsed(true);
-        rightSymbol.setUsed(true);
+
         return ret;
     }
 }

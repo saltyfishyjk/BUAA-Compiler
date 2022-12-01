@@ -56,7 +56,7 @@ public class IrUser extends IrValue {
             }
         }
         /* 不应当运行到这里 */
-        System.out.println("ERROR in IrUser! Should not reach here");
+        // System.out.println("ERROR in IrUser! Should not reach here");
         return null;
     }
 
