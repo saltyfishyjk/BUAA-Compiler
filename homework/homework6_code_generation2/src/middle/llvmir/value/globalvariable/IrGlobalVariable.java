@@ -66,7 +66,7 @@ public class IrGlobalVariable extends IrUser implements IrNode {
                 sb.append(this.getName() + " = dso_local global "
                         + this.containedType.irOutput().get(0)
                         + " " + this.init.irOutput().get(0) + "\n");
-                ret = ret;
+                ret.add(sb.toString());
             } else {
                 System.out.println("ERROR in IrGlobalVariable : should not reach here");
             }
@@ -80,8 +80,11 @@ public class IrGlobalVariable extends IrUser implements IrNode {
                 ret.add(temp);
             } else if (this.containedType instanceof  IrIntegerType) {
                 // 全局变量数组
-                /* TODO : 本次作业不涉及数组 */
-                ret = ret;
+                StringBuilder sb = new StringBuilder();
+                sb.append(this.getName() + " = dso_local global "
+                        + this.containedType.irOutput().get(0)
+                        + " " + this.init.irOutput().get(0) + "\n");
+                ret.add(sb.toString());
             } else {
                 System.out.println("ERROR in IrGlobalVariable : should not reach here");
             }
@@ -90,6 +93,7 @@ public class IrGlobalVariable extends IrUser implements IrNode {
     }
 
     /* 返回i32的初值 */
+    /* TODO : 待修改 */
     public int getIntInit() {
         Integer integer = Integer.valueOf(this.init.irOutput().get(0));
         return integer.intValue();

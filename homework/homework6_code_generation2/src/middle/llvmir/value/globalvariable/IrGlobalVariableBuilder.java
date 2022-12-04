@@ -167,21 +167,45 @@ public class IrGlobalVariableBuilder {
         setInitVal(symbol, def.getVarDefEle());
         symbolTable.addSymol(symbol);
         IrGlobalVariable globalVariable = null;
+        IrValueType type = IrIntegerType.get32(); // 32整数
+        String name = "@_GlobalVariable" + IrGlobalVariableCnt.getCnt(); // 自增变量名
+        boolean isConst = false;
         if (dimension == 0) {
             IrConstantInt constantInt = new IrConstantInt(IrIntegerType.get32(),
                     ((SymbolVar) symbol).getInitVal());
             // @是全局变量的标记
-            String name = "@_GlobalVariable" + IrGlobalVariableCnt.getCnt(); // 自增变量名
-            IrValueType type = IrIntegerType.get32(); // 32整数
-            boolean isConst = false;
             globalVariable = new IrGlobalVariable(name, type, isConst, constantInt);
             symbol.setValue(globalVariable);
         } else if (dimension == 1) {
             /* TODO : 本次作业不涉及数组 */
-            return null;
+            ArrayList<Integer> initval1 = ((SymbolVar)symbol).getInitVal1();
+            ArrayList<IrConstantInt> constantInts = new ArrayList<>();
+            int len = initval1.size();
+            for (int i = 0; i < len; i++) {
+                IrConstantInt irConstantInt = new IrConstantInt(type, initval1.get(i));
+                constantInts.add(irConstantInt);
+            }
+            IrConstantArray constantArray = new IrConstantArray(type, 1, len, constantInts);
+            globalVariable = new IrGlobalVariable(name, type, isConst, constantArray);
+            symbol.setValue(globalVariable);
         } else if (dimension == 2) {
             /* TODO : 本次作业不涉及数组 */
-            return null;
+            ArrayList<ArrayList<Integer>> initval2 = ((SymbolVar) symbol).getInitVal2();
+            ArrayList<ArrayList<IrConstantInt>> constantInts = new ArrayList<>();
+            int dimension1 = initval2.size();
+            int dimension2 = initval2.get(0).size();
+            for (int i = 0; i < dimension1; i++) {
+                ArrayList<IrConstantInt> temp = new ArrayList<>();
+                for (int j = 0; j < dimension2; j++) {
+                    IrConstantInt irConstantInt = new IrConstantInt(type, initval2.get(i).get(j));
+                    temp.add(irConstantInt);
+                }
+                constantInts.add(temp);
+            }
+            IrConstantArray constantArray = new IrConstantArray(type,
+                    2, dimension1, dimension2, constantInts);
+            globalVariable = new IrGlobalVariable(name, type, isConst, constantArray);
+            symbol.setValue(globalVariable);
         } else {
             System.out.println("ERROR in IrGlobalVariableBuilder! should not reach here");
         }
