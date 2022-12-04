@@ -30,19 +30,69 @@ public class MipsBuilder {
         /* 根据我们的寄存器约定，使用$24即$t8不断li和sw */
         HashMap<String, MipsSymbol> globalVariable = new HashMap<>();
         ArrayList<IrGlobalVariable> variables = irModule.getGlobalVariables();
-        int offset = 0;
+        /* 记录gp的偏移 */
+        int gpOffset = 0;
         for (IrGlobalVariable variable : variables) {
-            int value = variable.getIntInit();
-            /* 加载到$24 */
-            Li li = new Li(24, value);
-            mipsModule.addGlobal(li);
-            /* 保存到内存 */
-            Sw sw = new Sw(24, 28, offset);
-            mipsModule.addGlobal(sw);
-            MipsSymbol symbol = new MipsSymbol(variable.getName(),
-                    28, offset);
-            globalVariable.put(symbol.getName(), symbol);
-            offset += 4;
+            if (variable.getDimension() == 0) {
+                /* 0维全局变量 */
+                int value = variable.getIntInit();
+                if (value != 0) {
+                    /* 加载到$24 */
+                    Li li = new Li(24, value);
+                    mipsModule.addGlobal(li);
+                    /* 保存到内存 */
+                    Sw sw = new Sw(24, 28, gpOffset);
+                    mipsModule.addGlobal(sw);
+                    MipsSymbol symbol = new MipsSymbol(variable.getName(),
+                            28, gpOffset);
+                    globalVariable.put(symbol.getName(), symbol);
+                }
+                gpOffset += 4;
+            } else if (variable.getDimension() == 1) {
+                /* 1维数组 */
+                ArrayList<Integer> inits = variable.getIntInit1();
+                int dimension1 = variable.getDimension1();
+                MipsSymbol symbol = new MipsSymbol(variable.getName(),
+                        28, false, -1, true,
+                        gpOffset, false, false, 1,
+                        variable.getDimension1());
+                globalVariable.put(symbol.getName(), symbol);
+                /* 将初值装载到内存中 */
+                for (int i = 0; i < dimension1; i++) {
+                    int num = inits.get(i);
+                    if (num != 0) {
+                        Li li = new Li(24, num);
+                        mipsModule.addGlobal(li);
+                        Sw sw = new Sw(24, 28, gpOffset);
+                        mipsModule.addGlobal(sw);
+                    }
+                    gpOffset += 4;
+                }
+            } else if (variable.getDimension() == 2) {
+                /* 2维数组 */
+                ArrayList<ArrayList<Integer>> inits = variable.getIntInit2();
+                int dimension1 = variable.getDimension1();
+                int dimension2 = variable.getDimension2();
+                MipsSymbol symbol = new MipsSymbol(variable.getName(),
+                        28, false, -1, true,
+                        gpOffset, false, false, 2,
+                        dimension1, dimension2);
+                globalVariable.put(symbol.getName(), symbol);
+                for (int i = 0; i < dimension1; i++) {
+                    for (int j = 0; j < dimension2; j++) {
+                        int num = inits.get(i).get(j);
+                        if (num != 0) {
+                            Li li = new Li(24, num);
+                            mipsModule.addGlobal(li);
+                            Sw sw = new Sw(24, 28, gpOffset);
+                            mipsModule.addGlobal(sw);
+                        }
+                        gpOffset += 4;
+                    }
+                }
+            } else {
+                System.out.println("ERROR IN MipsBuilder : should not reach here");
+            }
         }
         /* 生成函数 */
         ArrayList<IrFunction> irFunctions = this.irModule.getFunctions();

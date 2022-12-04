@@ -177,7 +177,6 @@ public class IrGlobalVariableBuilder {
             globalVariable = new IrGlobalVariable(name, type, isConst, constantInt);
             symbol.setValue(globalVariable);
         } else if (dimension == 1) {
-            /* TODO : 本次作业不涉及数组 */
             ArrayList<Integer> initval1 = ((SymbolVar)symbol).getInitVal1();
             ArrayList<IrConstantInt> constantInts = new ArrayList<>();
             int len = initval1.size();
@@ -189,7 +188,6 @@ public class IrGlobalVariableBuilder {
             globalVariable = new IrGlobalVariable(name, type, isConst, constantArray);
             symbol.setValue(globalVariable);
         } else if (dimension == 2) {
-            /* TODO : 本次作业不涉及数组 */
             ArrayList<ArrayList<Integer>> initval2 = ((SymbolVar) symbol).getInitVal2();
             ArrayList<ArrayList<IrConstantInt>> constantInts = new ArrayList<>();
             int dimension1 = initval2.size();

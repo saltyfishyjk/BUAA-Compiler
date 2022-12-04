@@ -16,6 +16,9 @@ public class MipsSymbol {
     private int offset; // 标记当前符号在内存中相对于$base的偏移
     private boolean isTemp; // 标记当前符号是否是临时变量
     private boolean used; // 若本符号为临时变量，标记是否被使用过。由于LLVM IR是SSA，因此一旦被使用就可以free，且不用写回内存
+    private int dimension = 0; // 默认为0维数组即普通常变量
+    private int dimension1 = 0; // 第1维的长度
+    private int dimension2 = 0; // 第2维的长度
 
     public MipsSymbol cloneMipsSymbol() {
         MipsSymbol symbol = new MipsSymbol(this.name,
@@ -86,7 +89,7 @@ public class MipsSymbol {
         this.isTemp = isTemp;
     }
 
-    /* 通用构造器 */
+    /* 通用构造器For 0维数组（普通常变量） */
     public MipsSymbol(String name,
                       int base,
                       boolean inReg,
@@ -103,6 +106,38 @@ public class MipsSymbol {
         this.offset = offset;
         this.isTemp = isTemp;
         this.used = used;
+    }
+
+    /* 通用构造器For 1维数组 */
+    public MipsSymbol(String name,
+                      int base,
+                      boolean inReg,
+                      int regIndex,
+                      boolean hasRam,
+                      int offset,
+                      boolean isTemp,
+                      boolean used,
+                      int dimension,
+                      int dimension1) {
+        this(name, base, inReg, regIndex, hasRam, offset, isTemp, used);
+        this.dimension = dimension;
+        this.dimension1 = dimension1;
+    }
+
+    /* 通用构造器For 2维数组 */
+    public MipsSymbol(String name,
+                      int base,
+                      boolean inReg,
+                      int regIndex,
+                      boolean hasRam,
+                      int offset,
+                      boolean isTemp,
+                      boolean used,
+                      int dimension,
+                      int dimension1,
+                      int dimension2) {
+        this(name, base, inReg, regIndex, hasRam, offset, isTemp, used, dimension, dimension1);
+        this.dimension2 = dimension2;
     }
 
     public boolean isInReg() {

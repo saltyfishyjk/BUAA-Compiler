@@ -89,4 +89,24 @@ public class IrConstantArray extends IrConstant {
         ret.add(sb.toString());
         return ret;
     }
+
+    public int getDimension() {
+        return this.dimension;
+    }
+
+    public int getDimension1() {
+        return this.dimension1;
+    }
+
+    public int getDimension2() {
+        return this.dimension2;
+    }
+
+    public ArrayList<IrConstantInt> getConstants1() {
+        return this.constants1;
+    }
+
+    public ArrayList<ArrayList<IrConstantInt>> getConstants2() {
+        return this.constants2;
+    }
 }
