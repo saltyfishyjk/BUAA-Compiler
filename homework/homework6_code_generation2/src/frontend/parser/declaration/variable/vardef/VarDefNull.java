@@ -63,4 +63,8 @@ public class VarDefNull implements VarDefEle {
     public String getName() {
         return this.ident.getName();
     }
+
+    public ArrayList<ConstExp> getConstExps() {
+        return this.constExps;
+    }
 }

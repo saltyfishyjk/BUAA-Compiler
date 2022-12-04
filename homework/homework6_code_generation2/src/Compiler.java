@@ -21,7 +21,7 @@ public class Compiler {
      * 3 -> llvm_ir
      * 4 -> mips
      */
-    private static int choose = 4;
+    private static int choose = 3;
     private static boolean testllvm = true;
 
     public static void main(String[] args) {

@@ -55,14 +55,17 @@ public class IrGlobalVariable extends IrUser implements IrNode {
         if (this.isConst) {
             // 全局常量，一定被赋初值
             if (this.containedType instanceof IrIntegerType) {
-                // 全局数值常量
+                // 0维全局数值常量
                 String temp = this.getName() + " = dso_local global "
                         + this.containedType.irOutput().get(0)
                         + " " + this.init.irOutput().get(0) + "\n";
                 ret.add(temp);
             } else if (this.getValueType() instanceof IrArrayType) {
-                // 全局数组常量
-                /* TODO : 本次作业不涉及数组 */
+                // 1/2维全局数组常量
+                StringBuilder sb = new StringBuilder();
+                sb.append(this.getName() + " = dso_local global "
+                        + this.containedType.irOutput().get(0)
+                        + " " + this.init.irOutput().get(0) + "\n");
                 ret = ret;
             } else {
                 System.out.println("ERROR in IrGlobalVariable : should not reach here");

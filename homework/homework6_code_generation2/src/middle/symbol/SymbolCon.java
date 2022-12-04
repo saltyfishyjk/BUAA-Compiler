@@ -3,8 +3,11 @@ package middle.symbol;
 import java.util.ArrayList;
 
 public class SymbolCon extends Symbol {
+    /* 0维常量（非数组） */
     private int initVal;
+    /* 1维数组常量（一维数组） */
     private ArrayList<Integer> initval1;
+    /* 2维数组常量（二维数组） */
     private ArrayList<ArrayList<Integer>> initval2;
 
     public SymbolCon(int lineNum, String name, SymbolType symbolType) {

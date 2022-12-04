@@ -61,6 +61,15 @@ public class ConstInitValMulti implements ConstInitValEle {
         return constInitVals;
     }
 
+    public ArrayList<ConstInitVal> getAllConstInitVals() {
+        ArrayList<ConstInitVal> ret = new ArrayList<>();
+        ret.add(first);
+        if (this.constInitVals != null && this.constInitVals.size() > 0) {
+            ret.addAll(this.constInitVals);
+        }
+        return ret;
+    }
+
     @Override
     public int calcNode(SymbolTable symbolTable) {
         System.out.println("ERROR in ConstInitValMulti.calcNode : should not calc Multi Val");

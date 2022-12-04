@@ -23,6 +23,15 @@ public class InitVals implements InitValEle {
         this.rightBrace = rightBrace;
     }
 
+    public ArrayList<InitVal> getAllInitVals() {
+        ArrayList<InitVal> ret = new ArrayList<>();
+        ret.add(this.first);
+        if (this.initVals != null && this.initVals.size() > 0) {
+            ret.addAll(this.initVals);
+        }
+        return ret;
+    }
+
     @Override
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
