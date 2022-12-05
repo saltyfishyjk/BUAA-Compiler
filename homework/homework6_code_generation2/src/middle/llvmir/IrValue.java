@@ -15,6 +15,11 @@ public class IrValue implements IrNode {
     private boolean needName; // TODO
     private LinkedList<IrUse> uses;
     private boolean isParam = false;
+    private int dimension = 0;
+    private int dimension1 = 0;
+    private int dimension2 = 0;
+    private ArrayList<Integer> inits1;
+    private ArrayList<ArrayList<Integer>> inits2;
 
     public IrValue(IrValueType valueType) {
         this.valueType = valueType;
@@ -66,5 +71,45 @@ public class IrValue implements IrNode {
 
     public boolean isParam() {
         return this.isParam;
+    }
+
+    public void setInits1(ArrayList<Integer> inits1) {
+        this.inits1 = inits1;
+    }
+
+    public void setInits2(ArrayList<ArrayList<Integer>> inits2) {
+        this.inits2 = inits2;
+    }
+
+    public ArrayList<ArrayList<Integer>> getInits2() {
+        return this.inits2;
+    }
+
+    public ArrayList<Integer> getInits1() {
+        return this.inits1;
+    }
+
+    public void setDimension(int dimension) {
+        this.dimension = dimension;
+    }
+
+    public void setDimension1(int dimension1) {
+        this.dimension1 = dimension1;
+    }
+
+    public void setDimension2(int dimension2) {
+        this.dimension2 = dimension2;
+    }
+
+    public int getDimension() {
+        return this.dimension;
+    }
+
+    public int getDimension1() {
+        return this.dimension1;
+    }
+
+    public int getDimension2() {
+        return this.dimension2;
     }
 }

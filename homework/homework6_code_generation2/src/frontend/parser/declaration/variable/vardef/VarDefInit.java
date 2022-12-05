@@ -4,6 +4,7 @@ import frontend.lexer.Token;
 import frontend.parser.terminal.Ident;
 import frontend.parser.declaration.variable.initval.InitVal;
 import frontend.parser.expression.ConstExp;
+import middle.symbol.SymbolTable;
 
 import java.util.ArrayList;
 
@@ -69,6 +70,18 @@ public class VarDefInit implements VarDefEle {
         }
         System.out.println("ERROR in VarDefInit : should not reach here");
         return -1;
+    }
+
+    public int getDimension1(SymbolTable symbolTable) {
+        int dimension1 = 0;
+        dimension1 = this.constExps.get(0).calcNode(symbolTable);
+        return dimension1;
+    }
+
+    public int getDimension2(SymbolTable symbolTable) {
+        int dimension2 = 0;
+        dimension2 = this.constExps.get(1).calcNode(symbolTable);
+        return dimension2;
     }
 
     public String getName() {

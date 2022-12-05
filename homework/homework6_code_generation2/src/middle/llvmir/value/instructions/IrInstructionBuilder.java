@@ -9,6 +9,7 @@ import frontend.parser.declaration.constant.constinitval.ConstInitValMulti;
 import frontend.parser.declaration.variable.VarDecl;
 import frontend.parser.declaration.variable.initval.InitVal;
 import frontend.parser.declaration.variable.initval.InitValEle;
+import frontend.parser.declaration.variable.initval.InitVals;
 import frontend.parser.declaration.variable.vardef.VarDef;
 import frontend.parser.declaration.variable.vardef.VarDefEle;
 import frontend.parser.declaration.variable.vardef.VarDefInit;
@@ -82,8 +83,6 @@ public class IrInstructionBuilder {
     private StmtGetint stmtGetint = null;
     private StmtPrint stmtPrint = null;
     private StmtExp stmtExp = null;
-    // private StmtCond stmtCond = null;
-    // private StmtWhile stmtWhile = null;
     /* 以下对象是传入Stmt时的可能*/
     private Stmt stmt = null;
     /* 以下对象是传入AddExp时的可能 */
@@ -247,19 +246,34 @@ public class IrInstructionBuilder {
      */
     private void addCon(ConstDef constDef) {
         SymbolCon symbolCon;
+        IrIntegerType type = IrIntegerType.get32();
         if (constDef.getDimension() == 0) {
             // 数值常数
             SymbolType symbolType = SymbolType.CON;
             symbolCon = new SymbolCon(constDef.getName(), symbolType, 0);
             this.symbolTable.addSymol(symbolCon);
             setInitVal(symbolCon, constDef.getConstInitval());
-            IrValue value = new IrValue(IrIntegerType.get32(),
+            IrValue value = new IrValue(type,
                     String.valueOf(symbolCon.getInitVal()));
             symbolCon.setValue(value);
         } else if (constDef.getDimension() == 1) {
-            /* TODO : 本次作业不涉及数组 */
+            SymbolType symbolType = SymbolType.CON1;
+            symbolCon = new SymbolCon(constDef.getName(), symbolType, 1);
+            this.symbolTable.addSymol(symbolCon);
+            setInitVal(symbolCon, constDef.getConstInitval());
+            IrValue value = new IrValue(type, "1-D ARRAY");
+            value.setDimension(1); // 标记是1维数组
+            value.setInits1(symbolCon.getInitval1()); // 将1维数组的初始值传入
+            symbolCon.setValue(value);
         } else if (constDef.getDimension() == 2) {
-            /* TODO : 本次作业不涉及数组 */
+            SymbolType symbolType = SymbolType.CON2;
+            symbolCon = new SymbolCon(constDef.getName(), symbolType, 2);
+            this.symbolTable.addSymol(symbolCon);
+            setInitVal(symbolCon, constDef.getConstInitval());
+            IrValue value = new IrValue(type, "2-D ARRAY");
+            value.setDimension(2); // 标记是2维数组
+            value.setInits2(symbolCon.getInitval2()); // 将2维数组的初始值传入
+            symbolCon.setValue(value);
         } else {
             System.out.println(
                     "ERROR in IrInstructionBuilder.addCon : should not reach here");
@@ -278,18 +292,18 @@ public class IrInstructionBuilder {
         } else if (dimension == 1) { // 一维数组初值
             ConstInitValMulti initValMulti = (ConstInitValMulti)initVal.getConstInitValEle();
             ArrayList<Integer> temp = new ArrayList<>();
-            for (ConstInitVal initVal1 : initValMulti.getConstInitVals()) {
+            for (ConstInitVal initVal1 : initValMulti.getAllConstInitVals()) {
                 temp.add(initVal1.calcNode(this.symbolTable));
             }
             symbolCon.setInitval1(temp);
         } else if (dimension == 2) { // 二维数组初值
             ConstInitValMulti initValMulti = (ConstInitValMulti)initVal.getConstInitValEle();
             ArrayList<ArrayList<Integer>> temp1 = new ArrayList<>();
-            for (ConstInitVal initVal1 : initValMulti.getConstInitVals()) {
+            for (ConstInitVal initVal1 : initValMulti.getAllConstInitVals()) {
                 // initVal1 类型应当是一维数组
                 ConstInitValMulti initValMulti1 = (ConstInitValMulti)initVal1.getConstInitValEle();
                 ArrayList<Integer> temp2 = new ArrayList<>();
-                for (ConstInitVal initVal2 : initValMulti1.getConstInitVals()) {
+                for (ConstInitVal initVal2 : initValMulti1.getAllConstInitVals()) {
                     // initVal2应当是常量
                     temp2.add(initVal2.calcNode(this.symbolTable));
                 }
@@ -310,7 +324,6 @@ public class IrInstructionBuilder {
                 addVar(varDef);
             }
         }
-        /* TODO : 待施工 */
     }
 
     private void addVar(VarDef varDef) {
@@ -321,25 +334,51 @@ public class IrInstructionBuilder {
             int cnt = this.functionCnt.getCnt();
             String name = "%_LocalVariable" + cnt; // 中间代码中的名字
             int dimension = varDefNull.getDimension();
+            IrValueType type = IrIntegerType.get32();
             if (dimension == 0) {
-                // 零维
+                // 0维
                 // 生成IrValue对象
-                IrValue irValue = new IrValue(IrIntegerType.get32());
+                IrValue irValue = new IrValue(type);
                 irValue.setName(name);
                 // 生成SymbolVar对象
                 SymbolType symbolType = SymbolType.VAR;
                 SymbolVar symbolVar = new SymbolVar(varDefNull.getName(),
                         symbolType, dimension, irValue);
                 addVarSymbol(symbolVar);
-                IrAlloca irAlloca = new IrAlloca(IrIntegerType.get32(), irValue);
+                IrAlloca irAlloca = new IrAlloca(type, irValue);
                 irAlloca.setName(name);
                 this.instructions.add(irAlloca);
             } else if (dimension == 1) {
-                // 一维
-                /* TODO : 本次作业不涉及数组 */
+                // 1维变量数组
+                // 生成IrValue对象
+                IrValue irValue = new IrValue(type);
+                irValue.setName(name);
+                // 标记一维大小
+                irValue.setDimension1(varDefNull.getDimension1(this.symbolTable));
+                // 生成SymbolVar对象
+                SymbolType symbolType = SymbolType.VAR1;
+                SymbolVar symbolVar = new SymbolVar(varDefNull.getName(),
+                        symbolType, dimension, irValue);
+                addVarSymbol(symbolVar);
+                IrAlloca irAlloca = new IrAlloca(type, irValue);
+                irAlloca.setName(name);
+                this.instructions.add(irAlloca);
             } else if (dimension == 2) {
-                // 二维
-                /* TODO : 本次作业不涉及数组 */
+                // 2维变量数组
+                IrValue irValue = new IrValue(type);
+                irValue.setName(name);
+                // 标记一维大小
+                irValue.setDimension1(varDefNull.getDimension1(this.symbolTable));
+                // 标记二维大小
+                irValue.setDimension2(varDefNull.getDimension2(this.symbolTable));
+                // 生成SymbolVar对象
+                SymbolType symbolType = SymbolType.VAR2;
+                SymbolVar symbolVar = new SymbolVar(varDefNull.getName(),
+                        symbolType, dimension, irValue);
+                addVarSymbol(symbolVar);
+                IrAlloca irAlloca = new IrAlloca(type, irValue);
+                irAlloca.setName(name);
+                this.instructions.add(irAlloca);
             } else {
                 System.out.println("ERROR in IrInstructionBuilder.addVar : should not reach here");
             }
@@ -353,18 +392,17 @@ public class IrInstructionBuilder {
             if (dimension == 0) {
                 genIrInstructionFromVarDefInit0(varDefInit, name, dimension);
             } else if (dimension == 1) {
-                // 一维
-                /* TODO : 本次作业不涉及数组 */
+                // 1维
+                genIrInstructionFromVarDefInit1(varDefInit, name, dimension);
             } else if (dimension == 2) {
-                // 二维
-                /* TODO : 本次作业不涉及数组 */
+                // 2维
+                genIrInstructionFromVarDefInit2(varDefInit, name, dimension);
             } else {
                 System.out.println("ERROR in IrInstructionBuilder.addVar : should not reach here");
             }
         } else {
             System.out.println("ERROR in IrInstructionBuilder.addVar : should not reach here");
         }
-        /* TODO : 待施工 */
     }
 
     /* 从0维VarDefInit生成中间代码 */
@@ -392,6 +430,99 @@ public class IrInstructionBuilder {
             IrStore store = new IrStore(right, irAlloca);
             /* 生成赋值指令 */
             this.instructions.add(store);
+        }
+    }
+
+    /* 从1维数组VarDefInit生成中间代码 */
+    private void genIrInstructionFromVarDefInit1(VarDefInit varDefInit,
+                                                 String name,
+                                                 int dimension) {
+        IrValue irValue = new IrValue(IrIntegerType.get32());
+        irValue.setDimension1(varDefInit.getDimension1(this.symbolTable));
+        irValue.setName(name);
+        /* 生成SymbolVar对象并加入符号表 */
+        SymbolType symbolType = SymbolType.VAR1;
+        SymbolVar symbolVar = new SymbolVar(varDefInit.getName(),
+                symbolType, dimension, irValue);
+        addVarSymbol(symbolVar);
+        /* 生成内存申请指令 */
+        IrAlloca irAlloca = new IrAlloca(IrIntegerType.get32(), irValue);
+        // 标记是1维数组
+        irAlloca.setDimension(1);
+        irAlloca.setName(name);
+        this.instructions.add(irAlloca);
+        InitVal initVal = varDefInit.getInitVal();
+        /* InitValEle应该是InitVals类型 */
+        InitValEle initValEle = initVal.getInitValEle();
+        /* 每个InitVal都应该是Exp类型的 */
+        ArrayList<InitVal> initVals = ((InitVals)initValEle).getAllInitVals();
+        /* 标记当前是数组的多少位偏移 */
+        int cnt = 0;
+        for (InitVal initVal1 : initVals) {
+            InitValEle index = initVal1.getInitValEle();
+            if (!(index instanceof Exp)) {
+                System.out.println("ERROR in IrInstructionBuilder : should not reach here");
+            } else {
+                Exp exp = (Exp)index;
+                IrValue right = genIrInstructionFromExp(exp);
+                IrStore store = new IrStore(right, irAlloca, right.getDimension(),
+                        irAlloca.getDimension(), right.getDimension1(), cnt, 0, 0);
+                this.instructions.add(store);
+            }
+            cnt += 1;
+        }
+    }
+
+    /* 从2维VarDefInit生成中间代码 */
+    private void genIrInstructionFromVarDefInit2(VarDefInit varDefInit,
+                                                 String name,
+                                                 int dimension) {
+        IrValue irValue = new IrValue(IrIntegerType.get32());
+        irValue.setDimension1(varDefInit.getDimension1(this.symbolTable));
+        irValue.setDimension2(varDefInit.getDimension2(this.symbolTable));
+        irValue.setName(name);
+        /* 生成SymbolVar对象并加入符号表 */
+        SymbolType symbolType = SymbolType.VAR2;
+        SymbolVar symbolVar = new SymbolVar(varDefInit.getName(),
+                symbolType, dimension, irValue);
+        addVarSymbol(symbolVar);
+        /* 生成内存申请指令 */
+        IrAlloca irAlloca = new IrAlloca(IrIntegerType.get32(), irValue);
+        // 标记是2维数组
+        irAlloca.setDimension(2);
+        irAlloca.setName(name);
+        this.instructions.add(irAlloca);
+        InitVal initVal = varDefInit.getInitVal();
+        /* InitValEle应该是InitVals类型 */
+        InitValEle initValEle = initVal.getInitValEle();
+        /* 每个InitVal都应该是InitVals类型的，再往下一层才是Exp */
+        ArrayList<InitVal> initVals = ((InitVals)initValEle).getAllInitVals();
+        /* 标记当前是数组的多少位偏移 */
+        int i = 0;
+        for (InitVal initVal1 : initVals) {
+            InitValEle indexI = initVal1.getInitValEle();
+            if (!(indexI instanceof InitVals)) {
+                System.out.println("ERROR in IrInstructionBuilder : should not reach here");
+            } else {
+                InitVals initVals1 = (InitVals)indexI;
+                ArrayList<InitVal> initVals2 = initVals1.getAllInitVals();
+                int j = 0;
+                for (InitVal initVal2 : initVals2) {
+                    InitValEle indexJ = initVal2.getInitValEle();
+                    if (!(indexJ instanceof Exp)) {
+                        System.out.println("ERROR in IrInstructionBuilder : should not reach here");
+                    } else {
+                        Exp exp = (Exp)indexJ;
+                        IrValue right = genIrInstructionFromExp(exp);
+                        IrStore store = new IrStore(right, irAlloca, right.getDimension(),
+                                irAlloca.getDimension(), right.getDimension1(), i,
+                                right.getDimension2(), j);
+                        this.instructions.add(store);
+                    }
+                    j += 1;
+                }
+            }
+            i += 1;
         }
     }
 

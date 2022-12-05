@@ -3,6 +3,7 @@ package frontend.parser.declaration.variable.vardef;
 import frontend.lexer.Token;
 import frontend.parser.terminal.Ident;
 import frontend.parser.expression.ConstExp;
+import middle.symbol.SymbolTable;
 
 import java.util.ArrayList;
 
@@ -66,5 +67,17 @@ public class VarDefNull implements VarDefEle {
 
     public ArrayList<ConstExp> getConstExps() {
         return this.constExps;
+    }
+
+    public int getDimension1(SymbolTable symbolTable) {
+        int dimension1 = 0;
+        dimension1 = this.constExps.get(0).calcNode(symbolTable);
+        return dimension1;
+    }
+
+    public int getDimension2(SymbolTable symbolTable) {
+        int dimension2 = 0;
+        dimension2 = this.constExps.get(1).calcNode(symbolTable);
+        return dimension2;
     }
 }

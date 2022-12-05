@@ -14,10 +14,41 @@ import java.util.ArrayList;
  * LLVM IR Store 内存存储指令
  */
 public class IrStore extends IrInstruction {
+    private int dimensionRight = 0;
+    private int dimensionPointer = 0;
+    private int dimension1Right = 0;
+    private int dimension1Pointer = 0;
+    private int dimension2Right = 0;
+    private int dimension2Pointer = 0;
+
+    /* 缺省构造器，用于处理左右都是普通常变量的情况 */
     public IrStore(IrValue value, IrValue pointer) {
         super(IrInstructionType.Store, IrVoidType.getVoidType(), 2);
         this.setOperand(value, 0);
         this.setOperand(pointer, 1);
+        this.dimensionRight = 0;
+        this.dimension1Pointer = 0;
+    }
+
+    /* 处理涉及数组的赋值 */
+    /* 需要传入左右的维数和维度变量 */
+    public IrStore(IrValue value,
+                   IrValue pointer,
+                   int dimensionRight,
+                   int dimensionPointer,
+                   int dimension1Right,
+                   int dimension1Pointer,
+                   int dimension2Right,
+                   int dimension2Pointer) {
+        super(IrInstructionType.Store, IrVoidType.getVoidType(), 2);
+        this.setOperand(value, 0);
+        this.setOperand(pointer, 1);
+        this.dimensionRight = dimensionRight;
+        this.dimensionPointer = dimensionPointer;
+        this.dimension1Right = dimension1Right;
+        this.dimension1Pointer = dimension1Pointer;
+        this.dimension2Right = dimension2Right;
+        this.dimension2Pointer = dimension2Pointer;
     }
 
     @Override
