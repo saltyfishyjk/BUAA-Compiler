@@ -85,4 +85,8 @@ public class FuncFParam implements SyntaxNode {
     public String getName() {
         return this.ident.getName();
     }
+
+    public ArrayList<ConstExp> getConstExps() {
+        return this.constExps;
+    }
 }

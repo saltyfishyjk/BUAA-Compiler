@@ -1,12 +1,14 @@
 package middle.llvmir.value.function;
 
 import frontend.lexer.TokenType;
+import frontend.parser.expression.ConstExp;
 import frontend.parser.function.FuncDef;
 import frontend.parser.function.FuncFParam;
 import frontend.parser.function.FuncFParams;
 import frontend.parser.function.MainFuncDef;
 import middle.llvmir.IrModule;
 import middle.llvmir.IrValue;
+import middle.llvmir.type.IrArrayType;
 import middle.llvmir.type.IrFunctionType;
 import middle.llvmir.type.IrIntegerType;
 import middle.llvmir.type.IrValueType;
@@ -78,29 +80,31 @@ public class IrFunctionBuilder {
             /* 返回值为void */
             retType = IrVoidType.getVoidType();
         }
-        /* TODO : 将形参填表 */
+
         /* 为IrFunctionType构建List<IrValueType>paramTypes */
         ArrayList<IrValueType> paramTypes = new ArrayList<>(); // IrFunctionType的属性
+        ArrayList<IrValue> params = new ArrayList<>();
         FuncFParams funcFParams = this.funcDef.getFuncFParams();
         if (funcFParams != null) {
             FuncFParam first = funcFParams.getFirst();
             if (first != null) {
                 // 第一个参数（如果有）
                 paramTypes.add(genParamType(first));
-                // TODO : 使用函数变量名计数器计算变量名并填表
-                addSymbol(first);
+                params.add(addSymbol(first));
                 ArrayList<FuncFParam> funcFParamArrayList = funcFParams.getFuncFParams();
                 if (funcFParamArrayList != null && funcFParamArrayList.size() != 0) {
                     // 后续参数（如果有）
                     for (FuncFParam index : funcFParamArrayList) {
                         paramTypes.add(genParamType(index));
-                        // TODO : 使用函数变量名计数器计算变量名并填表
-                        addSymbol(index);
+                        /* 将形参填表 */
+                        params.add(addSymbol(index));
+
                     }
                 }
             }
         }
         IrFunctionType irFunctionType = new IrFunctionType(retType, paramTypes);
+        irFunctionType.setParams(params);
         // IrFunction irFunction = new IrFunction(irFunctionType, this.module);
         // IrFunction irFunction = new IrFunction(irFunctionType, this.module,
         // "@" + this.funcDef.getName());
@@ -141,36 +145,53 @@ public class IrFunctionBuilder {
         if (dimension == 0) {
             type = IrIntegerType.get32();
         } else if (dimension == 1) {
-            /* TODO : 本次作业不涉及数组 */
+            type = new IrArrayType(IrIntegerType.get32(), -1);
         } else if (dimension == 2) {
-            /* TODO : 本次作业不涉及数组 */
+            type = new IrArrayType(IrIntegerType.get32(), -1);
         } else {
             System.out.println("ERROR in IrFunctionBuilder : should not reach here");
         }
         return type;
     }
 
-    // TODO : 使用函数变量名计数器计算变量名并填表
-    private void addSymbol(FuncFParam funcFParam) {
+    // 使用函数变量名计数器计算变量名并填表
+    private IrValue addSymbol(FuncFParam funcFParam) {
+        IrValue ret = null;
         // 用于生成该变量在LLVM IR中的名字
+        // 使用函数变量名计数器计算变量名并填表
         int cnt = this.functionCnt.getCnt();
         String name = "%_LocalVariable" + cnt;
         // 获取当前参数的维度
         int dimension = funcFParam.getDimension();
         if (dimension == 0) {
-            IrValue value = new IrValue(IrIntegerType.get32(), name, true);
+            ret = new IrValue(IrIntegerType.get32(), name, true);
             SymbolVar symbolVar = new SymbolVar(funcFParam.getName(),
-                    SymbolType.VAR, dimension, value);
+                    SymbolType.VAR, dimension, ret);
             this.symbolTable.addSymol(symbolVar);
             // 也要将形参符号加入函数符号中，以便函数调用
             this.symbolFunc.addSymbol(symbolVar);
         } else if (dimension == 1) {
-            /* TODO : 本次作业不涉及数组 */
+            /* 1维数组，形如a[] */
+            ret = new IrValue(IrIntegerType.get32(), name, true);
+            SymbolVar symbolVar = new SymbolVar(funcFParam.getName(),
+                    SymbolType.VAR1, dimension, ret);
+            ret.setDimension(1);
+            this.symbolTable.addSymol(symbolVar);
+            this.symbolFunc.addSymbol(symbolVar);
         } else if (dimension == 2) {
-            /* TODO : 本次作业不涉及数组 */
+            /* 2维数组，形如a[][constExp] */
+            ret = new IrValue(IrIntegerType.get32(), name, true);
+            SymbolVar symbolVar = new SymbolVar(funcFParam.getName(),
+                    SymbolType.VAR2, dimension, ret);
+            ret.setDimension(2);
+            ArrayList<ConstExp> constExps = funcFParam.getConstExps();
+            ret.setDimension2(constExps.get(0).calcNode(this.symbolTable));
+            this.symbolTable.addSymol(symbolVar);
+            this.symbolFunc.addSymbol(symbolVar);
         } else {
             System.out.println("ERROR in IrFunctionBuilder.addSymbol : should not reach here");
         }
+        return ret;
     }
 
     private void addFuncSymbol(FuncDef funcDef) {

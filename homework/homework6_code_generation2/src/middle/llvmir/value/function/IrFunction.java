@@ -42,11 +42,19 @@ public class IrFunction extends IrValue implements IrNode {
     private void initParams() {
         if (this.getValueType() instanceof IrFunctionType) {
             IrFunctionType type = (IrFunctionType) this.getValueType();
-            ArrayList<IrValueType> temp = type.getParamTypes();
-            int len = temp.size();
+            ArrayList<IrValueType> valueTypes = type.getParamTypes();
+            ArrayList<IrValue> values = type.getParams();
+            int len = valueTypes.size();
             for (int i = 0; i < len; i++) {
-                IrParam param = new IrParam(temp.get(i), i);
-                param.setName("%_LocalVariable" + i);
+                // IrParam param = new IrParam(temp.get(i), i);
+                IrValue value = values.get(i);
+                IrParam param = new IrParam(valueTypes.get(i), i);
+                param.setName(value.getName());
+                // param.setName("%_LocalVariable" + i);
+                param.setDimension(value.getDimension());
+                param.setDimension1(value.getDimension1());
+                param.setDimension2(value.getDimension2());
+                param.setName(value.getName());
                 this.params.add(param);
             }
         } else {

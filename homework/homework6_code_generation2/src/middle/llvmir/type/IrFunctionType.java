@@ -1,5 +1,7 @@
 package middle.llvmir.type;
 
+import middle.llvmir.IrValue;
+
 import java.util.ArrayList;
 
 /**
@@ -9,10 +11,19 @@ import java.util.ArrayList;
 public class IrFunctionType extends IrValueType {
     private IrValueType retType; // 函数的返回类型，只有void和int两种可能
     private ArrayList<IrValueType> paramTypes; // 函数形参类型列表
+    private ArrayList<IrValue> params; // 函数形参列表
 
     public IrFunctionType(IrValueType retType, ArrayList<IrValueType> paramTypes) {
         this.retType = retType;
         this.paramTypes = paramTypes;
+    }
+
+    public void setParams(ArrayList<IrValue> params) {
+        this.params = params;
+    }
+
+    public ArrayList<IrValue> getParams() {
+        return this.params;
     }
 
     public IrValueType getRetType() {

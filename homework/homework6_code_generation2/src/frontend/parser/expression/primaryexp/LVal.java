@@ -52,6 +52,10 @@ public class LVal implements PrimaryExpEle {
         }
     }
 
+    public int getValueDimension() {
+        return this.dimension;
+    }
+
     @Override
     public String syntaxOutput() {
         StringBuilder sb = new StringBuilder();
@@ -135,5 +139,9 @@ public class LVal implements PrimaryExpEle {
 
     public String getName() {
         return this.ident.getName();
+    }
+
+    public ArrayList<Exp> getExps() {
+        return this.exps;
     }
 }

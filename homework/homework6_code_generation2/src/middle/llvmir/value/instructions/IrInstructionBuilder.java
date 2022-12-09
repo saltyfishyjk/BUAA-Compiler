@@ -193,7 +193,7 @@ public class IrInstructionBuilder {
                 System.out.println("ERROR in IrInstructionBuilder : should not reach here");
             }
         } else if (this.addExp != null) {
-            genIrInstructionFromAddExp(addExp);
+            genIrInstructionFromAddExp(addExp, false);
         } else {
             StmtEle stmtEle = this.stmt.getStmtEle();
             if (stmtEle instanceof StmtAssign) {
@@ -245,6 +245,7 @@ public class IrInstructionBuilder {
      * 辅助函数，主要目的是复用代码
      */
     private void addCon(ConstDef constDef) {
+        /* TODO 需要将常量数组的值保存到fp中 */
         SymbolCon symbolCon;
         IrIntegerType type = IrIntegerType.get32();
         if (constDef.getDimension() == 0) {
@@ -426,7 +427,7 @@ public class IrInstructionBuilder {
             System.out.println("ERROR in IrInstructionBuilder : should not reach here");
         } else {
             Exp exp = (Exp)initValEle;
-            IrValue right = genIrInstructionFromExp(exp);
+            IrValue right = genIrInstructionFromExp(exp, false);
             IrStore store = new IrStore(right, irAlloca);
             /* 生成赋值指令 */
             this.instructions.add(store);
@@ -464,7 +465,7 @@ public class IrInstructionBuilder {
                 System.out.println("ERROR in IrInstructionBuilder : should not reach here");
             } else {
                 Exp exp = (Exp)index;
-                IrValue right = genIrInstructionFromExp(exp);
+                IrValue right = genIrInstructionFromExp(exp, false);
                 IrStore store = new IrStore(right, irAlloca, right.getDimension(),
                         irAlloca.getDimension(), right.getDimension1(), cnt, 0, 0);
                 this.instructions.add(store);
@@ -513,7 +514,7 @@ public class IrInstructionBuilder {
                         System.out.println("ERROR in IrInstructionBuilder : should not reach here");
                     } else {
                         Exp exp = (Exp)indexJ;
-                        IrValue right = genIrInstructionFromExp(exp);
+                        IrValue right = genIrInstructionFromExp(exp, false);
                         IrStore store = new IrStore(right, irAlloca, right.getDimension(),
                                 irAlloca.getDimension(), right.getDimension1(), i,
                                 right.getDimension2(), j);
@@ -532,15 +533,15 @@ public class IrInstructionBuilder {
      * 由于这些临时变量是用完即弃的，所以不会被填入符号表，其传递形式为通过方法返回值
      */
 
-    private IrValue genIrInstructionFromExp(Exp exp) {
-        return genIrInstructionFromAddExp(exp.getAddExp());
+    private IrValue genIrInstructionFromExp(Exp exp, boolean isLeft) {
+        return genIrInstructionFromAddExp(exp.getAddExp(), isLeft);
     }
 
     /* 传入表达式右值中的一个AddExp，返回一个IrValue以供调用 */
-    private IrValue genIrInstructionFromAddExp(AddExp addExp) {
+    private IrValue genIrInstructionFromAddExp(AddExp addExp, boolean isLeft) {
         IrValue ret = null;
         MulExp first = addExp.getFirst();
-        IrValue left = genIrInstructionFromMulExp(first);
+        IrValue left = genIrInstructionFromMulExp(first, isLeft);
         if (addExp.getOperands().size() == 0) {
             // AddExp -> MulExp
             ret = left;
@@ -553,7 +554,7 @@ public class IrInstructionBuilder {
             for (int i = 0; i < len; i++) {
                 MulExp mulExp = operands.get(i);
                 Token operator = operators.get(i);
-                right = genIrInstructionFromMulExp(mulExp);
+                right = genIrInstructionFromMulExp(mulExp, isLeft);
                 IrBinaryInst addInst;
                 if (operator.getType().equals(TokenType.PLUS)) {
                     addInst = new IrBinaryInst(valueType, IrInstructionType.Add, left, right);
@@ -580,10 +581,10 @@ public class IrInstructionBuilder {
     }
 
     /* 传入表达式右值中的一个MulExp，返回一个IrValue以供调用 */
-    private IrValue genIrInstructionFromMulExp(MulExp mulExp) {
+    private IrValue genIrInstructionFromMulExp(MulExp mulExp, boolean isLeft) {
         IrValue ret = null;
         UnaryExp first = mulExp.getFirst();
-        IrValue left = genIrInstructionFromUnaryExp(first);
+        IrValue left = genIrInstructionFromUnaryExp(first, isLeft);
         if (mulExp.getOperands().size() == 0) {
             // MulExp -> UnaryExp
             ret = left;
@@ -596,7 +597,7 @@ public class IrInstructionBuilder {
             for (int i = 0; i < len; i++) {
                 UnaryExp unaryExp = operands.get(i);
                 Token operator = operators.get(i);
-                right = genIrInstructionFromUnaryExp(unaryExp);
+                right = genIrInstructionFromUnaryExp(unaryExp, isLeft);
                 IrBinaryInst mulInst;
                 if (operator.getType().equals(TokenType.MULT)) {
                     mulInst = new IrBinaryInst(valueType, IrInstructionType.Mul, left, right);
@@ -620,22 +621,22 @@ public class IrInstructionBuilder {
     }
 
     /* 传入表达式右值中的一个UnaryExp，返回一个IrValue以供调用 */
-    private IrValue genIrInstructionFromUnaryExp(UnaryExp unaryExp) {
+    private IrValue genIrInstructionFromUnaryExp(UnaryExp unaryExp, boolean isLeft) {
         IrValue ret = null;
         UnaryExpEle expEle = unaryExp.getUnaryExpEle();
         if (expEle instanceof PrimaryExp) {
             // PrimaryExp基本表达式
             PrimaryExp primaryExp = (PrimaryExp)expEle;
-            ret = genIrInstructionFromPrimaryExp(primaryExp);
+            ret = genIrInstructionFromPrimaryExp(primaryExp, isLeft);
         } else if (expEle instanceof UnaryExpFunc) {
             // UnaryExpFunc调用函数
             UnaryExpFunc unaryExpFunc = (UnaryExpFunc)expEle;
-            ret = genIrInstructionFromUnaryExpFunc(unaryExpFunc);
+            ret = genIrInstructionFromUnaryExpFunc(unaryExpFunc, isLeft);
         } else if (expEle instanceof UnaryExpOp) {
             // '+' / '-' / '!' UnaryExp
             // '!'只可能出现在Cond中
             UnaryExpOp unaryExpOp = (UnaryExpOp)expEle;
-            ret = genIrInstructionFromUnaryExpOp(unaryExpOp);
+            ret = genIrInstructionFromUnaryExpOp(unaryExpOp, isLeft);
         } else {
             System.out.println("ERROR in IrInstructionBuilder : should not reach here");
         }
@@ -643,18 +644,19 @@ public class IrInstructionBuilder {
     }
 
     /* 传入表达式右值中的一个PrimaryExp，返回一个IrValue以供调用 */
-    private IrValue genIrInstructionFromPrimaryExp(PrimaryExp primaryExp) {
+    private IrValue genIrInstructionFromPrimaryExp(PrimaryExp primaryExp, boolean isLeft) {
         PrimaryExpEle expEle = primaryExp.getPrimaryExpEle();
         IrValue ret = null;
         if (expEle instanceof LVal) {
             LVal lval = (LVal)expEle;
-            ret = genIrInstructionFromLVal(lval, false);
+            // ret = genIrInstructionFromLVal(lval, false);
+            ret = genIrInstructionFromLVal(lval, isLeft);
         } else if (expEle instanceof Number) {
             Number number = (Number)expEle;
             ret = genIrInstructionFromNumber(number);
         } else if (expEle instanceof PrimaryExpExp) {
             PrimaryExpExp exp = (PrimaryExpExp)expEle;
-            ret = genIrInstructionFromPrimaryExpExp(exp);
+            ret = genIrInstructionFromPrimaryExpExp(exp, isLeft);
         }
         return ret;
     }
@@ -663,7 +665,9 @@ public class IrInstructionBuilder {
     private IrValue genIrInstructionFromLVal(LVal lval, boolean isLeft) {
         IrValue ret = null;
         String nameSysy = lval.getName();
-        int dimension = lval.getDimension();
+        // 查询符号的维数
+        int dimension = lval.getValueDimension();
+        // int dimension = lval.getDimension();
         if (dimension == 0) {
             Symbol symbol = this.symbolTable.getSymbol(nameSysy);
             if (!(symbol instanceof SymbolCon || symbol instanceof SymbolVar)) {
@@ -696,9 +700,85 @@ public class IrInstructionBuilder {
                 }
             }
         } else if (dimension == 1) {
-            /* TODO : 本次作业不涉及数组 */
+            /* 1维数组 */
+            Symbol symbol = this.symbolTable.getSymbol(nameSysy);
+            // 数组维度变量
+            ArrayList<Exp> exps = lval.getExps();
+            if (isLeft) {
+                // 是左值，说明应当直接取用
+                // ret = symbol.getValue();
+                ret = symbol.getValue().cloneForCall();
+                ArrayList<Exp> lvalExps = lval.getExps();
+                /* 对int a[10]; */
+                if (lvalExps == null || lvalExps.size() == 0) {
+                    /* 形如a */
+                    ret.setDimensionValue(1);
+                } else if (lvalExps.size() == 1) {
+                    /* 形如a[1] */
+                    ret.setDimensionValue(0);
+                    ret.setDimension1Value(genIrInstructionFromExp(exps.get(0), true));
+                } else {
+                    System.out.println(
+                            "ERROR in IrInstructionBuilder.genLval : should not reach here");
+                }
+
+            } else {
+                // 1维数组对象
+                IrValue ptr = symbol.getValue();
+                IrValueType type = IrIntegerType.get32();
+                // 解析并获取1维度变量
+                Exp exp = exps.get(0);
+                IrValue dimension1 = genIrInstructionFromExp(exp, isLeft);
+                // 为储存从内存加载的数组元素的临时变量命名
+                int cnt = this.functionCnt.getCnt();
+                String retName = "%_LocalVariable" + cnt;
+                IrLoad irLoad = new IrLoad(type, ptr, dimension, dimension1, null);
+                irLoad.setName(retName);
+                this.instructions.add(irLoad);
+                ret = irLoad;
+            }
         } else if (dimension == 2) {
-            /* TODO : 本次作业不涉及数组 */
+            /* 2维数组 */
+            /* TODO : 检查传递二维数组的某一个一维数组 */
+            Symbol symbol = this.symbolTable.getSymbol(nameSysy);
+            ArrayList<Exp> exps = lval.getExps();
+            if (isLeft) {
+                ArrayList<Exp> lvalExps = lval.getExps();
+                // ret = symbol.getValue();
+                ret = symbol.getValue().cloneForCall();
+                /* 对int a[2][3] */
+                if (lvalExps == null || lvalExps.size() == 0) {
+                    /* 形如a */
+                    ret.setDimensionValue(2);
+                } else if (lvalExps.size() == 1) {
+                    /* 调用了二维数组的一维切片 */
+                    /* 形如a[1] */
+                    ret.setDimensionValue(1);
+                    ret.setDimension1Value(genIrInstructionFromExp(exps.get(0), true));
+                } else if (lvalExps.size() == 2) {
+                    /* 形如a[1][2] */
+                    ret.setDimensionValue(0);
+                    ret.setDimension1Value(genIrInstructionFromExp(exps.get(0), true));
+                    ret.setDimension2Value(genIrInstructionFromExp(exps.get(1), true));
+                } else {
+                    System.out.println(
+                            "ERROR in IrInstructionBuilder.genLval : should not reach here");
+                }
+            } else {
+                // 2维数组对象
+                IrValue ptr = symbol.getValue();
+                IrValueType type = IrIntegerType.get32();
+                // 解析并获取1,2维度变量
+                IrValue dimension1 = genIrInstructionFromExp(exps.get(0), isLeft);
+                IrValue dimension2 = genIrInstructionFromExp(exps.get(1), isLeft);
+                // 为储存从内存加载的数组元素的临时变量命名
+                int cnt = this.functionCnt.getCnt();
+                String retName = "%_LocalVariable" + cnt;
+                IrLoad irLoad = new IrLoad(type, ptr, dimension, dimension1, dimension2);
+                irLoad.setName(retName);
+                this.instructions.add(irLoad);
+                ret = irLoad;
+            }
         } else {
             System.out.println("ERROR in IrInstructionBuilder : should not reach here");
         }
@@ -713,13 +793,14 @@ public class IrInstructionBuilder {
     }
 
     /* 传入表达式右值中的一个PrimaryExpExp，返回一个IrValue以供调用 */
-    private IrValue genIrInstructionFromPrimaryExpExp(PrimaryExpExp primaryExpExp) {
+    private IrValue genIrInstructionFromPrimaryExpExp(PrimaryExpExp primaryExpExp, boolean isLeft) {
         Exp exp = primaryExpExp.getExp();
-        return genIrInstructionFromExp(exp);
+        return genIrInstructionFromExp(exp, isLeft);
     }
 
     /* 传入表达式右值中的一个UnaryExpFunc，返回一个IrValue以供调用 */
-    private IrValue genIrInstructionFromUnaryExpFunc(UnaryExpFunc func) {
+    private IrValue genIrInstructionFromUnaryExpFunc(UnaryExpFunc func, boolean isLeft) {
+        /* TODO : 需要处理参数是数组的情况 */
         IrCall call = null;
         String functionName = func.getFunctionName(); // 函数名
         FuncRParams funcRParams = func.getFuncRParams();
@@ -731,10 +812,10 @@ public class IrInstructionBuilder {
             call = new IrCall(irFunction, args);
         } else {
             Exp first = funcRParams.getFirst();
-            args.add(genIrInstructionFromExp(first));
+            args.add(genIrInstructionFromExp(first, true));
             ArrayList<Exp> exps = funcRParams.getExps();
             for (Exp exp : exps) {
-                args.add(genIrInstructionFromExp(exp));
+                args.add(genIrInstructionFromExp(exp, true));
             }
             call = new IrCall(irFunction, args);
         }
@@ -748,18 +829,18 @@ public class IrInstructionBuilder {
     }
 
     /* 传入表达式右值中的一个UnaryExpOp，返回一个IrValue以供调用 */
-    private IrValue genIrInstructionFromUnaryExpOp(UnaryExpOp expOp) {
+    private IrValue genIrInstructionFromUnaryExpOp(UnaryExpOp expOp, boolean isLeft) {
         IrValue ret = null;
         UnaryOp unaryOp = expOp.getUnaryOp();
         UnaryExp unaryExp = expOp.getUnaryExp();
         Token op = unaryOp.getToken();
         if (op.getType().equals(TokenType.PLUS)) {
-            ret = genIrInstructionFromUnaryExp(unaryExp);
+            ret = genIrInstructionFromUnaryExp(unaryExp, isLeft);
         } else if (op.getType().equals(TokenType.MINU)) {
             /* TODO : 这里处理的是i32，暂时没有考虑别的情况 */
             IrValue left = new IrValue(IrIntegerType.get32(), "-1");
             IrBinaryInst mulExp = new IrBinaryInst(IrIntegerType.get32(),
-                    IrInstructionType.Mul, left, genIrInstructionFromUnaryExp(unaryExp));
+                    IrInstructionType.Mul, left, genIrInstructionFromUnaryExp(unaryExp, isLeft));
             int cnt = this.functionCnt.getCnt();
             String name = "%_LocalVariable" + cnt;
             mulExp.setName(name);
@@ -768,7 +849,7 @@ public class IrInstructionBuilder {
         } else if (op.getType().equals(TokenType.NOT)) {
             /* 处理Not运算 */
             IrBinaryInst notExp = new IrBinaryInst(IrIntegerType.get32(), IrInstructionType.Not,
-                    genIrInstructionFromUnaryExp(unaryExp), null);
+                    genIrInstructionFromUnaryExp(unaryExp, isLeft), null);
             int cnt = this.functionCnt.getCnt();
             String name = "%_LocalVariable" + cnt;
             notExp.setName(name);
@@ -788,7 +869,7 @@ public class IrInstructionBuilder {
         LVal lval = stmtAssign.getLval();
         Exp exp = stmtAssign.getExp();
         IrValue left = genIrInstructionFromLVal(lval, true);
-        IrValue right = genIrInstructionFromExp(exp);
+        IrValue right = genIrInstructionFromExp(exp, false);
         /* left := right */
         IrStore store = new IrStore(right, left);
         this.instructions.add(store);
@@ -811,7 +892,7 @@ public class IrInstructionBuilder {
         IrRet ret;
         if (this.stmtReturn.hasExp()) {
             Exp exp = this.stmtReturn.getExp();
-            IrValue retVar = genIrInstructionFromExp(exp);
+            IrValue retVar = genIrInstructionFromExp(exp, false);
             ret = new IrRet(retVar);
         } else {
             ret = new IrRet();
@@ -831,7 +912,23 @@ public class IrInstructionBuilder {
         this.instructions.add(irCall);
         // 将输入存回
         /* left := right */
-        IrStore store = new IrStore(irCall, left);
+        IrStore store = null;
+        if (left.getDimension() == 0) {
+            store = new IrStore(irCall, left);
+        } else if (left.getDimension() == 1) {
+            /* 1维数组 */
+            ArrayList<Exp> exps = lval.getExps();
+            IrValue dimension1 = genIrInstructionFromExp(exps.get(0), false);
+            store = new IrStore(irCall, left, 0, 1, null, dimension1, null, null);
+        } else if (left.getDimension() == 2) {
+            /* 2维数组 */
+            ArrayList<Exp> exps = lval.getExps();
+            IrValue dimension1 = genIrInstructionFromExp(exps.get(0), false);
+            IrValue dimension2 = genIrInstructionFromExp(exps.get(1), false);
+            store = new IrStore(irCall, left, 0, 2, null, dimension1, null, dimension2);
+        } else {
+            System.out.println("ERROR IN IrInstructionBuilder : should not reach here");
+        }
         this.instructions.add(store);
     }
 
@@ -849,7 +946,7 @@ public class IrInstructionBuilder {
         /* 首先将exps处理出来 */
         int expSize = exps.size();
         for (int i = 0; i < expSize; i++) {
-            values.add(genIrInstructionFromExp(exps.get(i)));
+            values.add(genIrInstructionFromExp(exps.get(i), false));
         }
         for (int i = 0; i < len; i++) {
             char c = chars[i];
@@ -872,7 +969,7 @@ public class IrInstructionBuilder {
 
     private void genIrInstructionFromStmtExp() {
         Exp exp = this.stmtExp.getExp();
-        genIrInstructionFromExp(exp);
+        genIrInstructionFromExp(exp, false);
     }
 
 }

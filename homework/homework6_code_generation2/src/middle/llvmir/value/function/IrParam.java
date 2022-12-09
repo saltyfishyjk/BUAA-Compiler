@@ -30,10 +30,25 @@ public class IrParam extends IrValue implements IrNode {
         StringBuilder sb = new StringBuilder();
         if (this.getValueType() instanceof IrIntegerType) {
             sb.append("i32 ");
+            // sb.append("%_LocalVariable" + this.rank);
+            sb.append(this.getName());
         } else if (this.getValueType() instanceof IrArrayType) {
-            /* TODO : 本次作业不涉及数组 */
+            /* 数组 */
+            int dimension = this.getDimension();
+            if (dimension == 1) {
+                /* 形如a[] */
+                sb.append("i32* ");
+                // sb.append("%_LocalVariable" + this.rank);
+                sb.append(this.getName());
+                sb.append("[] ");
+            } else if (dimension == 2) {
+                /* 形如a[][constExp] */
+                sb.append("i32** ");
+                sb.append(this.getName());
+                sb.append("[]");
+                sb.append("[" + this.getDimension2() + "] ");
+            }
         }
-        sb.append("%_LocalVariable" + this.rank);
         ret.add(sb.toString());
         return ret;
     }

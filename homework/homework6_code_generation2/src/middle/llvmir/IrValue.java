@@ -20,12 +20,34 @@ public class IrValue implements IrNode {
     private int dimension2 = 0;
     private ArrayList<Integer> inits1;
     private ArrayList<ArrayList<Integer>> inits2;
+    /* 以下是函数调用时的维数标记，区分与符号本身的维度 */
+    private int dimensionValue = -1; // 标记
+    private IrValue dimension1Value = null; // 用于函数调用时传入的一维对象
+    private IrValue dimension2Value = null; // 用于函数调用时传入的二维对象
 
     public IrValue(IrValueType valueType) {
         this.valueType = valueType;
         this.name = "";
         this.needName = true;
         this.uses = new LinkedList<>();
+    }
+
+    public IrValue cloneForCall() {
+        IrValue ret = new IrValue(this.getValueType());
+        ret.setDimensionValue(this.dimensionValue);
+        if (this.dimension1Value == null) {
+            ret.setDimension1Value(null);
+        } else {
+            ret.setDimension1Value(this.dimension1Value.cloneForCall());
+        }
+        if (this.dimension2Value == null) {
+            ret.setDimension2Value(null);
+        } else {
+            ret.setDimension2Value(this.dimension2Value.cloneForCall());
+        }
+        ret.setDimension(this.getDimension());
+        ret.setName(this.name);
+        return ret;
     }
 
     public IrValue(IrValueType valueType, String name) {
@@ -111,5 +133,29 @@ public class IrValue implements IrNode {
 
     public int getDimension2() {
         return this.dimension2;
+    }
+
+    public void setDimension1Value(IrValue dimension1Value) {
+        this.dimension1Value = dimension1Value;
+    }
+
+    public void setDimension2Value(IrValue dimension2Value) {
+        this.dimension2Value = dimension2Value;
+    }
+
+    public void setDimensionValue(int dimensionValue) {
+        this.dimensionValue = dimensionValue;
+    }
+
+    public int getDimensionValue() {
+        return this.dimensionValue;
+    }
+
+    public IrValue getDimension1Value() {
+        return this.dimension1Value;
+    }
+
+    public IrValue getDimension2Value() {
+        return this.dimension2Value;
     }
 }

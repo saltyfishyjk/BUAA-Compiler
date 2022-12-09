@@ -88,13 +88,45 @@ public class IrCall extends IrInstruction {
             // 有参数
             int len = this.getNumOp();
             for (int i = 1; i < len; i++) {
-                /*ArrayList<String> arg = this.getOperand(i).irOutput();
-                if (arg == null || arg.size() != 1) {
-                    System.out.println("ERROR in IrCall : should not reach here");
+                IrValue arg = this.getOperand(i);
+                if (arg.getDimensionValue() == -1) {
+                    sb.append("i32 "); // TODO :此处默认是i32，后续需要处理数组
+                    sb.append(arg.getName());
+                } else if (arg.getDimensionValue() == 0) {
+                    /* 要传入一个0维参数 */
+                    sb.append("i32 ");
+                    sb.append(arg.getName());
+                    /* arg符号本身的维数不可能是0，因为是0不会走到setDimensionValue */
+                    if (arg.getDimension() == 1) {
+                        /* 形如a[1] */
+                        IrValue dimension1Value = arg.getDimension1Value();
+                        sb.append("[" + dimension1Value.getName() + "] ");
+                    } else if (arg.getDimension() == 2) {
+                        /* 形如a[1][2] */
+                        IrValue dimension1Value = arg.getDimension1Value();
+                        sb.append("[" + dimension1Value.getName() + "]");
+                        IrValue dimension2Value = arg.getDimension2Value();
+                        sb.append("[" + dimension2Value.getName() + "] ");
+                    } else {
+                        System.out.println("ERROR in IrCall : should not reach here");
+                    }
+                } else if (arg.getDimensionValue() == 1) {
+                    sb.append("i32* ");
+                    sb.append(arg.getName());
+                    /* 要传入一个1维参数 */
+                    if (arg.getDimension() == 1) {
+                        /* 形如a */
+                        /* 无需再append什么内容 */
+                    } else if (arg.getDimension() == 2) {
+                        /* 形如a[1] */
+                        IrValue dimension1Value = arg.getDimension1Value();
+                        sb.append("[" + dimension1Value.getName() + "] ");
+                    }
+                } else if (arg.getDimensionValue() == 2) {
+                    sb.append("i32** ");
+                    /* 传入二维数组，形如a */
+                    sb.append(arg.getName());
                 }
-                sb.append(arg.get(0));*/
-                sb.append("i32 "); // TODO :此处默认是i32，后续需要处理数组
-                sb.append(this.getOperand(i).getName());
                 if (i != len - 1) {
                     sb.append(", ");
                 }
