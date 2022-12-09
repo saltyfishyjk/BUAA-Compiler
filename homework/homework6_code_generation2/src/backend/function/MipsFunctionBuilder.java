@@ -80,6 +80,8 @@ public class MipsFunctionBuilder {
                 // 修改符号表中的偏移
                 this.table.addOffset(4);
             }
+            /* 设置函数形参维数，用于后续计算存取方式 */
+            symbol.setDimension(target.getDimension());
             this.table.addSymbol(name, symbol);
             index += 1;
         }

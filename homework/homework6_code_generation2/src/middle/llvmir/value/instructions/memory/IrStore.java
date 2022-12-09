@@ -38,6 +38,30 @@ public class IrStore extends IrInstruction {
         this.dimension1Pointer = 0;
     }
 
+    public int getDimensionPointer() {
+        return this.dimensionPointer;
+    }
+
+    public int getDimension1Pointer() {
+        return this.dimension1Pointer;
+    }
+
+    public int getDimension2Pointer() {
+        return this.dimension2Pointer;
+    }
+
+    public IrValue getDimension1PointerValue() {
+        return this.dimension1PointerValue;
+    }
+
+    public IrValue getDimension2PointerValue() {
+        return this.dimension2PointerValue;
+    }
+
+    public boolean getHandleIrValue() {
+        return this.handleIrValue;
+    }
+
     /* 处理涉及数组的赋值 */
     /* 需要传入左右的维数和维度变量 */
     /* 在处理数组初始化的时候由于可以直接知道常数的维度变量 */

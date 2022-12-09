@@ -64,10 +64,42 @@ public class MipsInstructionBuilder {
     private ArrayList<MipsInstruction> genMipsInstructionFromAlloca() {
         /* alloca是LLVM IR中的变量声明语句，其本意是申请内存空间
          * 在这里，我们为了提高性能，在alloca时仅将其加入符号表，暂时不为其分配寄存器和内存 */
-        /* TODO : 这里未处理数组 */
         IrAlloca alloca = (IrAlloca)irInstruction;
         String name = alloca.getName();
-        MipsSymbol symbol = new MipsSymbol(name, 30);
+        int dimension = alloca.getDimension();
+        MipsSymbol symbol = null;
+        if (dimension == 0) {
+            /* 0维变量声明 */
+            symbol = new MipsSymbol(name, 30);
+        } else if (dimension == 1) {
+            /* 1维变量声明 */
+            symbol = new MipsSymbol(name, 30);
+            symbol.setDimension(dimension);
+            symbol.setDimension1(alloca.getDimension1());
+            // 1维数组的起始位置的偏移
+            int fpOffset = this.table.getFpOffset();
+            symbol.setOffset(fpOffset);
+            /* 标记已为其分配内存 */
+            symbol.setHasRam(true);
+            /* 将fp上移并保存 */
+            fpOffset += 4 * symbol.getDimension1();
+            this.table.setFpOffset(fpOffset);
+        } else if (dimension == 2) {
+            /* 2维变量声明 */
+            symbol = new MipsSymbol(name, 30);
+            /* 标记两层维数 */
+            symbol.setDimension(dimension);
+            symbol.setDimension1(alloca.getDimension1());
+            symbol.setDimension2(alloca.getDimension2());
+            /* 2维数组的起始位置的偏移 */
+            int fpOffset = this.table.getFpOffset();
+            symbol.setOffset(fpOffset);
+            /* 标记已为其分配内存 */
+            symbol.setHasRam(true);
+            /* 将fp上移并保存 */
+            fpOffset += 4 * symbol.getDimension1() * symbol.getDimension2();
+            this.table.setFpOffset(fpOffset);
+        }
         insertSymbolTable(name, symbol);
         return null;
     }
@@ -454,6 +486,7 @@ public class MipsInstructionBuilder {
             ret.add(li);
         } else {
             // 变量
+            // 这里不用处理数组等情况，因为生成中间代码时会提前生成Load将数组中的值加载到变量中
             leftReg = this.table.getRegIndex(leftName, this.father, true);
         }
         rightReg = this.table.getRegIndex(rightName, this.father, false);
@@ -461,8 +494,67 @@ public class MipsInstructionBuilder {
         Move move = new Move(rightReg, leftReg);
         this.registerFile.getSymbol(leftReg).setUsed(true);
         ret.add(move);
-        /* 如果是全局变量，则需要立刻写回内存 */
-        if (rightName.contains("Global")) {
+        /* Right的维数 */
+        int dimensionPointer = store.getDimensionPointer();
+        boolean handleIrValue = store.getHandleIrValue();
+        if (dimensionPointer == 1) {
+            /* 需要将值保存到1维变量的内存中 */
+            if (handleIrValue) {
+                /* 说明维度数值是变量，需要加载 */
+                /* TODO */
+                IrValue dimension1PointerValue = store.getDimension1PointerValue();
+                String dimension1PointerValueName = dimension1PointerValue.getName();
+                if (isConst(dimension1PointerValueName)) {
+                    /* 说明维度变量是常数 */
+                    MipsInstruction temp = this.registerFile.writeBackPublic(rightSymbol,
+                            Integer.valueOf(dimension1PointerValueName) * 4);
+                    rightSymbol.setInReg(false);
+                    rightSymbol.setUsed(true);
+                    ret.add(temp);
+                } else {
+                    /* 说明维度是变量 */
+                    /* 获取维度变量值所在寄存器 */
+                    int dimension1PointerReg = this.table.getRegIndex(
+                            dimension1PointerValueName, this.father, true);
+                    ArrayList<MipsInstruction> temp = this.registerFile.writeBackPublic(
+                            rightSymbol, dimension1PointerReg, -1, 1
+                    );
+                    if (temp != null && temp.size() > 0) {
+                        ret.addAll(temp);
+                    } else {
+                        System.out.println(
+                                "ERROR IN MipsInstructionBuilder : should not reach here");
+                    }
+                }
+            } else {
+                /* 说明维度数值是常数，在编译时已知 */
+                MipsInstruction temp = this.registerFile.writeBackPublic(rightSymbol,
+                        store.getDimension1Pointer() * 4);
+                rightSymbol.setInReg(false);
+                rightSymbol.setUsed(true);
+                ret.add(temp);
+            }
+        } else if (dimensionPointer == 2) {
+            /* 需要将值保存到2维变量的内存中 */
+            if (handleIrValue) {
+                /* 说明维度数值是变量，需要加载 */
+                /* TODO */
+            } else {
+                /* 说明维度数值是常数，在编译时已知 */
+                /* 对于数组a[m][n]，访问a[i][j]即访问a(i * n + j) */
+                int n = rightSymbol.getDimension2();
+                int i = store.getDimension1Pointer();
+                int j = store.getDimension2Pointer();
+                int offset = i * n + j;
+                offset *= 4;
+                MipsInstruction temp = this.registerFile.writeBackPublic(rightSymbol,
+                        offset);
+                rightSymbol.setUsed(true);
+                rightSymbol.setInReg(false);
+                ret.add(temp);
+            }
+        } else if (rightName.contains("Global")) {
+            /* 如果是全局变量，则需要立刻写回内存 */
             MipsInstruction temp = this.registerFile.writeBackPublic(rightSymbol);
             rightSymbol.setUsed(true);
             rightSymbol.setInReg(false);

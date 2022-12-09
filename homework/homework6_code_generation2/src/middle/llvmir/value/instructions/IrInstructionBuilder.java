@@ -347,12 +347,16 @@ public class IrInstructionBuilder {
                         symbolType, dimension, irValue);
                 addVarSymbol(symbolVar);
                 IrAlloca irAlloca = new IrAlloca(type, irValue);
+                /* 标记Alloca的维数 */
+                irAlloca.setDimension(0);
                 irAlloca.setName(name);
                 this.instructions.add(irAlloca);
             } else if (dimension == 1) {
                 // 1维变量数组
                 // 生成IrValue对象
                 IrValue irValue = new IrValue(type);
+                // 标记维数
+                irValue.setDimension(dimension);
                 irValue.setName(name);
                 // 标记一维大小
                 irValue.setDimension1(varDefNull.getDimension1(this.symbolTable));
@@ -362,11 +366,17 @@ public class IrInstructionBuilder {
                         symbolType, dimension, irValue);
                 addVarSymbol(symbolVar);
                 IrAlloca irAlloca = new IrAlloca(type, irValue);
+                /* 标记Alloca申请的维数 */
+                irAlloca.setDimension(1);
+                /* 标记申请的维数 */
+                irAlloca.setDimension1(irValue.getDimension1());
                 irAlloca.setName(name);
                 this.instructions.add(irAlloca);
             } else if (dimension == 2) {
                 // 2维变量数组
                 IrValue irValue = new IrValue(type);
+                // 标记维数
+                irValue.setDimension(dimension);
                 irValue.setName(name);
                 // 标记一维大小
                 irValue.setDimension1(varDefNull.getDimension1(this.symbolTable));
@@ -378,6 +388,10 @@ public class IrInstructionBuilder {
                         symbolType, dimension, irValue);
                 addVarSymbol(symbolVar);
                 IrAlloca irAlloca = new IrAlloca(type, irValue);
+                /* 标记Alloca维数 */
+                irAlloca.setDimension(dimension);
+                irAlloca.setDimension1(irValue.getDimension1());
+                irAlloca.setDimension2(irValue.getDimension2());
                 irAlloca.setName(name);
                 this.instructions.add(irAlloca);
             } else {
@@ -419,6 +433,8 @@ public class IrInstructionBuilder {
         addVarSymbol(symbolVar);
         /* 生成内存申请指令 */
         IrAlloca irAlloca = new IrAlloca(IrIntegerType.get32(), irValue);
+        /* 标记Alloca维数 */
+        irAlloca.setDimension(0);
         irAlloca.setName(name);
         this.instructions.add(irAlloca);
         InitVal initVal = varDefInit.getInitVal();
@@ -439,6 +455,8 @@ public class IrInstructionBuilder {
                                                  String name,
                                                  int dimension) {
         IrValue irValue = new IrValue(IrIntegerType.get32());
+        // 标记维数
+        irValue.setDimension(1);
         irValue.setDimension1(varDefInit.getDimension1(this.symbolTable));
         irValue.setName(name);
         /* 生成SymbolVar对象并加入符号表 */
@@ -450,6 +468,7 @@ public class IrInstructionBuilder {
         IrAlloca irAlloca = new IrAlloca(IrIntegerType.get32(), irValue);
         // 标记是1维数组
         irAlloca.setDimension(1);
+        irAlloca.setDimension1(irValue.getDimension1());
         irAlloca.setName(name);
         this.instructions.add(irAlloca);
         InitVal initVal = varDefInit.getInitVal();
@@ -479,6 +498,8 @@ public class IrInstructionBuilder {
                                                  String name,
                                                  int dimension) {
         IrValue irValue = new IrValue(IrIntegerType.get32());
+        // 标记维数
+        irValue.setDimension(2);
         irValue.setDimension1(varDefInit.getDimension1(this.symbolTable));
         irValue.setDimension2(varDefInit.getDimension2(this.symbolTable));
         irValue.setName(name);
@@ -491,6 +512,8 @@ public class IrInstructionBuilder {
         IrAlloca irAlloca = new IrAlloca(IrIntegerType.get32(), irValue);
         // 标记是2维数组
         irAlloca.setDimension(2);
+        irAlloca.setDimension1(irValue.getDimension1());
+        irAlloca.setDimension2(irValue.getDimension2());
         irAlloca.setName(name);
         this.instructions.add(irAlloca);
         InitVal initVal = varDefInit.getInitVal();
@@ -865,13 +888,41 @@ public class IrInstructionBuilder {
         this.symbolTable.addSymol(symbolVar);
     }
 
+    /* 需要考虑左右分别是0,1,2维数组的情况 */
     private void genIrInstructionFromStmtAssign() {
         LVal lval = stmtAssign.getLval();
         Exp exp = stmtAssign.getExp();
-        IrValue left = genIrInstructionFromLVal(lval, true);
         IrValue right = genIrInstructionFromExp(exp, false);
+        IrValue left = genIrInstructionFromLVal(lval, true);
         /* left := right */
-        IrStore store = new IrStore(right, left);
+        int leftDimension = left.getDimension();
+        IrStore store = null;
+        /* 无需考虑right的维数，必然为0，因为这是gen...Exp函数的返回值约定 */
+        int rightDimension = right.getDimension();
+        if (leftDimension == 0) {
+            /* 0维变量 */
+            store = new IrStore(right, left);
+        } else {
+            /* 涉及数组，以下为排列组合 */
+            IrValue dimension1PointerValue = null;
+            IrValue dimension2PointerValue = null;
+            if (leftDimension == 1) {
+                /* 1维数组 */
+                ArrayList<Exp> exps = lval.getExps();
+                dimension1PointerValue = genIrInstructionFromExp(exps.get(0), false);
+                // store = new IrStore(right, left, 0, 1, null, dimension1, null, null);
+            } else if (leftDimension == 2) {
+                /* 2维数组 */
+                ArrayList<Exp> exps = lval.getExps();
+                dimension1PointerValue = genIrInstructionFromExp(exps.get(0), false);
+                dimension2PointerValue = genIrInstructionFromExp(exps.get(1), false);
+            } else {
+                System.out.println("ERROR IN IrInstructionBuilder : should not reach here");
+            }
+            store = new IrStore(right, left, rightDimension, leftDimension,
+                    null, dimension1PointerValue, 
+                    null, dimension2PointerValue);
+        }
         this.instructions.add(store);
     }
 

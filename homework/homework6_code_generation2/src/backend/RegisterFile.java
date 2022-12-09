@@ -1,8 +1,10 @@
 package backend;
 
 import backend.basicblock.MipsBasicBlock;
+import backend.instruction.Add;
 import backend.instruction.Lw;
 import backend.instruction.MipsInstruction;
+import backend.instruction.Sll;
 import backend.instruction.Sw;
 import backend.symbol.MipsSymbol;
 import backend.symbol.MipsSymbolTable;
@@ -177,11 +179,15 @@ public class RegisterFile {
                 MipsSymbol oldSymbol = this.regs.get(oldReg);
                 if (oldSymbol.hasRam()) {
                     /* 已经分配内存 */
-                    writeBack(oldSymbol, basicBlock);
+                    if (oldSymbol.isInReg()) {
+                        writeBack(oldSymbol, basicBlock);
+                    }
                 } else {
                     /* 须分配内存 */
-                    allocRam(oldSymbol);
-                    writeBack(oldSymbol, basicBlock);
+                    if (oldSymbol.isInReg()) {
+                        allocRam(oldSymbol);
+                        writeBack(oldSymbol, basicBlock);
+                    }
                 }
                 /* 修改被弹出符号状态 */
                 oldSymbol.setInReg(false);
@@ -227,6 +233,51 @@ public class RegisterFile {
         int offset = symbol.getOffset();
         Sw sw = new Sw(rt, base, offset);
         return sw;
+    }
+    
+    public MipsInstruction writeBackPublic(MipsSymbol symbol, int deltaOffset) {
+        int rt = symbol.getRegIndex();
+        int base = symbol.getBase();
+        int offset = symbol.getOffset() + deltaOffset;
+        Sw sw = new Sw(rt, base, offset);
+        return sw;
+    }
+
+    /**
+     * 写回维度数值为变量的数组元素
+     * @param symbol : 被写回的元素
+     * @param reg1 : 1维变量所在的寄存器
+     * @param reg2 : 2维变量所在的寄存器
+     * @param dimension : 当前应当计算1维还是2维
+     * @return : 返回新增的所有指令
+     */
+    public ArrayList<MipsInstruction> writeBackPublic(MipsSymbol symbol,
+                                                      int reg1,
+                                                      int reg2,
+                                                      int dimension) {
+        ArrayList<MipsInstruction> ret = new ArrayList<>();
+        if (dimension == 1) {
+            /* 说明是1维变量 */
+            int base = symbol.getBase();
+            int fpOffset = symbol.getOffset();
+            /* 偏移量需要*4即左移2位 */
+            Sll sll = new Sll(3, reg1, 2);
+            ret.add(sll);
+            /* 偏移量和数组的基fpOffset相加得到相对base的偏移 */
+            Add add = new Add(3, 3, fpOffset);
+            ret.add(add);
+            /* 相对base的偏移量和base相加得到绝对偏移 */
+            add = new Add(3, 3, base);
+            ret.add(add);
+            int rt = symbol.getRegIndex();
+            Sw sw = new Sw(rt, 3, 0);
+            ret.add(sw);
+        } else if (dimension == 2) {
+            /* TODO */
+        } else {
+            System.out.printf("ERROR IN RegisterFile : should not reach here");
+        }
+        return ret;
     }
 
     /* 从内存中读取变量 */

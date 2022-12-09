@@ -1,7 +1,6 @@
 package middle.llvmir.value.instructions.memory;
 
 import middle.llvmir.IrValue;
-import middle.llvmir.type.IrIntegerType;
 import middle.llvmir.type.IrPointerType;
 import middle.llvmir.type.IrValueType;
 import middle.llvmir.value.instructions.IrInstruction;
@@ -35,13 +34,29 @@ public class IrAlloca extends IrInstruction {
 
     @Override
     public ArrayList<String> irOutput() {
-        ArrayList<String> ret = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
-        if (this.allocated instanceof IrIntegerType) {
+        sb.append(this.irValue.getName() + " = alloca i32");
+        /*if (this.allocated instanceof IrIntegerType) {
             // 零维
             sb.append(this.irValue.getName() + " = alloca i32\n");
             ret.add(sb.toString());
+        }*/
+        int dimension = this.getDimension();
+        if (dimension == 0) {
+            // 0维
+        } else if (dimension == 1) {
+            // 1维
+            sb.append("[" + this.getDimension1() + "]");
+        } else if (dimension == 2) {
+            // 2维
+            sb.append("[" + this.getDimension1() + "]");
+            sb.append("[" + this.getDimension2() + "]");
+        } else {
+            System.out.println("ERROR IN IrAlloca : should not reach here");
         }
+        sb.append("\n");
+        ArrayList<String> ret = new ArrayList<>();
+        ret.add(sb.toString());
         return ret;
     }
 }

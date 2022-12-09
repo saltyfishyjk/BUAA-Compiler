@@ -191,4 +191,28 @@ public class MipsSymbol {
     public String getName() {
         return name;
     }
+
+    public void setDimension(int dimension) {
+        this.dimension = dimension;
+    }
+
+    public void setDimension1(int dimension1) {
+        this.dimension1 = dimension1;
+    }
+
+    public void setDimension2(int dimension2) {
+        this.dimension2 = dimension2;
+    }
+
+    public int getDimension() {
+        return this.dimension;
+    }
+
+    public int getDimension1() {
+        return this.dimension1;
+    }
+
+    public int getDimension2() {
+        return dimension2;
+    }
 }
