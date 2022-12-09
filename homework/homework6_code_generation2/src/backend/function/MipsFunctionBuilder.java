@@ -82,6 +82,8 @@ public class MipsFunctionBuilder {
             }
             /* 设置函数形参维数，用于后续计算存取方式 */
             symbol.setDimension(target.getDimension());
+            symbol.setDimension1(target.getDimension1());
+            symbol.setDimension2(target.getDimension2());
             this.table.addSymbol(name, symbol);
             index += 1;
         }

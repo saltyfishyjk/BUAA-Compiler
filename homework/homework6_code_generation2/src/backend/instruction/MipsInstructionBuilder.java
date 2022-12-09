@@ -405,7 +405,7 @@ public class MipsInstructionBuilder {
         /* 局部变量若位于寄存器中，则move*/
         /* 局部变量若位于内存中，则lw */
         IrLoad left = (IrLoad)irInstruction;
-        /* TODO : 待施工 */
+        /* TODO : 数组待施工 */
         String leftName = left.getName();
         /* 生成左部临时变量符号 */
         MipsSymbol leftSymbol = new MipsSymbol(leftName, 30, false,
@@ -438,18 +438,24 @@ public class MipsInstructionBuilder {
             /* 返回值为int的函数需要将返回值存入$v0即$2 */
             String name = ret.getOperand(0).getName();
             int reg;
+            MipsSymbol temp = null;
             if (isConst(name)) {
                 // 常数，需要从寄存器表获取一个$t并使用li将该立即数加载进去
                 // 然后使用move进行赋值
                 // 这里的Symbol不应当被加入符号表
-                reg = this.registerFile.getReg(true, new MipsSymbol("temp", 30), this.father);
+                temp = new MipsSymbol("temp", 30);
+                reg = this.registerFile.getReg(true, temp, this.father);
                 Li li = new Li(reg, Integer.valueOf(name));
                 ans.add(li);
+                temp.setUsed(true);
             } else {
                 // 变量
                 reg = this.table.getRegIndex(name, this.father, true);
             }
             Move move = new Move(2, reg);
+            if (temp != null) {
+                temp.setUsed(true);
+            }
             ans.add(move);
             if (!this.father.getFather().getIsMain()) {
                 Jr jr = new Jr(31);
@@ -501,7 +507,6 @@ public class MipsInstructionBuilder {
             /* 需要将值保存到1维变量的内存中 */
             if (handleIrValue) {
                 /* 说明维度数值是变量，需要加载 */
-                /* TODO */
                 IrValue dimension1PointerValue = store.getDimension1PointerValue();
                 String dimension1PointerValueName = dimension1PointerValue.getName();
                 if (isConst(dimension1PointerValueName)) {
@@ -539,6 +544,41 @@ public class MipsInstructionBuilder {
             if (handleIrValue) {
                 /* 说明维度数值是变量，需要加载 */
                 /* TODO */
+                IrValue dimension1PointerValue = store.getDimension1PointerValue();
+                String dimension1PointerValueName = dimension1PointerValue.getName();
+                MipsSymbol temp1 = null; // 用于1维变量是常数的时候使用
+                int reg1 = -1;
+                if (isConst(dimension1PointerValueName)) {
+                    /* 说明是一个常数，需要找到一个空闲寄存器将其装入 */
+                    temp1 = new MipsSymbol("temp", 30);
+                    reg1 = this.registerFile.getReg(true, temp1, this.father);
+                } else {
+                    reg1 = this.table.getRegIndex(dimension1PointerValueName, this.father, true);
+                }
+                IrValue dimension2PointerValue = store.getDimension2PointerValue();
+                String dimension2PointerValueName = dimension2PointerValue.getName();
+                MipsSymbol temp2 = null;
+                int reg2 = -1;
+                if (isConst(dimension2PointerValueName)) {
+                    /* 说明是一个常数，需要找到一个空闲寄存器将其装入 */
+                    temp2 = new MipsSymbol("temp", 30);
+                    reg2 = this.registerFile.getReg(true, temp2, this.father);
+                } else {
+                    reg2 = this.table.getRegIndex(dimension2PointerValueName, this.father, true);
+                }
+                ArrayList<MipsInstruction> instructions = this.registerFile.writeBackPublic(
+                        rightSymbol, reg1, reg2, 2);
+                if (instructions != null && instructions.size() > 0) {
+                    ret.addAll(instructions);
+                } else {
+                    System.out.println("ERROR IN MipsInstructionBuilder : should not reach here");
+                }
+                if (temp1 != null) {
+                    temp1.setUsed(true);
+                }
+                if (temp2 != null) {
+                    temp2.setUsed(true);
+                }
             } else {
                 /* 说明维度数值是常数，在编译时已知 */
                 /* 对于数组a[m][n]，访问a[i][j]即访问a(i * n + j) */

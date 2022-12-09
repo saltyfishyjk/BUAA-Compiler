@@ -2,8 +2,10 @@ package backend;
 
 import backend.basicblock.MipsBasicBlock;
 import backend.instruction.Add;
+import backend.instruction.Addi;
 import backend.instruction.Lw;
 import backend.instruction.MipsInstruction;
+import backend.instruction.MulImm;
 import backend.instruction.Sll;
 import backend.instruction.Sw;
 import backend.symbol.MipsSymbol;
@@ -235,6 +237,7 @@ public class RegisterFile {
         return sw;
     }
     
+    /* 对于编译时能确定的相对偏移的writeBack */
     public MipsInstruction writeBackPublic(MipsSymbol symbol, int deltaOffset) {
         int rt = symbol.getRegIndex();
         int base = symbol.getBase();
@@ -257,7 +260,8 @@ public class RegisterFile {
                                                       int dimension) {
         ArrayList<MipsInstruction> ret = new ArrayList<>();
         if (dimension == 1) {
-            /* 说明是1维变量 */
+            /* 1维变量 */
+            /* 对形如a[reg1]计算 */
             int base = symbol.getBase();
             int fpOffset = symbol.getOffset();
             /* 偏移量需要*4即左移2位 */
@@ -273,7 +277,34 @@ public class RegisterFile {
             Sw sw = new Sw(rt, 3, 0);
             ret.add(sw);
         } else if (dimension == 2) {
-            /* TODO */
+            /* 2维变量 */
+            /* 对形如a[reg1][reg2]的计算 */
+            /* 函数传入参数形如a[][n]的计算 */
+            /* 相对**数组首地址**的偏移是reg1 * n + reg2 */
+            int n = symbol.getDimension2(); // 获取第二维的长度，是编译时确定的整数
+            // 将reg1 * n 装入3号寄存器
+            MulImm mulImm = new MulImm(3, reg1, n);
+            ret.add(mulImm);
+            // 将reg1 * n + reg2装入3号寄存器
+            Add add = new Add(3, 3, reg2);
+            ret.add(add);
+            // 将偏移 << 2
+            Sll sll = new Sll(3, 3, 2);
+            ret.add(sll);
+            // 将相对数组首地址偏移和数组相对fp的偏移相加
+            int fpOffset = symbol.getOffset();
+            if (fpOffset != 0) {
+                Addi addi = new Addi(3, 3, fpOffset);
+                ret.add(addi);
+            }
+            // fp + offset获取绝对地址
+            int base = symbol.getBase();
+            add = new Add(3, 3, base);
+            ret.add(add);
+            // 计算Sw
+            int rt = symbol.getRegIndex();
+            Sw sw = new Sw(rt, 3, 0);
+            ret.add(sw);
         } else {
             System.out.printf("ERROR IN RegisterFile : should not reach here");
         }
