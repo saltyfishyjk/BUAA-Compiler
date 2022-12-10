@@ -248,63 +248,114 @@ public class RegisterFile {
 
     /**
      * 写回维度数值为变量的数组元素
+     * 对于数组形参，其首元素绝对地址存放在fp内存中，通过相对首元素的偏移加上该绝对地址（abs + offset(ele)）获取访问的绝对地址
+     * 对于全局/局部数组，其存放在fp或gp中，其相对于fp的偏移在**编译**时已知，通过计算fp/gp + offset(arr) + offset(ele)来访问
      * @param symbol : 被写回的元素
      * @param reg1 : 1维变量所在的寄存器
      * @param reg2 : 2维变量所在的寄存器
      * @param dimension : 当前应当计算1维还是2维
      * @return : 返回新增的所有指令
      */
-    public ArrayList<MipsInstruction> writeBackPublic(MipsSymbol symbol,
+    public ArrayList<MipsInstruction> writeBackPublic(int leftReg,
+                                                      MipsSymbol symbol,
                                                       int reg1,
                                                       int reg2,
-                                                      int dimension) {
+                                                      int dimension,
+                                                      MipsBasicBlock basicBlock) {
         ArrayList<MipsInstruction> ret = new ArrayList<>();
         if (dimension == 1) {
             /* 1维变量 */
             /* 对形如a[reg1]计算 */
-            int base = symbol.getBase();
-            int fpOffset = symbol.getOffset();
-            /* 偏移量需要*4即左移2位 */
-            Sll sll = new Sll(3, reg1, 2);
-            ret.add(sll);
-            /* 偏移量和数组的基fpOffset相加得到相对base的偏移 */
-            Add add = new Add(3, 3, fpOffset);
-            ret.add(add);
-            /* 相对base的偏移量和base相加得到绝对偏移 */
-            add = new Add(3, 3, base);
-            ret.add(add);
-            int rt = symbol.getRegIndex();
-            Sw sw = new Sw(rt, 3, 0);
-            ret.add(sw);
+            boolean isParam = symbol.getIsParam();
+            if (isParam) {
+                /* Step 1 计算相对于数组首地址的偏移 */
+                /* 说明数组是函数形参，其在对应内存中保存的信息是数组首元素的绝对地址 */
+                String name = symbol.getName();
+                /* 计算目标内存单元相对于数组首元素的偏移 */
+                Sll sll = new Sll(3, reg1, 2);
+                ret.add(sll);
+                /* 获取函数形参数组首元素的绝对地址 */
+                int reg = this.table.getRegIndex(name, basicBlock, true);
+                /* Step 2 计算数组首元素绝对地址加上目标内存单元相对于数组首元素的偏移 */
+                Add add = new Add(3, 3, reg); 
+                ret.add(add);
+                /* 生成Sw */
+                Sw sw = new Sw(leftReg, 3, 0);
+                ret.add(sw);
+            } else {
+                /* 说明数组是全局变量或局部变量，可以以当前的gp或fp作为base */
+                int base = symbol.getBase();
+                int fpOffset = symbol.getOffset();
+                /* 偏移量需要*4即左移2位 */
+                Sll sll = new Sll(3, reg1, 2);
+                ret.add(sll);
+                /* 偏移量和数组的基fpOffset相加得到相对base的偏移 */
+                Addi addi = new Addi(3, 3, fpOffset);
+                ret.add(addi);
+                /* 相对base的偏移量和base相加得到绝对偏移 */
+                Add add = new Add(3, 3, base);
+                ret.add(add);
+                /* 获取被写回的元素所在的寄存器 */
+                // int rt = table.getRegIndex(symbol.getName(), basicBlock, true);
+                // int rt = symbol.getRegIndex();
+                Sw sw = new Sw(leftReg, 3, 0);
+                ret.add(sw);
+            }
         } else if (dimension == 2) {
             /* 2维变量 */
             /* 对形如a[reg1][reg2]的计算 */
             /* 函数传入参数形如a[][n]的计算 */
             /* 相对**数组首地址**的偏移是reg1 * n + reg2 */
-            int n = symbol.getDimension2(); // 获取第二维的长度，是编译时确定的整数
-            // 将reg1 * n 装入3号寄存器
-            MulImm mulImm = new MulImm(3, reg1, n);
-            ret.add(mulImm);
-            // 将reg1 * n + reg2装入3号寄存器
-            Add add = new Add(3, 3, reg2);
-            ret.add(add);
-            // 将偏移 << 2
-            Sll sll = new Sll(3, 3, 2);
-            ret.add(sll);
-            // 将相对数组首地址偏移和数组相对fp的偏移相加
-            int fpOffset = symbol.getOffset();
-            if (fpOffset != 0) {
-                Addi addi = new Addi(3, 3, fpOffset);
-                ret.add(addi);
+            boolean isParam = symbol.getIsParam();
+            if (isParam) {
+                /* 说明数组是函数形参，其在对应内存中保存的信息是数组首元素的绝对地址 */
+                /* Step 1 计算相对于数组首地址的偏移 */
+                /* 获取第2维的长度n */
+                int n = symbol.getDimension2();
+                /* 计算reg1 * n并装入3号寄存器 */
+                MulImm mulImm = new MulImm(3, reg1, n);
+                ret.add(mulImm);
+                /* 将reg1 * n + reg2装入3号寄存器 */
+                Add add = new Add(3, 3, reg2);
+                ret.add(add);
+                /* 将偏移<<2 */
+                Sll sll = new Sll(3, 3, 2);
+                ret.add(sll);
+                /* Step 2 计算数组首元素绝对地址加上目标内存单元相对于数组首元素的偏移 */
+                int reg = this.table.getRegIndex(symbol.getName(), basicBlock, true);
+                add = new Add(3, 3, reg);
+                ret.add(add);
+                Sw sw = new Sw(leftReg, 3, 0);
+                ret.add(sw);
+            } else {
+                /* 说明数组是全局变量或局部变量，可以以当前的gp或fp作为base */
+                int n = symbol.getDimension2(); // 获取第二维的长度，是编译时确定的整数
+                // 将reg1 * n 装入3号寄存器
+                MulImm mulImm = new MulImm(3, reg1, n);
+                ret.add(mulImm);
+                // 将reg1 * n + reg2装入3号寄存器
+                Add add = new Add(3, 3, reg2);
+                ret.add(add);
+                // 将偏移 << 2
+                Sll sll = new Sll(3, 3, 2);
+                ret.add(sll);
+                // 将相对数组首地址偏移和数组相对fp的偏移相加
+                int fpOffset = symbol.getOffset();
+                if (fpOffset != 0) {
+                    Addi addi = new Addi(3, 3, fpOffset);
+                    ret.add(addi);
+                }
+                // fp + offset获取绝对地址
+                int base = symbol.getBase();
+                add = new Add(3, 3, base);
+                ret.add(add);
+                // 计算Sw
+                /* 获取被写回的元素所在的寄存器 */
+                // int rt = table.getRegIndex(symbol.getName(), basicBlock, true);
+                // int rt = symbol.getRegIndex();
+                Sw sw = new Sw(leftReg, 3, 0);
+                ret.add(sw);
             }
-            // fp + offset获取绝对地址
-            int base = symbol.getBase();
-            add = new Add(3, 3, base);
-            ret.add(add);
-            // 计算Sw
-            int rt = symbol.getRegIndex();
-            Sw sw = new Sw(rt, 3, 0);
-            ret.add(sw);
         } else {
             System.out.printf("ERROR IN RegisterFile : should not reach here");
         }

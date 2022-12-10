@@ -84,6 +84,7 @@ public class MipsFunctionBuilder {
             symbol.setDimension(target.getDimension());
             symbol.setDimension1(target.getDimension1());
             symbol.setDimension2(target.getDimension2());
+            symbol.setParam(true);
             this.table.addSymbol(name, symbol);
             index += 1;
         }

@@ -35,6 +35,11 @@ public class MipsInstructionBuilder {
         this.registerFile = this.table.getRegisterFile();
     }
 
+    /* TODO : 需要处理数组传参（地址传递） */
+    /* TODO : 具体表现为传递数组的绝对地址，在函数内部访问的时候以绝对地址 */
+    /* TODO : 加上访问内存单元相对于该地址的偏移 */
+    /* TODO : 目前实现的是访问函数内声明的数组 */
+    /* TODO : 需要处理常量数组的访问 */
     public ArrayList<MipsInstruction> genMipsInstruction() {
         if (irInstruction instanceof IrAlloca) {
             return genMipsInstructionFromAlloca();
@@ -402,7 +407,7 @@ public class MipsInstructionBuilder {
     private ArrayList<MipsInstruction> genMipsInstructionFromLoad() {
         /* IrLoad左侧的变量都是新临时变量，用于取用全局变量或局部变量 */
         /* 全局变量直接从lw从内存中加载 */
-        /* 局部变量若位于寄存器中，则move*/
+        /* 局部变量若位于寄存器中，则move */
         /* 局部变量若位于内存中，则lw */
         IrLoad left = (IrLoad)irInstruction;
         /* TODO : 数组待施工 */
@@ -522,7 +527,7 @@ public class MipsInstructionBuilder {
                     int dimension1PointerReg = this.table.getRegIndex(
                             dimension1PointerValueName, this.father, true);
                     ArrayList<MipsInstruction> temp = this.registerFile.writeBackPublic(
-                            rightSymbol, dimension1PointerReg, -1, 1
+                            leftReg, rightSymbol, dimension1PointerReg, -1, 1, this.father
                     );
                     if (temp != null && temp.size() > 0) {
                         ret.addAll(temp);
@@ -543,7 +548,6 @@ public class MipsInstructionBuilder {
             /* 需要将值保存到2维变量的内存中 */
             if (handleIrValue) {
                 /* 说明维度数值是变量，需要加载 */
-                /* TODO */
                 IrValue dimension1PointerValue = store.getDimension1PointerValue();
                 String dimension1PointerValueName = dimension1PointerValue.getName();
                 MipsSymbol temp1 = null; // 用于1维变量是常数的时候使用
@@ -567,7 +571,7 @@ public class MipsInstructionBuilder {
                     reg2 = this.table.getRegIndex(dimension2PointerValueName, this.father, true);
                 }
                 ArrayList<MipsInstruction> instructions = this.registerFile.writeBackPublic(
-                        rightSymbol, reg1, reg2, 2);
+                        leftReg, rightSymbol, reg1, reg2, 2, this.father);
                 if (instructions != null && instructions.size() > 0) {
                     ret.addAll(instructions);
                 } else {

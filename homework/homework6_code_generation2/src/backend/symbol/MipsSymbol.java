@@ -19,6 +19,7 @@ public class MipsSymbol {
     private int dimension = 0; // 默认为0维数组即普通常变量
     private int dimension1 = 0; // 第1维的长度
     private int dimension2 = 0; // 第2维的长度
+    private boolean isParam = false; // 标记是否为函数参数，对于数组形参和数组全局/局部变量的处理逻辑不同
 
     public MipsSymbol cloneMipsSymbol() {
         MipsSymbol symbol = new MipsSymbol(this.name,
@@ -214,5 +215,13 @@ public class MipsSymbol {
 
     public int getDimension2() {
         return dimension2;
+    }
+
+    public void setParam(boolean param) {
+        this.isParam = param;
+    }
+    
+    public boolean getIsParam() {
+        return this.isParam;
     }
 }
