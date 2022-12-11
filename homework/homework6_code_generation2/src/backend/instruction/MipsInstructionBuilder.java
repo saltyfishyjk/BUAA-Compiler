@@ -322,42 +322,423 @@ public class MipsInstructionBuilder {
         newRegisterFile.setHasValues(this.registerFile.cloneHasValues());
         newRegisterFile.setRegNum(this.registerFile.getRegNum());
         newRegisterFile.setRegs(this.registerFile.cloneRegs());
-        /**/
         IrCall call = (IrCall)irInstruction;
         ArrayList<IrValue> params = call.getParams();
         int len = params.size();
-        for (int i = 0; i < 4 && i < len; i++) {
+        // for (int i = 0; i < 4 && i < len; i++) {
+        int newFpOffset = 0;
+        for (int i = 0; i < len; i++) {
             IrValue param = params.get(i);
             String name = param.getName();
             if (newTable.hasSymbol(name)) {
-                int reg = newTable.getRegIndex(name, this.father, true);
-                Move move = new Move(4 + i, reg);
-                newTable.getSymbol(name).setUsed(true);
-                ret.add(move);
+                /* 分情况讨论包括符号是否为数组，传入的维数，符号是否为形参等 */
+                int symbolDimension = param.getDimension();
+                if (symbolDimension == 0) {
+                    /* 说明符号本身是0维的，进行值传递 */
+                    int reg = newTable.getRegIndex(name, this.father, true);
+                    if (i < 4) {
+                        /* 存入$a */
+                        Move move = new Move(4 + i, reg);
+                        newTable.getSymbol(name).setUsed(true);
+                        ret.add(move);
+                    } else {
+                        /* 存入内存 */
+                        Sw sw = new Sw(reg, 3, newFpOffset);
+                        ret.add(sw);
+                    }
+                } else if (symbolDimension == 1) {
+                    /* 说明符号本身是1维的，分情况讨论 */
+                    boolean isParam = param.isParam();
+                    if (isParam) {
+                        /* 说明符号是形参，应当从内存访问 */
+                        int dimensionValue = param.getDimensionValue();
+                        if (dimensionValue == 0) {
+                            /* 说明取用形参的内存单元进行值传递 */
+                            /* 计算偏移 */
+                            IrValue dimension1 = param.getDimension1Value();
+                            String dimension1Name = dimension1.getName();
+                            if (isConst(dimension1Name)) {
+                                /* 说明是常数 */
+                                Li li = new Li(2, Integer.valueOf(dimension1Name));
+                                ret.add(li);
+                                /* <<2 */
+                                Sll sll = new Sll(2, 2, 2);
+                                ret.add(sll);
+                            } else {
+                                /* 获取该维数变量所在的寄存器 */
+                                int dimension1Reg = newTable.getRegIndex(dimension1Name,
+                                        this.father, true);
+                                /* <<2 */
+                                Sll sll = new Sll(2, dimension1Reg, 2);
+                                ret.add(sll);
+                            }
+                            /* 获取该形参数组的首地址(绝对地址) */
+                            int reg = newTable.getRegIndex(name, this.father, true);
+                            /* 获取内存单元的绝对地址 */
+                            Add add = new Add(2, 2, reg);
+                            ret.add(add);
+                            if (i < 4) {
+                                /* 存入$a */
+                                /* 将该内存单元中的值加载到$a寄存器 */
+                                Lw lw = new Lw(4 + i, 2, 0);
+                                ret.add(lw);
+                            } else {
+                                /* 存入内存 */
+                                /* 首先将目标内存单元加载到2号寄存器 */
+                                Lw lw = new Lw(2, 2, 0);
+                                ret.add(lw);
+                                /* 再将该内存单元转存到目标内存中 */
+                                Sw sw = new Sw(2, 3, newFpOffset);
+                                ret.add(sw);
+                            }
+                        } else if (dimensionValue == 1) {
+                            /* 说明传递形参，由于其已经是绝对地址了，因此直接加载 */
+                            /* 获取形参数组首地址的绝对地址 */
+                            int reg = newTable.getRegIndex(name, this.father, true);
+                            if (i < 4) {
+                                /* 将该首地址加载到$a寄存器 */
+                                Move move = new Move(4 + i, reg);
+                                ret.add(move);
+                            } else {
+                                /* 存入内存 */
+                                Sw sw = new Sw(reg, 3, newFpOffset);
+                                ret.add(sw);
+                            }
+                        } else {
+                            System.out.println("ERROR IN MipsInstructionBuilder : " +
+                                    "should not reach here");
+                        }
+                    } else {
+                        /* 说明符号不是形参，正常访问 */
+                        int dimensionValue = param.getDimensionValue();
+                        /* 获取符号 */
+                        MipsSymbol symbol = this.table.getSymbol(name);
+                        /* 获取相对于fp/gp的偏移 */
+                        int fpOffset = symbol.getOffset();
+                        /* 获取base */
+                        int base = symbol.getBase();
+                        if (dimensionValue == 0) {
+                            /* 说明取用内存单元进行值传递 */
+                            /* 计算偏移 */
+                            IrValue dimension1 = param.getDimension1Value();
+                            String dimension1Name = dimension1.getName();
+                            if (isConst(dimension1Name)) {
+                                /* 说明是常数 */
+                                Li li = new Li(2, Integer.valueOf(dimension1Name));
+                                ret.add(li);
+                                /* <<2 */
+                                Sll sll = new Sll(2, 2, 2);
+                                ret.add(sll);
+                            } else {
+                                /* 获取该维数变量所在的寄存器 */
+                                int dimension1Reg = newTable.getRegIndex(dimension1Name, 
+                                        this.father, true);
+                                /* <<2 */
+                                Sll sll = new Sll(2, dimension1Reg, 2);
+                                ret.add(sll);
+                            }
+                            /* 计算总偏移并装入2号寄存器 */
+                            addi = new Addi(2, 2, fpOffset);
+                            ret.add(addi);
+                            /* 计算绝对地址 */
+                            Add add = new Add(2, 2, base);
+                            ret.add(add);
+                            if (i < 4) {
+                                /* 装入$a */
+                                Lw lw = new Lw(4 + i, 2, 0);
+                                ret.add(lw);
+                            } else {
+                                /* 装入内存 */
+                                /* 首先将目标内存单元加载到2号寄存器中 */
+                                Lw lw = new Lw(2, 2, 0);
+                                ret.add(lw);
+                                /* 存入内存 */
+                                Sw sw = new Sw(2, 3, newFpOffset);
+                                ret.add(sw);
+                            }
+                        } else if (dimensionValue == 1) {
+                            /* 说明进行地址传递，需要计算出数组首元素的绝对地址 */
+                            if (i < 4) {
+                                /* 将reg(base) + fpOffset装入$a */
+                                addi = new Addi(4 + i, base, fpOffset);
+                                ret.add(addi);
+                            } else {
+                                addi = new Addi(2, base, fpOffset);
+                                ret.add(addi);
+                                Sw sw = new Sw(2, 3, newFpOffset);
+                                ret.add(sw);
+                            }
+                        } else {
+                            System.out.println("ERROR IN MipsInstructionBuilder :" +
+                                    " should not reach here");
+                        }
+                    }    
+                } else if (symbolDimension == 2) {
+                    /* 说明符号本身是2维的，分情况讨论 */
+                    boolean isParam = param.isParam();
+                    if (isParam) {
+                        /* 说明是形参，对内存单元访问要访问内存 */
+                        int dimensionValue = param.getDimensionValue();
+                        if (dimensionValue == 0) {
+                            /* 形如a[i][j]，计算公式为i * n + j */
+                            /* 说明访问一个内存单元 */
+                            IrValue dimension1 = param.getDimension1Value();
+                            String dimension1Name = dimension1.getName();
+                            if (isConst(dimension1Name)) {
+                                /* 说明是常数 */
+                                Li li = new Li(2, Integer.valueOf(dimension1Name));
+                                ret.add(li);
+                            } else {
+                                /* 获取该维数变量所在的寄存器 */
+                                int dimension1Reg = newTable.getRegIndex(dimension1Name,
+                                        this.father, true);
+                                /* 将该变量移入2号寄存器 */
+                                Move move = new Move(2, dimension1Reg);
+                                ret.add(move);
+                            }
+                            /* 获取n */
+                            int n = param.getDimension2();
+                            /* 计算i * n并装入2号寄存器 */
+                            MulImm mulImm = new MulImm(2, 2, n);
+                            ret.add(mulImm);
+                            /* 计算i * n + j并装入2号寄存器 */
+                            IrValue dimension2 = param.getDimension2Value();
+                            String dimension2Name = dimension2.getName();
+                            if (isConst(dimension2Name)) {
+                                /* 说明是常数 */
+                                addi = new Addi(2, 2, Integer.valueOf(dimension2Name));
+                                ret.add(addi);
+                            } else {
+                                /* 获取该维数变量所在的寄存器 */
+                                int dimension2Reg = newTable.getRegIndex(dimension2Name, 
+                                        this.father, true);
+                                /* 累加入2号寄存器 */
+                                Add add = new Add(2, 2, dimension2Reg);
+                                ret.add(add);
+                            }
+                            /* <<2 */
+                            Sll sll = new Sll(2, 2, 2);
+                            ret.add(sll);
+                            /* 获取数组首地址绝对地址 */
+                            int reg = newTable.getRegIndex(name, this.father, true);
+                            /* 将数组首地址绝对地址和偏移相加得到目标内存单元绝对地址 */
+                            Add add = new Add(2, 2, reg);
+                            ret.add(add);
+                            if (i < 4) {
+                                /* 将该内存单元的值加载到$a中 */
+                                Lw lw = new Lw(4 + i, 2, 0);
+                                ret.add(lw);
+                            } else {
+                                /* 存入内存 */
+                                Lw lw = new Lw(2, 2, 0);
+                                ret.add(lw);
+                                Sw sw = new Sw(2, 3, newFpOffset);
+                                ret.add(sw);
+                            }
+                        } else if (dimensionValue == 1) {
+                            /* 说明传递其中一个1维数组的地址，需要计算出其绝对地址 */
+                            /* 声明如a[m][n]，传入如a[i] */
+                            /* 计算方式为abs + i * n */
+                            /* 获取i */
+                            IrValue dimension1 = param.getDimension1Value();
+                            String dimension1Name = dimension1.getName();
+                            if (isConst(dimension1Name)) {
+                                Li li = new Li(2, Integer.valueOf(dimension1Name));
+                                ret.add(li);
+                            } else {
+                                int reg1 = newTable.getRegIndex(dimension1.getName(),
+                                        this.father, true);
+                                Move move = new Move(2, reg1);
+                                ret.add(move);
+                            }
+                            /* 获取n */
+                            int n = param.getDimension2();
+                            /* 计算i * n并装入2号寄存器 */
+                            MulImm mulImm = new MulImm(2, 2, n);
+                            ret.add(mulImm);
+                            /* <<2 */
+                            Sll sll = new Sll(2, 2, 2);
+                            ret.add(sll);
+                            /* 计算绝对地址 */
+                            int reg = newTable.getRegIndex(param.getName(),
+                                    this.father, true);
+                            if (i < 4) {
+                                /* 存入$a */
+                                Add add = new Add(4 + i, 2, reg);
+                                ret.add(add);
+                            } else {
+                                /* 存入内存 */
+                                Add add = new Add(2, 2, reg);
+                                ret.add(add);
+                                Sw sw = new Sw(2, 3, newFpOffset);
+                                ret.add(sw);
+                            }
+                        } else if (dimensionValue == 2) {
+                            /* 说明直接传递本身即可 */
+                            int reg = newTable.getRegIndex(param.getName(), this.father, true);
+                            if (i < 4) {
+                                /* 存入$a */
+                                Move move = new Move(4 + i, reg);
+                                ret.add(move);
+                            } else {
+                                /* 存入内存 */
+                                Sw sw = new Sw(reg, 3, newFpOffset);
+                                ret.add(sw);
+                            }
+                        } else {
+                            System.out.println("ERROR IN MipsInstructionBuilder : " +
+                                    "should not reach here");
+                        }
+                    } else {
+                        /* 说明不是形参，对内存单元直接访问 */
+                        int dimensionValue = param.getDimensionValue();
+                        /* 获取符号 */
+                        MipsSymbol symbol = this.table.getSymbol(name);
+                        /* 获取相对于fp/gp的偏移 */
+                        int fpOffset = symbol.getOffset();
+                        /* 获取base */
+                        int base = symbol.getBase();
+                        if (dimensionValue == 0) {
+                            /* 说明访问一个内存单元 */
+                            /* 形如a[i][j]，计算公式为i * n + j */
+                            /* 说明访问一个内存单元 */
+                            IrValue dimension1 = param.getDimension1Value();
+                            String dimension1Name = dimension1.getName();
+                            if (isConst(dimension1Name)) {
+                                /* 说明是常数 */
+                                Li li = new Li(2, Integer.valueOf(dimension1Name));
+                                ret.add(li);
+                            } else {
+                                /* 获取该维数变量所在的寄存器 */
+                                int dimension1Reg = newTable.getRegIndex(dimension1Name, 
+                                        this.father, true);
+                                /* 将该变量移入2号寄存器 */
+                                Move move = new Move(2, dimension1Reg);
+                                ret.add(move);
+                            }
+                            /* 获取n */
+                            int n = param.getDimension2();
+                            /* 计算i * n并装入2号寄存器 */
+                            MulImm mulImm = new MulImm(2, 2, n);
+                            ret.add(mulImm);
+                            /* 计算i * n + j并装入2号寄存器 */
+                            IrValue dimension2 = param.getDimension2Value();
+                            String dimension2Name = dimension2.getName();
+                            if (isConst(dimension2Name)) {
+                                /* 说明是常数 */
+                                addi = new Addi(2, 2, Integer.valueOf(dimension2Name));
+                                ret.add(addi);
+                            } else {
+                                /* 获取该维数变量所在的寄存器 */
+                                int dimension2Reg = newTable.getRegIndex(dimension2Name, 
+                                        this.father, true);
+                                /* 累加入2号寄存器 */
+                                Add add = new Add(2, 2, dimension2Reg);
+                                ret.add(add);
+                            }
+                            /* <<2 */
+                            Sll sll = new Sll(2, 2, 2);
+                            ret.add(sll);
+                            /* 获取目标内存单元相对于base的偏移 */
+                            addi = new Addi(2, 2, fpOffset);
+                            ret.add(addi);
+                            /* 获取目标内存单元绝对地址 */
+                            Add add = new Add(2, 2, base);
+                            ret.add(add);
+                            if (i < 4) {
+                                /* 将该内存单元的值加载到$a中 */
+                                Lw lw = new Lw(4 + i, 2, 0);
+                                ret.add(lw);
+                            } else {
+                                /* 存入内存 */
+                                Lw lw = new Lw(2, 2, 0);
+                                ret.add(lw);
+                                Sw sw = new Sw(2, 3, newFpOffset);
+                                ret.add(sw);
+                            }
+                        } else if (dimensionValue == 1) {
+                            /* 说明传递其中一个1维数组的地址，需要计算出绝对地址 */
+                            /* 计算公式为(base) + fpOffset + i * n */
+                            IrValue dimension1 = param.getDimension1Value();
+                            String dimension1Name = dimension1.getName();
+                            /* 计算i */
+                            if (isConst(dimension1Name)) {
+                                Li li = new Li(2, Integer.valueOf(dimension1Name));
+                                ret.add(li);
+                            } else {
+                                int reg = newTable.getRegIndex(dimension1Name, this.father, true);
+                                Move move = new Move(2, reg);
+                                ret.add(move);
+                            }
+                            int n = param.getDimension2();
+                            /* 计算i * n */
+                            MulImm mulImm = new MulImm(2, 2, n);
+                            ret.add(mulImm);
+                            /* <<2 */
+                            Sll sll = new Sll(2, 2, 2);
+                            ret.add(sll);
+                            /* 计算fpOffset + i * n */
+                            addi = new Addi(2, 2, fpOffset);
+                            ret.add(addi);
+                            if (i < 4) {
+                                /* 计算绝对地址并装入$a */
+                                Add add = new Add(4 + i, 2, base);
+                                ret.add(add);
+                            } else {
+                                /* 存入内存 */
+                                Add add = new Add(2, 2, base);
+                                ret.add(add);
+                                Sw sw = new Sw(2, 3, newFpOffset);
+                                ret.add(sw);
+                            }
+                        } else if (dimensionValue == 2) {
+                            /* 需要计算出数组绝对地址 */
+                            /* 计算公式为(base) + fpOffset */
+                            if (i < 4) {
+                                /* 存入$a */
+                                addi = new Addi(4 + i, base, fpOffset);
+                                ret.add(addi);
+                            } else {
+                                /* 存入内存 */
+                                addi = new Addi(2, base, fpOffset);
+                                ret.add(addi);
+                                Sw sw = new Sw(2, 3, newFpOffset);
+                                ret.add(sw);
+                            }
+                        } else {
+                            System.out.println("ERROR IN MipsInstructionBuilder : " +
+                                    "should not reach here");
+                        }
+                    }
+                }
+                
             } else {
                 /* 进入此说明参数是一个常数*/
                 Li li = new Li(4 + i, Integer.valueOf(name));
                 ret.add(li);
             }
+            if (i >= 4) {
+                newFpOffset += 4;
+            }
         }
-        int fpOffset = 0;
+        // int newFpOffset = 0;
         for (int i = 4; i < len; i++) {
             IrValue param = params.get(i);
             String name = param.getName();
             if (newTable.hasSymbol(name)) {
                 int reg = newTable.getRegIndex(name, this.father, true);
-                Sw sw = new Sw(reg, 3, fpOffset);
+                Sw sw = new Sw(reg, 3, newFpOffset);
                 this.table.getSymbol(name).setUsed(true);
                 ret.add(sw);
             } else {
                 /* 进入此说明参数是一个常数 */
                 /* 由于已经保存完了寄存器现场，因此可以直接拿一个寄存器来用 */
                 Li li = new Li(8, Integer.valueOf(name));
-                Sw sw = new Sw(8, 3, fpOffset);
+                Sw sw = new Sw(8, 3, newFpOffset);
                 ret.add(li);
                 ret.add(sw);
             }
-            fpOffset += 4;
+            newFpOffset += 4;
         }
 
         /* 3. 修改$fp, $sp */
@@ -420,7 +801,6 @@ public class MipsInstructionBuilder {
         IrValue right = left.getOperand(0);
         String rightName = right.getName();
         MipsSymbol rightSymbol = this.table.getSymbol(rightName);
-        /* TODO : 数组待施工 */
         /* right维数 */
         int rightDimension = right.getDimension();
         int rightReg = -1;

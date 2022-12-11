@@ -32,6 +32,10 @@ public class IrValue implements IrNode {
         this.uses = new LinkedList<>();
     }
 
+    public void setParam(boolean param) {
+        this.isParam = param;
+    }
+
     public IrValue cloneForCall() {
         IrValue ret = new IrValue(this.getValueType());
         ret.setDimensionValue(this.dimensionValue);
@@ -47,6 +51,9 @@ public class IrValue implements IrNode {
         }
         ret.setDimension(this.getDimension());
         ret.setName(this.name);
+        ret.setParam(this.isParam);
+        ret.setDimension1(this.dimension1);
+        ret.setDimension2(this.dimension2);
         return ret;
     }
 

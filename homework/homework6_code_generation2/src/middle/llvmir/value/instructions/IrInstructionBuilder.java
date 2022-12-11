@@ -835,10 +835,13 @@ public class IrInstructionBuilder {
             call = new IrCall(irFunction, args);
         } else {
             Exp first = funcRParams.getFirst();
-            args.add(genIrInstructionFromExp(first, true));
+            IrValue arg = genIrInstructionFromExp(first, true);
+            //arg.setParam(this.symbolTable.getSymbol());
+            args.add(arg);
             ArrayList<Exp> exps = funcRParams.getExps();
             for (Exp exp : exps) {
-                args.add(genIrInstructionFromExp(exp, true));
+                arg = genIrInstructionFromExp(exp, true);
+                args.add(arg);
             }
             call = new IrCall(irFunction, args);
         }
