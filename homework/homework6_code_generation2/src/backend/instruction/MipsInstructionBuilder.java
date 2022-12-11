@@ -410,25 +410,101 @@ public class MipsInstructionBuilder {
         /* 局部变量若位于寄存器中，则move */
         /* 局部变量若位于内存中，则lw */
         IrLoad left = (IrLoad)irInstruction;
-        /* TODO : 数组待施工 */
+
         String leftName = left.getName();
         /* 生成左部临时变量符号 */
         MipsSymbol leftSymbol = new MipsSymbol(leftName, 30, false,
                 -1, false, -1, true, false);
         insertSymbolTable(leftName, leftSymbol);
-        int leftReg = this.registerFile.getReg(true, leftSymbol, this.father);
-        /* 标记当前变量在寄存器中 */
-        leftSymbol.setInReg(true);
-        /* 标记当前变量所在寄存器 */
-        leftSymbol.setRegIndex(leftReg);
-        ArrayList<MipsInstruction> ret = new ArrayList<>();
         /* 获取右部变量 */
         IrValue right = left.getOperand(0);
         String rightName = right.getName();
         MipsSymbol rightSymbol = this.table.getSymbol(rightName);
-        int rightReg = this.table.getRegIndex(rightName, this.father, true);
-        Move move = new Move(leftReg, rightReg);
-        ret.add(move);
+        /* TODO : 数组待施工 */
+        /* right维数 */
+        int rightDimension = right.getDimension();
+        int rightReg = -1;
+        ArrayList<MipsInstruction> ret = new ArrayList<>();
+        if (rightDimension == 0) {
+            /* 说明从0维变量中load */
+            int leftReg = this.registerFile.getReg(true, leftSymbol, this.father);
+            /* 标记当前变量在寄存器中 */
+            leftSymbol.setInReg(true);
+            /* 标记当前变量所在寄存器 */
+            leftSymbol.setRegIndex(leftReg);
+            rightReg = this.table.getRegIndex(rightName, this.father, true);
+            Move move = new Move(leftReg, rightReg);
+            ret.add(move);
+        } else if (rightDimension == 1) {
+            /* 说明从1维变量中load */
+            /* 1维变量 */
+            IrValue dimension1 = left.getDimension1Value();
+            String dimension1Name = dimension1.getName();
+            int reg1 = -1;
+            MipsSymbol dimension1Symbol = null;
+            if (isConst(dimension1Name)) {
+                /* 是常数 */
+                dimension1Symbol = new MipsSymbol("Temp", 30, false, -1, false, 
+                        -1, true, false);
+                reg1 = this.registerFile.getReg(true, dimension1Symbol, this.father);
+                Li li = new Li(reg1, Integer.valueOf(dimension1Name));
+                ret.add(li);
+            } else {
+                /* 是变量 */
+                reg1 = this.table.getRegIndex(dimension1Name, this.father, true);
+            }
+            ArrayList<MipsInstruction> instructions = null;
+            instructions = this.registerFile.readBackPublic(leftSymbol, rightSymbol, reg1,
+                    -1, 1, this.father);
+            if (instructions != null && instructions.size() > 0) {
+                ret.addAll(instructions);
+            }
+            if (dimension1Symbol != null) {
+                dimension1Symbol.setUsed(true);
+            }
+        } else if (rightDimension == 2) {
+            /* 说明从2维变量中load */
+            /* 1维变量 */
+            IrValue dimension1 = left.getDimension1Value();
+            String dimension1Name = dimension1.getName();
+            MipsSymbol temp1 = null;
+            int reg1 = -1;
+            if (isConst(dimension1Name)) {
+                temp1 = new MipsSymbol("temp", 30);
+                reg1 = this.registerFile.getReg(true, temp1, this.father);
+            } else {
+                reg1 = this.table.getRegIndex(dimension1Name, this.father, true);
+            }
+            /* 2维变量 */
+            IrValue dimension2 = left.getDimension2Value();
+            String dimension2Name = dimension2.getName();
+            MipsSymbol temp2 = null;
+            int reg2 = -1;
+            if (isConst(dimension2Name)) {
+                temp2 = new MipsSymbol("temp", 30);
+                reg2 = this.registerFile.getReg(true, temp2, this.father);
+            } else {
+                reg2 = this.table.getRegIndex(dimension2Name, this.father, true);
+            }
+            ArrayList<MipsInstruction> instructions = null;
+            instructions = this.registerFile.readBackPublic(leftSymbol, rightSymbol, reg1,
+                    reg2, 2, this.father);
+            if (instructions != null && instructions.size() > 0) {
+                ret.addAll(instructions);
+            } else {
+                System.out.println("ERROR IN MipsInstructionBuilder : should not reach here");
+            }
+            if (temp1 != null) {
+                temp1.setUsed(true);
+            }
+            if (temp2 != null) {
+                temp2.setUsed(true);
+            }
+        } else {
+            System.out.println("ERROR IN MipsInstructionBuilder : should not reach here");
+        }
+        
+        
         if (rightName.contains("Global")) {
             /* 将全局变量标记为不在寄存器中 */
             rightSymbol.setInReg(false);

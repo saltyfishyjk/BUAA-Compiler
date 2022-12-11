@@ -60,4 +60,12 @@ public class IrLoad extends IrInstruction {
         ret.add(sb.toString());
         return ret;
     }
+    
+    public IrValue getDimension1Value() {
+        return this.dimension1;
+    }
+
+    public IrValue getDimension2Value() {
+        return this.dimension2;
+    }
 }

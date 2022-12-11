@@ -370,6 +370,82 @@ public class RegisterFile {
         basicBlock.addInstruction(temp);
     }
 
+    public ArrayList<MipsInstruction> readBackPublic(MipsSymbol leftSymbol,
+                                                     MipsSymbol symbol,
+                                                     int reg1,
+                                                     int reg2,
+                                                     int dimension,
+                                                     MipsBasicBlock basicBlock) {
+        ArrayList<MipsInstruction> ret = new ArrayList<>();
+        boolean isParam = symbol.getIsParam();
+        /* Step 1 计算被加载的内存单元的位置并装入3号寄存器 */
+        if (dimension == 1) {
+            /* 1维变量，形如a[i] */
+            /* Step 1.1 计算偏移：将偏移<<2 */
+            Sll sll = new Sll(3, reg1, 2);
+            ret.add(sll);
+            if (isParam) {
+                /* 是函数形参 */
+                /* Step 1.2 获取函数形参数组首元素的绝对地址 */
+                int reg = this.table.getRegIndex(symbol.getName(), basicBlock, true);
+                /* 计算目标内存单元的绝对地址并装入3号寄存器 */
+                Add add = new Add(3, 3, reg);
+                ret.add(add);
+            } else {
+                /* 不是函数形参 */
+                int base = symbol.getBase();
+                int fpOffset = symbol.getOffset();
+                /* Step 1.2 计算相对于fp/gp的偏移并装入3号寄存器 */
+                Addi addi = new Addi(3, 3, fpOffset);
+                ret.add(addi);
+                /* Step 1.3 将fp/gp和相对fp/gp的偏移相加并装入3号寄存器 */
+                Add add = new Add(3, 3, base);
+                ret.add(add);
+            }
+        } else if (dimension == 2) {
+            /* 2维变量，形如a[i][j] */
+            /* Step 2.1 计算偏移 */
+            /* 获取第2维长度n */
+            int n = symbol.getDimension2();
+            /* $3 = reg1(i) * n */
+            MulImm mulImm = new MulImm(3, reg1, n);
+            ret.add(mulImm);
+            /* $3 = reg1(i) * n + m */
+            Add add = new Add(3, 3, reg2);
+            ret.add(add);
+            /* 偏移<<2 */
+            Sll sll = new Sll(3, 3, 2);
+            ret.add(sll);
+            isParam = symbol.getIsParam();
+            if (isParam) {
+                /* 是函数形参 */
+                int reg = this.table.getRegIndex(symbol.getName(), basicBlock, true);
+                /* 计算目标内存单元并装入3号寄存器 */
+                add = new Add(3, 3, reg);
+                ret.add(add);
+            } else {
+                /* 不是函数形参 */
+                int base = symbol.getBase();
+                int fpOffset = symbol.getOffset();
+                /* 计算相对于fp/gp的偏移 */
+                Addi addi = new Addi(3, 3, fpOffset);
+                ret.add(addi);
+                /* 计算绝对地址 */
+                add = new Add(3, 3, base);
+                ret.add(add);
+            }
+        } else {
+            System.out.println("ERROR IN RegisterFile : should not reach here");
+        }
+        /* Step 2 将被加载的内存单元读取到leftSymbol所在的寄存器 */
+        int leftReg = this.getReg(true, leftSymbol, basicBlock);
+        leftSymbol.setInReg(true);
+        leftSymbol.setRegIndex(leftReg);
+        Lw lw = new Lw(leftReg, 3, 0);
+        ret.add(lw);
+        return ret;
+    }
+
     /* 获取一个空闲寄存器编号 */
     private int hasFreeReg(boolean isTemp) {
         for (int i = 0; i < this.regNum; i++) {
