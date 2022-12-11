@@ -43,10 +43,10 @@ public class MipsBuilder {
                     /* 保存到内存 */
                     Sw sw = new Sw(24, 28, gpOffset);
                     mipsModule.addGlobal(sw);
-                    MipsSymbol symbol = new MipsSymbol(variable.getName(),
-                            28, gpOffset);
-                    globalVariable.put(symbol.getName(), symbol);
                 }
+                MipsSymbol symbol = new MipsSymbol(variable.getName(),
+                        28, gpOffset);
+                globalVariable.put(symbol.getName(), symbol);
                 gpOffset += 4;
             } else if (variable.getDimension() == 1) {
                 /* 1维数组 */
