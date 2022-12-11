@@ -466,6 +466,8 @@ public class RegisterFile {
                 /* 如果有未赋值的寄存器可以直接使用 */
                 if (!this.hasValues.get(i)) {
                     return i;
+                } else if (!this.regs.get(i).isInReg()) {
+                    return i;
                 }
             }
         }

@@ -41,6 +41,10 @@ public class MipsSymbol {
         this.used = false;
     }
 
+    public void setTemp(boolean temp) {
+        this.isTemp = temp;
+    }
+
     /* 当寄存器充足时，为该符号设置inReg = true, regIndex为对应的寄存器数字编号 */
     public MipsSymbol(String name, int base, boolean inReg, int regIndex) {
         this(name, base);

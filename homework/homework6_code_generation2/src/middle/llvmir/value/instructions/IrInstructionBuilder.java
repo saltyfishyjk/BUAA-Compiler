@@ -60,6 +60,7 @@ import middle.symbol.SymbolTable;
 import middle.symbol.SymbolType;
 import middle.symbol.SymbolVar;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 
 /**
@@ -248,6 +249,8 @@ public class IrInstructionBuilder {
         /* TODO 需要将常量数组的值保存到fp中 */
         SymbolCon symbolCon;
         IrIntegerType type = IrIntegerType.get32();
+        int cnt = this.functionCnt.getCnt();
+        String name = "%_LocalConst" + cnt;
         if (constDef.getDimension() == 0) {
             // 数值常数
             SymbolType symbolType = SymbolType.CON;
@@ -262,19 +265,63 @@ public class IrInstructionBuilder {
             symbolCon = new SymbolCon(constDef.getName(), symbolType, 1);
             this.symbolTable.addSymol(symbolCon);
             setInitVal(symbolCon, constDef.getConstInitval());
-            IrValue value = new IrValue(type, "1-D ARRAY");
+            // IrValue value = new IrValue(type, "1-D ARRAY");
+            IrValue value = new IrValue(type, name);
             value.setDimension(1); // 标记是1维数组
+            value.setDimension1(symbolCon.getInitval1().size());
             value.setInits1(symbolCon.getInitval1()); // 将1维数组的初始值传入
             symbolCon.setValue(value);
+            /* 使用IrStore将数组初值保存到内存中 */
+            ArrayList<Integer> inits = symbolCon.getInitval1();
+            /* 生成IrAlloca指令 */
+            IrAlloca irAlloca = new IrAlloca(type, value);
+            irAlloca.setDimension(1);
+            irAlloca.setDimension1(value.getDimension1());
+            irAlloca.setName(name);
+            this.instructions.add(irAlloca);
+            int i = 0;
+            for (Integer index : inits) {
+                IrValue val = new IrValue(IrIntegerType.get32(), String.valueOf(index));
+                IrStore store = new IrStore(val, value, 0, 2, -1, i, -1, -1);
+                this.instructions.add(store);
+                i += 1;
+            }
         } else if (constDef.getDimension() == 2) {
             SymbolType symbolType = SymbolType.CON2;
             symbolCon = new SymbolCon(constDef.getName(), symbolType, 2);
             this.symbolTable.addSymol(symbolCon);
             setInitVal(symbolCon, constDef.getConstInitval());
-            IrValue value = new IrValue(type, "2-D ARRAY");
+            // IrValue value = new IrValue(type, "2-D ARRAY");
+            IrValue value = new IrValue(type, name);
             value.setDimension(2); // 标记是2维数组
+            value.setDimension1(symbolCon.getInitval2().size()); // 标记第1维长度
+            value.setDimension2(symbolCon.getInitval2().get(0).size()); // 标记第2维长度
             value.setInits2(symbolCon.getInitval2()); // 将2维数组的初始值传入
             symbolCon.setValue(value);
+            AbstractList<ArrayList<Integer>> inits = symbolCon.getInitval2();
+            /* 生成IrAlloca指令 */
+            IrAlloca irAlloca = new IrAlloca(type, value);
+            irAlloca.setDimension(2); // 设置维度
+            irAlloca.setDimension1(value.getDimension1()); // 设置1维变量
+            irAlloca.setDimension2(value.getDimension2()); // 设置2维变量
+            irAlloca.setName(name);
+            this.instructions.add(irAlloca);
+            int i = 0;
+            for (ArrayList<Integer> index1 : inits) {
+                if (index1 == null || index1.size() == 0) {
+                    i += 1;
+                    continue;
+                }
+                int j = 0;
+                for (Integer index2 : index1) {
+                    /* 为常数构造IrValue */
+                    IrValue val = new IrValue(IrIntegerType.get32(), String.valueOf(index2));
+                    IrStore store = new IrStore(val, value, 0, 2, -1, i, -1, j);
+                    this.instructions.add(store);
+                    j += 1;
+                }
+                i += 1;
+            }
         } else {
             System.out.println(
                     "ERROR in IrInstructionBuilder.addCon : should not reach here");

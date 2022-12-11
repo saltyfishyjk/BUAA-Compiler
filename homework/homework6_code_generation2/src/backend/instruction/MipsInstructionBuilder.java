@@ -852,6 +852,9 @@ public class MipsInstructionBuilder {
             if (isConst(dimension1Name)) {
                 temp1 = new MipsSymbol("temp", 30);
                 reg1 = this.registerFile.getReg(true, temp1, this.father);
+                /* 将该常数加载入该寄存器 */
+                Li li = new Li(reg1, Integer.valueOf(dimension1Name));
+                ret.add(li);
             } else {
                 reg1 = this.table.getRegIndex(dimension1Name, this.father, true);
             }
@@ -863,6 +866,9 @@ public class MipsInstructionBuilder {
             if (isConst(dimension2Name)) {
                 temp2 = new MipsSymbol("temp", 30);
                 reg2 = this.registerFile.getReg(true, temp2, this.father);
+                /* 将该常数加载入该寄存器 */
+                Li li = new Li(reg2, Integer.valueOf(dimension2Name));
+                ret.add(li);
             } else {
                 reg2 = this.table.getRegIndex(dimension2Name, this.father, true);
             }
@@ -875,9 +881,11 @@ public class MipsInstructionBuilder {
                 System.out.println("ERROR IN MipsInstructionBuilder : should not reach here");
             }
             if (temp1 != null) {
+                temp1.setTemp(true);
                 temp1.setUsed(true);
             }
             if (temp2 != null) {
+                temp2.setTemp(true);
                 temp2.setUsed(true);
             }
         } else {
@@ -942,11 +950,12 @@ public class MipsInstructionBuilder {
         int rightReg = -1;
         ArrayList<MipsInstruction> ret = new ArrayList<>();
         /* 获取左操作数的寄存器 */
+        MipsSymbol tempSymbol = null;
         if (isConst(leftName)) {
             // 常数，需要从寄存器表获取一个$t并使用li将该立即数加载进去
             // 然后使用move进行赋值
             // 这里的Symbol不应当被加入符号表
-            MipsSymbol tempSymbol = new MipsSymbol("name", 30, false, -1, false,
+            tempSymbol = new MipsSymbol("name", 30, false, -1, false,
                     -1, true, false);
             leftReg = this.registerFile.getReg(true, tempSymbol, this.father);
             Li li = new Li(leftReg, Integer.valueOf(leftName));
@@ -972,6 +981,7 @@ public class MipsInstructionBuilder {
                 String dimension1PointerValueName = dimension1PointerValue.getName();
                 if (isConst(dimension1PointerValueName)) {
                     /* 说明维度变量是常数 */
+                    /* TODO : 感觉有问题 */
                     MipsInstruction temp = this.registerFile.writeBackPublic(rightSymbol,
                             Integer.valueOf(dimension1PointerValueName) * 4);
                     rightSymbol.setInReg(false);
@@ -1012,6 +1022,9 @@ public class MipsInstructionBuilder {
                     /* 说明是一个常数，需要找到一个空闲寄存器将其装入 */
                     temp1 = new MipsSymbol("temp", 30);
                     reg1 = this.registerFile.getReg(true, temp1, this.father);
+                    /* 将立即数装入寄存器 */
+                    Li li = new Li(reg1, Integer.valueOf(dimension1PointerValueName));
+                    ret.add(li);
                 } else {
                     reg1 = this.table.getRegIndex(dimension1PointerValueName, this.father, true);
                 }
@@ -1023,6 +1036,9 @@ public class MipsInstructionBuilder {
                     /* 说明是一个常数，需要找到一个空闲寄存器将其装入 */
                     temp2 = new MipsSymbol("temp", 30);
                     reg2 = this.registerFile.getReg(true, temp2, this.father);
+                    /* 将立即数装入寄存器 */
+                    Li li = new Li(reg2, Integer.valueOf(dimension2PointerValueName));
+                    ret.add(li);
                 } else {
                     reg2 = this.table.getRegIndex(dimension2PointerValueName, this.father, true);
                 }
@@ -1034,9 +1050,11 @@ public class MipsInstructionBuilder {
                     System.out.println("ERROR IN MipsInstructionBuilder : should not reach here");
                 }
                 if (temp1 != null) {
+                    temp1.setTemp(true);
                     temp1.setUsed(true);
                 }
                 if (temp2 != null) {
+                    temp2.setTemp(true);
                     temp2.setUsed(true);
                 }
             } else {
@@ -1059,6 +1077,9 @@ public class MipsInstructionBuilder {
             rightSymbol.setUsed(true);
             rightSymbol.setInReg(false);
             ret.add(temp);
+        }
+        if (tempSymbol != null) {
+            tempSymbol.setUsed(true);
         }
         return ret;
     }
