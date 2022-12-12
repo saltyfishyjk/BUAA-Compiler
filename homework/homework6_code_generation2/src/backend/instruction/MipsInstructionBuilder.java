@@ -989,12 +989,14 @@ public class MipsInstructionBuilder {
                 String dimension1PointerValueName = dimension1PointerValue.getName();
                 if (isConst(dimension1PointerValueName)) {
                     /* 说明维度变量是常数 */
-                    /* TODO : 感觉有问题 */
-                    MipsInstruction temp = this.registerFile.writeBackPublic(leftReg, rightSymbol,
-                            Integer.valueOf(dimension1PointerValueName) * 4);
+                    ArrayList<MipsInstruction> temp = this.registerFile.writeBackPublic(
+                            leftReg, rightSymbol, 
+                            Integer.valueOf(dimension1PointerValueName) * 4, this.father);
                     rightSymbol.setInReg(false);
                     rightSymbol.setUsed(true);
-                    ret.add(temp);
+                    if (temp != null && temp.size() > 0) {
+                        ret.addAll(temp);
+                    }
                 } else {
                     /* 说明维度是变量 */
                     /* 获取维度变量值所在寄存器 */
@@ -1013,11 +1015,13 @@ public class MipsInstructionBuilder {
                 }
             } else {
                 /* 说明维度数值是常数，在编译时已知 */
-                MipsInstruction temp = this.registerFile.writeBackPublic(leftReg, rightSymbol,
-                        store.getDimension1Pointer() * 4);
+                ArrayList<MipsInstruction> temp = this.registerFile.writeBackPublic(leftReg,
+                        rightSymbol, store.getDimension1Pointer() * 4, this.father);
                 rightSymbol.setInReg(false);
                 rightSymbol.setUsed(true);
-                ret.add(temp);
+                if (temp != null && temp.size() > 0) {
+                    ret.addAll(temp);
+                }
             }
         } else if (dimensionPointer == 2) {
             /* 需要将值保存到2维变量的内存中 */
@@ -1076,11 +1080,13 @@ public class MipsInstructionBuilder {
                 int j = store.getDimension2Pointer();
                 int offset = i * n + j;
                 offset *= 4;
-                MipsInstruction temp = this.registerFile.writeBackPublic(leftReg, rightSymbol,
-                        offset);
+                ArrayList<MipsInstruction> temp = this.registerFile.writeBackPublic(
+                        leftReg, rightSymbol, offset, this.father);
                 rightSymbol.setUsed(true);
                 rightSymbol.setInReg(false);
-                ret.add(temp);
+                if (temp != null && temp.size() > 0) {
+                    ret.addAll(temp);
+                }
             }
         } else if (rightName.contains("Global")) {
             /* 如果是全局变量，则需要立刻写回内存 */

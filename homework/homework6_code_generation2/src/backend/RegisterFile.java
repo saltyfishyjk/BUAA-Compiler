@@ -238,13 +238,33 @@ public class RegisterFile {
     }
     
     /* 对于编译时能确定的相对偏移的writeBack */
-    public MipsInstruction writeBackPublic(int leftReg, MipsSymbol symbol, int deltaOffset) {
-        // int rt = symbol.getRegIndex();
-        int rt = leftReg;
-        int base = symbol.getBase();
-        int offset = symbol.getOffset() + deltaOffset;
-        Sw sw = new Sw(rt, base, offset);
-        return sw;
+    public ArrayList<MipsInstruction> writeBackPublic(int leftReg,
+                                        MipsSymbol symbol,
+                                        int deltaOffset,
+                                        MipsBasicBlock basicBlock) {
+        String name = symbol.getName();
+        boolean isParam = symbol.getIsParam();
+        Sw sw = null;
+        ArrayList<MipsInstruction> ret = new ArrayList<>();
+        if (isParam) {
+            /* 获取函数形参数组首元素的绝对地址 */
+            int reg = this.table.getRegIndex(name, basicBlock, true);
+            /* 计算目标内存单元的绝对地址 */
+            Addi addi = new Addi(3, reg, deltaOffset);
+            ret.add(addi);
+            /* 存储到目标单元 */
+            sw = new Sw(leftReg, 3, 0);
+            ret.add(sw);
+        } else {
+            /* 说明不是数组形参，应当直接根据base的偏移进行储存 */
+            int base = symbol.getBase();
+            int offset = symbol.getOffset() + deltaOffset;
+            sw = new Sw(leftReg, base, offset);
+            ret.add(sw);
+        }
+        
+        
+        return ret;
     }
 
     /**
