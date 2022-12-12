@@ -241,7 +241,9 @@ public class MipsInstructionBuilder {
             Li li = new Li(2, 1);
             ret.add(li);
             String name = call.getOperand(1).getName();
+            MipsSymbol symbol = null;
             if (this.table.hasSymbol(name)) {
+                symbol = this.table.getSymbol(name);
                 int reg = this.table.getRegIndex(name, this.father, true);
                 move = new Move(4, reg);
                 ret.add(move);
@@ -254,6 +256,9 @@ public class MipsInstructionBuilder {
             ret.add(syscall);
             move = new Move(4, 3);
             ret.add(move);
+            if (symbol != null) {
+                symbol.setUsed(true);
+            }
         } else if (functionName.equals("@putch")) {
             // 不应当进入本分支，因为打印字符串已经在MipsBasicBlockBuilder中处理完了
             System.out.println("ERROR in Mips InstructionBuilder : should not reach here");

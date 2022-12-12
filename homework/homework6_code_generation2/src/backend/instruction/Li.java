@@ -38,4 +38,17 @@ public class Li extends MipsInstruction {
         ret.add(sb.toString());
         return ret;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getInstName() + " ");
+        sb.append(RegisterName.getName(this.regNum) + ", ");
+        if (immediate >= 0) {
+            sb.append("0x" + Integer.toHexString(this.immediate) + "\n");
+        } else {
+            sb.append(this.immediate + "\n");
+        }
+        return sb.toString();
+    }
 }

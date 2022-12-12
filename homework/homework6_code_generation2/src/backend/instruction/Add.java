@@ -25,4 +25,14 @@ public class Add extends MipsInstruction {
         ret.add(sb.toString());
         return ret;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getInstName() + " ");
+        sb.append(RegisterName.getName(this.target) + ", ");
+        sb.append(RegisterName.getName(this.left) + ", ");
+        sb.append(RegisterName.getName(this.right) + "\n");
+        return sb.toString();
+    }
 }

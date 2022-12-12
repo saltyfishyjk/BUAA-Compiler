@@ -25,4 +25,14 @@ public class Addi extends MipsInstruction {
         ret.add(sb.toString());
         return ret;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getInstName() + " ");
+        sb.append(RegisterName.getName(target) + ", ");
+        sb.append(RegisterName.getName(source) + ", ");
+        sb.append(immediate + "\n");
+        return sb.toString();
+    }
 }
