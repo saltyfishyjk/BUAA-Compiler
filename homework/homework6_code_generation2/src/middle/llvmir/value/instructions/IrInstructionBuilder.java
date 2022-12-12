@@ -282,7 +282,7 @@ public class IrInstructionBuilder {
             int i = 0;
             for (Integer index : inits) {
                 IrValue val = new IrValue(IrIntegerType.get32(), String.valueOf(index));
-                IrStore store = new IrStore(val, value, 0, 2, -1, i, -1, -1);
+                IrStore store = new IrStore(val, value, 0, 1, -1, i, -1, -1);
                 this.instructions.add(store);
                 i += 1;
             }
