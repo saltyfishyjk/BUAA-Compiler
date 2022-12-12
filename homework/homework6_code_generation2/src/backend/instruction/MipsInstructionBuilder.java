@@ -327,6 +327,7 @@ public class MipsInstructionBuilder {
         newRegisterFile.setHasValues(this.registerFile.cloneHasValues());
         newRegisterFile.setRegNum(this.registerFile.getRegNum());
         newRegisterFile.setRegs(this.registerFile.cloneRegs());
+        newRegisterFile.setSregUse(this.registerFile.cloneSregUse());
         IrCall call = (IrCall)irInstruction;
         ArrayList<IrValue> params = call.getParams();
         int len = params.size();

@@ -30,6 +30,18 @@ public class RegisterFile {
     private Stack<Integer> sregUse = new Stack<>(); // 记录s寄存器的使用先后顺序
     private int tempPtr = 8; //指向最旧的寄存器的指针
 
+    public Stack<Integer> cloneSregUse() {
+        Stack<Integer> ret = new Stack<>();
+        for (Integer index : sregUse) {
+            ret.push(index);
+        }
+        return ret;
+    }
+
+    public void setSregUse(Stack<Integer> sregUse) {
+        this.sregUse = sregUse;
+    }
+
     public HashMap<Integer, Boolean> cloneHasValues() {
         HashMap<Integer, Boolean> newHasValues = new HashMap<>();
         for (Integer index : this.hasValues.keySet()) {
