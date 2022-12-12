@@ -214,7 +214,8 @@ public class RegisterFile {
         int fpOffset = this.table.getFpOffset();
         /* TODO : 这里默认申请4字节，可能需要修改 */
         symbol.setOffset(fpOffset + 4);
-        this.table.addOffset(4);
+        // this.table.addOffset(4);
+        this.table.addOffset(8);
         symbol.setHasRam(true);
     }
 
