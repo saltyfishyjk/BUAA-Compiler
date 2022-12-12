@@ -56,6 +56,8 @@ public class MipsBuilder {
                         28, false, -1, true,
                         gpOffset, false, false, 1,
                         variable.getDimension1());
+                /* 添加维数 */
+                symbol.setDimension1(variable.getDimension1());
                 globalVariable.put(symbol.getName(), symbol);
                 /* 将初值装载到内存中 */
                 for (int i = 0; i < dimension1; i++) {
@@ -77,6 +79,9 @@ public class MipsBuilder {
                         28, false, -1, true,
                         gpOffset, false, false, 2,
                         dimension1, dimension2);
+                /* 添加维数 */
+                symbol.setDimension1(variable.getDimension1());
+                symbol.setDimension2(variable.getDimension2());
                 globalVariable.put(symbol.getName(), symbol);
                 for (int i = 0; i < dimension1; i++) {
                     for (int j = 0; j < dimension2; j++) {

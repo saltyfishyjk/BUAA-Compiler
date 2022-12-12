@@ -16,6 +16,7 @@ import frontend.parser.declaration.variable.vardef.VarDefNull;
 import frontend.parser.expression.ConstExp;
 import frontend.parser.expression.Exp;
 import frontend.parser.terminal.Ident;
+import middle.llvmir.IrValue;
 import middle.llvmir.type.IrIntegerType;
 import middle.llvmir.type.IrValueType;
 import middle.llvmir.value.constant.IrConstantArray;
@@ -175,6 +176,8 @@ public class IrGlobalVariableBuilder {
                     ((SymbolVar) symbol).getInitVal());
             // @是全局变量的标记
             globalVariable = new IrGlobalVariable(name, type, isConst, constantInt);
+            /* 设置父类对象的dimension */
+            ((IrValue)globalVariable).setDimension(globalVariable.getDimension());
             symbol.setValue(globalVariable);
         } else if (dimension == 1) {
             ArrayList<Integer> initval1 = ((SymbolVar)symbol).getInitVal1();
@@ -186,6 +189,9 @@ public class IrGlobalVariableBuilder {
             }
             IrConstantArray constantArray = new IrConstantArray(type, 1, len, constantInts);
             globalVariable = new IrGlobalVariable(name, type, isConst, constantArray);
+            /* 设置父类对象的dimension */
+            ((IrValue)globalVariable).setDimension(globalVariable.getDimension());
+            ((IrValue)globalVariable).setDimension1(globalVariable.getDimension1());
             symbol.setValue(globalVariable);
         } else if (dimension == 2) {
             ArrayList<ArrayList<Integer>> initval2 = ((SymbolVar) symbol).getInitVal2();
@@ -203,6 +209,10 @@ public class IrGlobalVariableBuilder {
             IrConstantArray constantArray = new IrConstantArray(type,
                     2, dimension1, dimension2, constantInts);
             globalVariable = new IrGlobalVariable(name, type, isConst, constantArray);
+            /* 设置父类对象的dimension */
+            ((IrValue)globalVariable).setDimension(globalVariable.getDimension());
+            ((IrValue)globalVariable).setDimension1(globalVariable.getDimension1());
+            ((IrValue)globalVariable).setDimension2(globalVariable.getDimension2());
             symbol.setValue(globalVariable);
         } else {
             System.out.println("ERROR in IrGlobalVariableBuilder! should not reach here");
