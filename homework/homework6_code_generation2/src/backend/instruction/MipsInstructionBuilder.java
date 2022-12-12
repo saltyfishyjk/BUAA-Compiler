@@ -993,7 +993,7 @@ public class MipsInstructionBuilder {
                     int dimension1PointerReg = this.table.getRegIndex(
                             dimension1PointerValueName, this.father, true);
                     ArrayList<MipsInstruction> temp = this.registerFile.writeBackPublic(
-                            leftReg, rightSymbol, dimension1PointerReg, -1, 1, this.father
+                            rightReg, rightSymbol, dimension1PointerReg, -1, 1, this.father
                     );
                     if (temp != null && temp.size() > 0) {
                         ret.addAll(temp);
@@ -1043,7 +1043,7 @@ public class MipsInstructionBuilder {
                     reg2 = this.table.getRegIndex(dimension2PointerValueName, this.father, true);
                 }
                 ArrayList<MipsInstruction> instructions = this.registerFile.writeBackPublic(
-                        leftReg, rightSymbol, reg1, reg2, 2, this.father);
+                        rightReg, rightSymbol, reg1, reg2, 2, this.father);
                 if (instructions != null && instructions.size() > 0) {
                     ret.addAll(instructions);
                 } else {
