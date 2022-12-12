@@ -60,7 +60,6 @@ import middle.symbol.SymbolTable;
 import middle.symbol.SymbolType;
 import middle.symbol.SymbolVar;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 
 /**
@@ -271,8 +270,6 @@ public class IrInstructionBuilder {
             value.setDimension1(symbolCon.getInitval1().size());
             value.setInits1(symbolCon.getInitval1()); // 将1维数组的初始值传入
             symbolCon.setValue(value);
-            /* 使用IrStore将数组初值保存到内存中 */
-            ArrayList<Integer> inits = symbolCon.getInitval1();
             /* 生成IrAlloca指令 */
             IrAlloca irAlloca = new IrAlloca(type, value);
             irAlloca.setDimension(1);
@@ -280,6 +277,8 @@ public class IrInstructionBuilder {
             irAlloca.setName(name);
             this.instructions.add(irAlloca);
             int i = 0;
+            /* 使用IrStore将数组初值保存到内存中 */
+            ArrayList<Integer> inits = symbolCon.getInitval1();
             for (Integer index : inits) {
                 IrValue val = new IrValue(IrIntegerType.get32(), String.valueOf(index));
                 IrStore store = new IrStore(val, value, 0, 1, -1, i, -1, -1);
@@ -298,7 +297,6 @@ public class IrInstructionBuilder {
             value.setDimension2(symbolCon.getInitval2().get(0).size()); // 标记第2维长度
             value.setInits2(symbolCon.getInitval2()); // 将2维数组的初始值传入
             symbolCon.setValue(value);
-            AbstractList<ArrayList<Integer>> inits = symbolCon.getInitval2();
             /* 生成IrAlloca指令 */
             IrAlloca irAlloca = new IrAlloca(type, value);
             irAlloca.setDimension(2); // 设置维度
@@ -307,6 +305,7 @@ public class IrInstructionBuilder {
             irAlloca.setName(name);
             this.instructions.add(irAlloca);
             int i = 0;
+            ArrayList<ArrayList<Integer>> inits = symbolCon.getInitval2();
             for (ArrayList<Integer> index1 : inits) {
                 if (index1 == null || index1.size() == 0) {
                     i += 1;

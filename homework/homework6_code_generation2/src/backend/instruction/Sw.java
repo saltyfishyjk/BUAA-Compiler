@@ -32,4 +32,14 @@ public class Sw extends MipsInstruction {
         ret.add(sb.toString());
         return ret;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getInstName() + " ");
+        sb.append(RegisterName.getName(rt) + ", ");
+        sb.append(offset);
+        sb.append("(" + RegisterName.getName(base) + ")\n");
+        return sb.toString();
+    }
 }

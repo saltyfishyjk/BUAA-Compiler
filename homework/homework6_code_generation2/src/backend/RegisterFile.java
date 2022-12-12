@@ -238,8 +238,9 @@ public class RegisterFile {
     }
     
     /* 对于编译时能确定的相对偏移的writeBack */
-    public MipsInstruction writeBackPublic(MipsSymbol symbol, int deltaOffset) {
-        int rt = symbol.getRegIndex();
+    public MipsInstruction writeBackPublic(int leftReg, MipsSymbol symbol, int deltaOffset) {
+        // int rt = symbol.getRegIndex();
+        int rt = leftReg;
         int base = symbol.getBase();
         int offset = symbol.getOffset() + deltaOffset;
         Sw sw = new Sw(rt, base, offset);
@@ -541,6 +542,10 @@ public class RegisterFile {
                 if (this.hasValues.get(i)) {
                     /* s寄存器内有值 */
                     MipsSymbol symbol = this.regs.get(i);
+                    if (!symbol.isInReg()) {
+                        /* 不在寄存器中则不写回 */
+                        continue;
+                    }
                     if (!symbol.hasRam()) {
                         allocRam(symbol);
                     }

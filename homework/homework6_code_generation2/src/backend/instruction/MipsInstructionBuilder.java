@@ -965,13 +965,16 @@ public class MipsInstructionBuilder {
             // 这里不用处理数组等情况，因为生成中间代码时会提前生成Load将数组中的值加载到变量中
             leftReg = this.table.getRegIndex(leftName, this.father, true);
         }
-        rightReg = this.table.getRegIndex(rightName, this.father, false);
         MipsSymbol rightSymbol = this.table.getSymbol(rightName);
-        Move move = new Move(rightReg, leftReg);
-        this.registerFile.getSymbol(leftReg).setUsed(true);
-        ret.add(move);
         /* Right的维数 */
         int dimensionPointer = store.getDimensionPointer();
+        if (dimensionPointer == 0) {
+            rightReg = this.table.getRegIndex(rightName, this.father, false);
+            /* 如果右侧是无维度变量，则直接赋值即可 */
+            Move move = new Move(rightReg, leftReg);
+            this.registerFile.getSymbol(leftReg).setUsed(true);
+            ret.add(move);
+        }
         boolean handleIrValue = store.getHandleIrValue();
         if (dimensionPointer == 1) {
             /* 需要将值保存到1维变量的内存中 */
@@ -982,7 +985,7 @@ public class MipsInstructionBuilder {
                 if (isConst(dimension1PointerValueName)) {
                     /* 说明维度变量是常数 */
                     /* TODO : 感觉有问题 */
-                    MipsInstruction temp = this.registerFile.writeBackPublic(rightSymbol,
+                    MipsInstruction temp = this.registerFile.writeBackPublic(leftReg, rightSymbol,
                             Integer.valueOf(dimension1PointerValueName) * 4);
                     rightSymbol.setInReg(false);
                     rightSymbol.setUsed(true);
@@ -992,9 +995,10 @@ public class MipsInstructionBuilder {
                     /* 获取维度变量值所在寄存器 */
                     int dimension1PointerReg = this.table.getRegIndex(
                             dimension1PointerValueName, this.father, true);
+                    //ArrayList<MipsInstruction> temp = this.registerFile.writeBackPublic(
+                    //        rightReg, rightSymbol, dimension1PointerReg, -1, 1, this.father);
                     ArrayList<MipsInstruction> temp = this.registerFile.writeBackPublic(
-                            rightReg, rightSymbol, dimension1PointerReg, -1, 1, this.father
-                    );
+                            leftReg, rightSymbol, dimension1PointerReg, -1, 1, this.father);
                     if (temp != null && temp.size() > 0) {
                         ret.addAll(temp);
                     } else {
@@ -1004,7 +1008,7 @@ public class MipsInstructionBuilder {
                 }
             } else {
                 /* 说明维度数值是常数，在编译时已知 */
-                MipsInstruction temp = this.registerFile.writeBackPublic(rightSymbol,
+                MipsInstruction temp = this.registerFile.writeBackPublic(leftReg, rightSymbol,
                         store.getDimension1Pointer() * 4);
                 rightSymbol.setInReg(false);
                 rightSymbol.setUsed(true);
@@ -1042,8 +1046,10 @@ public class MipsInstructionBuilder {
                 } else {
                     reg2 = this.table.getRegIndex(dimension2PointerValueName, this.father, true);
                 }
+                // ArrayList<MipsInstruction> instructions = this.registerFile.writeBackPublic(
+                //        rightReg, rightSymbol, reg1, reg2, 2, this.father);
                 ArrayList<MipsInstruction> instructions = this.registerFile.writeBackPublic(
-                        rightReg, rightSymbol, reg1, reg2, 2, this.father);
+                        leftReg, rightSymbol, reg1, reg2, 2, this.father);
                 if (instructions != null && instructions.size() > 0) {
                     ret.addAll(instructions);
                 } else {
@@ -1065,7 +1071,7 @@ public class MipsInstructionBuilder {
                 int j = store.getDimension2Pointer();
                 int offset = i * n + j;
                 offset *= 4;
-                MipsInstruction temp = this.registerFile.writeBackPublic(rightSymbol,
+                MipsInstruction temp = this.registerFile.writeBackPublic(leftReg, rightSymbol,
                         offset);
                 rightSymbol.setUsed(true);
                 rightSymbol.setInReg(false);

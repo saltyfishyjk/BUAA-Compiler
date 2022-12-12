@@ -30,4 +30,15 @@ public class Lw extends MipsInstruction {
         ret.add(lw.toString());
         return ret;
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder lw = new StringBuilder();
+        /* 指令签名 */
+        lw.append(this.getInstName() + " ");
+        /* 操作体 */
+        lw.append(RegisterName.getName(rt) + ", ");
+        lw.append(this.offset + "(" + RegisterName.getName(base) + ")\n");
+        return lw.toString();
+    }
 }
