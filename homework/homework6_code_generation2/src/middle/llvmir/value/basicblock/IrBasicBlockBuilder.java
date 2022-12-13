@@ -277,6 +277,8 @@ public class IrBasicBlockBuilder {
             ifBlock.addIrInstruction(irGoto);
             this.basicBlocks.add(ifBlock);
         } else {
+            IrGoto irGoto = new IrGoto(endLabel);
+            ifBlock.addIrInstruction(irGoto);
             this.basicBlocks.add(ifBlock);
         }
         /* 处理else语句块 */
@@ -320,6 +322,9 @@ public class IrBasicBlockBuilder {
                 elseBlock.addIrInstruction(irGoto);
                 this.basicBlocks.add(elseBlock);
             } else {
+                /* 将goto endLabel添加到ifBlock末尾 */
+                IrGoto irGoto = new IrGoto(endLabel);
+                elseBlock.addIrInstruction(irGoto);
                 this.basicBlocks.add(elseBlock);
             }
         }
