@@ -53,7 +53,15 @@ public class RegisterFile {
     public HashMap<Integer, MipsSymbol> cloneRegs() {
         HashMap<Integer, MipsSymbol> newRegs = new HashMap<>();
         for (Integer index : this.regs.keySet()) {
-            newRegs.put(index, this.regs.get(index).cloneMipsSymbol());
+            String name = this.regs.get(index).getName();
+            // newRegs.put(index, this.regs.get(index).cloneMipsSymbol());
+            MipsSymbol symbol = this.table.getSymbol(name);
+            if (symbol == null) {
+                newRegs.put(index, this.regs.get(index).cloneMipsSymbol());
+            } else {
+                newRegs.put(index, this.table.getSymbol(name));
+            }
+            
         }
         return newRegs;
     }

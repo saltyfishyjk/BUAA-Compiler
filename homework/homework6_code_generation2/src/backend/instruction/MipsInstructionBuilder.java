@@ -301,6 +301,14 @@ public class MipsInstructionBuilder {
     /* 调用自定义函数 */
     private ArrayList<MipsInstruction> genMipsInstructionFromSelfDefineFunc() {
         ArrayList<MipsInstruction> ret = new ArrayList<>();
+        ArrayList<MipsInstruction> temp = this.registerFile.writeBackAll();
+        if (temp != null && temp.size() > 0) {
+            ret.addAll(temp);
+        }
+        if (ret.size() > 0) {
+            this.father.addInstruction(ret);
+            ret = new ArrayList<>();
+        }
         /* 1. 保存现场到$sp */
         int spOffset = 0;
         for (int i = 2; i < 32; i++) {
@@ -313,10 +321,14 @@ public class MipsInstructionBuilder {
                 spOffset -= 4;
             }
         }
+        
+        
         /* 实参存入寄存器与内存（如果有）$fp */
         /* 将子函数fp装入v1 */
         Addi addi = new Addi(3, 30, (this.table.getFpOffset() + 32 * 4));
         ret.add(addi);
+        this.father.addInstruction(ret);
+        ret = new ArrayList<>();
         /* 应当建立新表 */
         /* 深拷贝 */
         RegisterFile newRegisterFile = new RegisterFile();
@@ -347,10 +359,14 @@ public class MipsInstructionBuilder {
                         Move move = new Move(4 + i, reg);
                         newTable.getSymbol(name).setUsed(true);
                         ret.add(move);
+                        this.father.addInstruction(ret);
+                        ret = new ArrayList<>();
                     } else {
                         /* 存入内存 */
                         Sw sw = new Sw(reg, 3, newFpOffset);
                         ret.add(sw);
+                        this.father.addInstruction(ret);
+                        ret = new ArrayList<>();
                     }
                 } else if (symbolDimension == 1) {
                     /* 说明符号本身是1维的，分情况讨论 */
@@ -367,9 +383,13 @@ public class MipsInstructionBuilder {
                                 /* 说明是常数 */
                                 Li li = new Li(2, Integer.valueOf(dimension1Name));
                                 ret.add(li);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                                 /* <<2 */
                                 Sll sll = new Sll(2, 2, 2);
                                 ret.add(sll);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 /* 获取该维数变量所在的寄存器 */
                                 int dimension1Reg = newTable.getRegIndex(dimension1Name,
@@ -377,25 +397,35 @@ public class MipsInstructionBuilder {
                                 /* <<2 */
                                 Sll sll = new Sll(2, dimension1Reg, 2);
                                 ret.add(sll);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                             /* 获取该形参数组的首地址(绝对地址) */
                             int reg = newTable.getRegIndex(name, this.father, true);
                             /* 获取内存单元的绝对地址 */
                             Add add = new Add(2, 2, reg);
                             ret.add(add);
+                            this.father.addInstruction(ret);
+                            ret = new ArrayList<>();
                             if (i < 4) {
                                 /* 存入$a */
                                 /* 将该内存单元中的值加载到$a寄存器 */
                                 Lw lw = new Lw(4 + i, 2, 0);
                                 ret.add(lw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 /* 存入内存 */
                                 /* 首先将目标内存单元加载到2号寄存器 */
                                 Lw lw = new Lw(2, 2, 0);
                                 ret.add(lw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                                 /* 再将该内存单元转存到目标内存中 */
                                 Sw sw = new Sw(2, 3, newFpOffset);
                                 ret.add(sw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                         } else if (dimensionValue == 1) {
                             /* 说明传递形参，由于其已经是绝对地址了，因此直接加载 */
@@ -405,10 +435,14 @@ public class MipsInstructionBuilder {
                                 /* 将该首地址加载到$a寄存器 */
                                 Move move = new Move(4 + i, reg);
                                 ret.add(move);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 /* 存入内存 */
                                 Sw sw = new Sw(reg, 3, newFpOffset);
                                 ret.add(sw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                         } else {
                             System.out.println("ERROR IN MipsInstructionBuilder : " +
@@ -432,9 +466,13 @@ public class MipsInstructionBuilder {
                                 /* 说明是常数 */
                                 Li li = new Li(2, Integer.valueOf(dimension1Name));
                                 ret.add(li);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                                 /* <<2 */
                                 Sll sll = new Sll(2, 2, 2);
                                 ret.add(sll);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 /* 获取该维数变量所在的寄存器 */
                                 int dimension1Reg = newTable.getRegIndex(dimension1Name, 
@@ -442,25 +480,37 @@ public class MipsInstructionBuilder {
                                 /* <<2 */
                                 Sll sll = new Sll(2, dimension1Reg, 2);
                                 ret.add(sll);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                             /* 计算总偏移并装入2号寄存器 */
                             addi = new Addi(2, 2, fpOffset);
                             ret.add(addi);
+                            this.father.addInstruction(ret);
+                            ret = new ArrayList<>();
                             /* 计算绝对地址 */
                             Add add = new Add(2, 2, base);
                             ret.add(add);
+                            this.father.addInstruction(ret);
+                            ret = new ArrayList<>();
                             if (i < 4) {
                                 /* 装入$a */
                                 Lw lw = new Lw(4 + i, 2, 0);
                                 ret.add(lw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 /* 装入内存 */
                                 /* 首先将目标内存单元加载到2号寄存器中 */
                                 Lw lw = new Lw(2, 2, 0);
                                 ret.add(lw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                                 /* 存入内存 */
                                 Sw sw = new Sw(2, 3, newFpOffset);
                                 ret.add(sw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                         } else if (dimensionValue == 1) {
                             /* 说明进行地址传递，需要计算出数组首元素的绝对地址 */
@@ -468,11 +518,17 @@ public class MipsInstructionBuilder {
                                 /* 将reg(base) + fpOffset装入$a */
                                 addi = new Addi(4 + i, base, fpOffset);
                                 ret.add(addi);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 addi = new Addi(2, base, fpOffset);
                                 ret.add(addi);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                                 Sw sw = new Sw(2, 3, newFpOffset);
                                 ret.add(sw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                         } else {
                             System.out.println("ERROR IN MipsInstructionBuilder :" +
@@ -494,6 +550,8 @@ public class MipsInstructionBuilder {
                                 /* 说明是常数 */
                                 Li li = new Li(2, Integer.valueOf(dimension1Name));
                                 ret.add(li);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 /* 获取该维数变量所在的寄存器 */
                                 int dimension1Reg = newTable.getRegIndex(dimension1Name,
@@ -501,12 +559,16 @@ public class MipsInstructionBuilder {
                                 /* 将该变量移入2号寄存器 */
                                 Move move = new Move(2, dimension1Reg);
                                 ret.add(move);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                             /* 获取n */
                             int n = param.getDimension2();
                             /* 计算i * n并装入2号寄存器 */
                             MulImm mulImm = new MulImm(2, 2, n);
                             ret.add(mulImm);
+                            this.father.addInstruction(ret);
+                            ret = new ArrayList<>();
                             /* 计算i * n + j并装入2号寄存器 */
                             IrValue dimension2 = param.getDimension2Value();
                             String dimension2Name = dimension2.getName();
@@ -514,6 +576,8 @@ public class MipsInstructionBuilder {
                                 /* 说明是常数 */
                                 addi = new Addi(2, 2, Integer.valueOf(dimension2Name));
                                 ret.add(addi);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 /* 获取该维数变量所在的寄存器 */
                                 int dimension2Reg = newTable.getRegIndex(dimension2Name, 
@@ -521,25 +585,37 @@ public class MipsInstructionBuilder {
                                 /* 累加入2号寄存器 */
                                 Add add = new Add(2, 2, dimension2Reg);
                                 ret.add(add);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                             /* <<2 */
                             Sll sll = new Sll(2, 2, 2);
                             ret.add(sll);
+                            this.father.addInstruction(ret);
+                            ret = new ArrayList<>();
                             /* 获取数组首地址绝对地址 */
                             int reg = newTable.getRegIndex(name, this.father, true);
                             /* 将数组首地址绝对地址和偏移相加得到目标内存单元绝对地址 */
                             Add add = new Add(2, 2, reg);
                             ret.add(add);
+                            this.father.addInstruction(ret);
+                            ret = new ArrayList<>();
                             if (i < 4) {
                                 /* 将该内存单元的值加载到$a中 */
                                 Lw lw = new Lw(4 + i, 2, 0);
                                 ret.add(lw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 /* 存入内存 */
                                 Lw lw = new Lw(2, 2, 0);
                                 ret.add(lw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                                 Sw sw = new Sw(2, 3, newFpOffset);
                                 ret.add(sw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                         } else if (dimensionValue == 1) {
                             /* 说明传递其中一个1维数组的地址，需要计算出其绝对地址 */
@@ -551,20 +627,28 @@ public class MipsInstructionBuilder {
                             if (isConst(dimension1Name)) {
                                 Li li = new Li(2, Integer.valueOf(dimension1Name));
                                 ret.add(li);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 int reg1 = newTable.getRegIndex(dimension1.getName(),
                                         this.father, true);
                                 Move move = new Move(2, reg1);
                                 ret.add(move);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                             /* 获取n */
                             int n = param.getDimension2();
                             /* 计算i * n并装入2号寄存器 */
                             MulImm mulImm = new MulImm(2, 2, n);
                             ret.add(mulImm);
+                            this.father.addInstruction(ret);
+                            ret = new ArrayList<>();
                             /* <<2 */
                             Sll sll = new Sll(2, 2, 2);
                             ret.add(sll);
+                            this.father.addInstruction(ret);
+                            ret = new ArrayList<>();
                             /* 计算绝对地址 */
                             int reg = newTable.getRegIndex(param.getName(),
                                     this.father, true);
@@ -572,12 +656,18 @@ public class MipsInstructionBuilder {
                                 /* 存入$a */
                                 Add add = new Add(4 + i, 2, reg);
                                 ret.add(add);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 /* 存入内存 */
                                 Add add = new Add(2, 2, reg);
                                 ret.add(add);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                                 Sw sw = new Sw(2, 3, newFpOffset);
                                 ret.add(sw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                         } else if (dimensionValue == 2) {
                             /* 说明直接传递本身即可 */
@@ -586,10 +676,14 @@ public class MipsInstructionBuilder {
                                 /* 存入$a */
                                 Move move = new Move(4 + i, reg);
                                 ret.add(move);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 /* 存入内存 */
                                 Sw sw = new Sw(reg, 3, newFpOffset);
                                 ret.add(sw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                         } else {
                             System.out.println("ERROR IN MipsInstructionBuilder : " +
@@ -614,6 +708,8 @@ public class MipsInstructionBuilder {
                                 /* 说明是常数 */
                                 Li li = new Li(2, Integer.valueOf(dimension1Name));
                                 ret.add(li);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 /* 获取该维数变量所在的寄存器 */
                                 int dimension1Reg = newTable.getRegIndex(dimension1Name, 
@@ -621,12 +717,16 @@ public class MipsInstructionBuilder {
                                 /* 将该变量移入2号寄存器 */
                                 Move move = new Move(2, dimension1Reg);
                                 ret.add(move);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                             /* 获取n */
                             int n = param.getDimension2();
                             /* 计算i * n并装入2号寄存器 */
                             MulImm mulImm = new MulImm(2, 2, n);
                             ret.add(mulImm);
+                            this.father.addInstruction(ret);
+                            ret = new ArrayList<>();
                             /* 计算i * n + j并装入2号寄存器 */
                             IrValue dimension2 = param.getDimension2Value();
                             String dimension2Name = dimension2.getName();
@@ -634,6 +734,8 @@ public class MipsInstructionBuilder {
                                 /* 说明是常数 */
                                 addi = new Addi(2, 2, Integer.valueOf(dimension2Name));
                                 ret.add(addi);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 /* 获取该维数变量所在的寄存器 */
                                 int dimension2Reg = newTable.getRegIndex(dimension2Name, 
@@ -641,26 +743,40 @@ public class MipsInstructionBuilder {
                                 /* 累加入2号寄存器 */
                                 Add add = new Add(2, 2, dimension2Reg);
                                 ret.add(add);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                             /* <<2 */
                             Sll sll = new Sll(2, 2, 2);
                             ret.add(sll);
+                            this.father.addInstruction(ret);
+                            ret = new ArrayList<>();
                             /* 获取目标内存单元相对于base的偏移 */
                             addi = new Addi(2, 2, fpOffset);
                             ret.add(addi);
+                            this.father.addInstruction(ret);
+                            ret = new ArrayList<>();
                             /* 获取目标内存单元绝对地址 */
                             Add add = new Add(2, 2, base);
                             ret.add(add);
+                            this.father.addInstruction(ret);
+                            ret = new ArrayList<>();
                             if (i < 4) {
                                 /* 将该内存单元的值加载到$a中 */
                                 Lw lw = new Lw(4 + i, 2, 0);
                                 ret.add(lw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 /* 存入内存 */
                                 Lw lw = new Lw(2, 2, 0);
                                 ret.add(lw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                                 Sw sw = new Sw(2, 3, newFpOffset);
                                 ret.add(sw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                         } else if (dimensionValue == 1) {
                             /* 说明传递其中一个1维数组的地址，需要计算出绝对地址 */
@@ -671,31 +787,47 @@ public class MipsInstructionBuilder {
                             if (isConst(dimension1Name)) {
                                 Li li = new Li(2, Integer.valueOf(dimension1Name));
                                 ret.add(li);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 int reg = newTable.getRegIndex(dimension1Name, this.father, true);
                                 Move move = new Move(2, reg);
                                 ret.add(move);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                             int n = param.getDimension2();
                             /* 计算i * n */
                             MulImm mulImm = new MulImm(2, 2, n);
                             ret.add(mulImm);
+                            this.father.addInstruction(ret);
+                            ret = new ArrayList<>();
                             /* <<2 */
                             Sll sll = new Sll(2, 2, 2);
                             ret.add(sll);
+                            this.father.addInstruction(ret);
+                            ret = new ArrayList<>();
                             /* 计算fpOffset + i * n */
                             addi = new Addi(2, 2, fpOffset);
                             ret.add(addi);
+                            this.father.addInstruction(ret);
+                            ret = new ArrayList<>();
                             if (i < 4) {
                                 /* 计算绝对地址并装入$a */
                                 Add add = new Add(4 + i, 2, base);
                                 ret.add(add);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 /* 存入内存 */
                                 Add add = new Add(2, 2, base);
                                 ret.add(add);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                                 Sw sw = new Sw(2, 3, newFpOffset);
                                 ret.add(sw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                         } else if (dimensionValue == 2) {
                             /* 需要计算出数组绝对地址 */
@@ -704,12 +836,18 @@ public class MipsInstructionBuilder {
                                 /* 存入$a */
                                 addi = new Addi(4 + i, base, fpOffset);
                                 ret.add(addi);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             } else {
                                 /* 存入内存 */
                                 addi = new Addi(2, base, fpOffset);
                                 ret.add(addi);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                                 Sw sw = new Sw(2, 3, newFpOffset);
                                 ret.add(sw);
+                                this.father.addInstruction(ret);
+                                ret = new ArrayList<>();
                             }
                         } else {
                             System.out.println("ERROR IN MipsInstructionBuilder : " +
@@ -722,6 +860,8 @@ public class MipsInstructionBuilder {
                 /* 进入此说明参数是一个常数*/
                 Li li = new Li(4 + i, Integer.valueOf(name));
                 ret.add(li);
+                this.father.addInstruction(ret);
+                ret = new ArrayList<>();
             }
             if (i >= 4) {
                 newFpOffset += 4;
@@ -736,6 +876,8 @@ public class MipsInstructionBuilder {
                 Sw sw = new Sw(reg, 3, newFpOffset);
                 this.table.getSymbol(name).setUsed(true);
                 ret.add(sw);
+                this.father.addInstruction(ret);
+                ret = new ArrayList<>();
             } else {
                 /* 进入此说明参数是一个常数 */
                 /* 由于已经保存完了寄存器现场，因此可以直接拿一个寄存器来用 */
@@ -743,6 +885,8 @@ public class MipsInstructionBuilder {
                 Sw sw = new Sw(8, 3, newFpOffset);
                 ret.add(li);
                 ret.add(sw);
+                this.father.addInstruction(ret);
+                ret = new ArrayList<>();
             }
             newFpOffset += 4;
         }
@@ -760,6 +904,9 @@ public class MipsInstructionBuilder {
         Jal jal = new Jal(call.getFunctionName().substring(1));
         ret.add(jal);
 
+        this.father.addInstruction(ret);
+        ret = new ArrayList<>();
+        
         /* 5. 恢复$fp现场，本质上是通过MipsSymbolTable的fpOffset自减 */
         // addi = new Addi(30, 30, -fpOffset);
         addi = new Addi(30, 30, -(this.table.getFpOffset() + 32 * 4));
@@ -767,6 +914,8 @@ public class MipsInstructionBuilder {
         /* 6. 恢复$sp现场，本质上是通过讲$sp自增至原值，将$ra和其他保存寄存器的值恢复 */
         addi = new Addi(29, 29, -spOffset);
         ret.add(addi);
+        this.father.addInstruction(ret);
+        ret = new ArrayList<>();
         for (int i = 31; i >= 2; i--) {
             if (26 <= i && i <= 30) {
                 continue;
@@ -777,6 +926,8 @@ public class MipsInstructionBuilder {
                 ret.add(lw);
             }
         }
+        this.father.addInstruction(ret);
+        ret = new ArrayList<>();
         /* 7. 可能会有一个左值赋值 */
         if (call.getName().length() > 0) {
             /* 有赋值需求 */
@@ -786,7 +937,10 @@ public class MipsInstructionBuilder {
             int regLeft = this.table.getRegIndex(call.getName(), this.father, false);
             move = new Move(regLeft, 2);
             ret.add(move);
+            this.father.addInstruction(ret);
+            ret = new ArrayList<>();
         }
+        ret = new ArrayList<>();
         return ret;
     }
 

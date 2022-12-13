@@ -79,7 +79,7 @@ public class MipsSymbolTable {
         if (hasSymbol(name)) {
             return this.symbols.get(name);
         } else {
-            System.out.println("ERROR in MipsSymbolTable : should not reach here");
+            // System.out.println("ERROR in MipsSymbolTable : should not reach here");
         }
         return null;
     }
