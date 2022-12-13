@@ -56,6 +56,7 @@ import middle.llvmir.value.instructions.terminator.IrGoto;
 import middle.llvmir.value.instructions.terminator.IrRet;
 import middle.symbol.Symbol;
 import middle.symbol.SymbolCon;
+import middle.symbol.SymbolFunc;
 import middle.symbol.SymbolTable;
 import middle.symbol.SymbolType;
 import middle.symbol.SymbolVar;
@@ -880,15 +881,45 @@ public class IrInstructionBuilder {
             // 说明无参数
             call = new IrCall(irFunction, args);
         } else {
-            Exp first = funcRParams.getFirst();
-            IrValue arg = genIrInstructionFromExp(first, true);
-            //arg.setParam(this.symbolTable.getSymbol());
-            args.add(arg);
+            SymbolFunc symbolFunc = (SymbolFunc)symbol; 
+            ArrayList<Symbol> symbols = symbolFunc.getSymbols();
+            ArrayList<Exp> exps = funcRParams.getAllExps();
+            IrValue arg = null;
+            int i = 0;
+            for (Exp exp : exps) {
+                Symbol symbolNowExp = symbols.get(i);
+                int dimension = symbolNowExp.getDimension();
+                if (dimension != 0) {
+                    /* 对待参数中的数组部分 */
+                    arg = genIrInstructionFromExp(exp, true);
+                    args.add(arg);
+                } else {
+                    /* 对待参数中的数组部分 */
+                    arg = genIrInstructionFromExp(exp, false);
+                    IrValue left = new IrValue(IrIntegerType.get32());
+                    int cnt = this.functionCnt.getCnt();
+                    String name = "%_LocalVariable" + cnt;
+                    IrAlloca irAlloca = new IrAlloca(IrIntegerType.get32(), left);
+                    irAlloca.setName(name);
+                    this.instructions.add(irAlloca);
+                    IrStore store = new IrStore(arg, left);
+                    left.setName(name);
+                    store.setName(name);
+                    instructions.add(store);
+                    args.add(store);
+                }
+                
+                i += 1;
+            }
+            // Exp first = funcRParams.getFirst();
+            // IrValue arg = genIrInstructionFromExp(first, true);
+            // IrValue arg = genIrInstructionFromExp(first, false);
+            /*
             ArrayList<Exp> exps = funcRParams.getExps();
             for (Exp exp : exps) {
                 arg = genIrInstructionFromExp(exp, true);
                 args.add(arg);
-            }
+            }*/
             call = new IrCall(irFunction, args);
         }
         if (!call.getVoid()) {

@@ -34,12 +34,7 @@ public class MipsInstructionBuilder {
         this.table = this.father.getTable();
         this.registerFile = this.table.getRegisterFile();
     }
-
-    /* TODO : 需要处理数组传参（地址传递） */
-    /* TODO : 具体表现为传递数组的绝对地址，在函数内部访问的时候以绝对地址 */
-    /* TODO : 加上访问内存单元相对于该地址的偏移 */
-    /* TODO : 目前实现的是访问函数内声明的数组 */
-    /* TODO : 需要处理常量数组的访问 */
+    
     public ArrayList<MipsInstruction> genMipsInstruction() {
         if (irInstruction instanceof IrAlloca) {
             return genMipsInstructionFromAlloca();
