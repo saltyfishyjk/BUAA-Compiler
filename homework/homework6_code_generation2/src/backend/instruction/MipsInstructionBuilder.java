@@ -315,7 +315,7 @@ public class MipsInstructionBuilder {
         }
         /* 实参存入寄存器与内存（如果有）$fp */
         /* 将子函数fp装入v1 */
-        Addi addi = new Addi(3, 30, this.table.getFpOffset());
+        Addi addi = new Addi(3, 30, (this.table.getFpOffset() + 32 * 4));
         ret.add(addi);
         /* 应当建立新表 */
         /* 深拷贝 */
@@ -762,7 +762,7 @@ public class MipsInstructionBuilder {
 
         /* 5. 恢复$fp现场，本质上是通过MipsSymbolTable的fpOffset自减 */
         // addi = new Addi(30, 30, -fpOffset);
-        addi = new Addi(30, 30, -this.table.getFpOffset());
+        addi = new Addi(30, 30, -(this.table.getFpOffset() + 32 * 4));
         ret.add(addi);
         /* 6. 恢复$sp现场，本质上是通过讲$sp自增至原值，将$ra和其他保存寄存器的值恢复 */
         addi = new Addi(29, 29, -spOffset);
