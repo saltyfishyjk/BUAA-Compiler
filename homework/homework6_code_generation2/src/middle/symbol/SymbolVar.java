@@ -8,6 +8,16 @@ public class SymbolVar extends Symbol {
     private int initVal; // 普通变量初值
     private ArrayList<Integer> initVal1;
     private ArrayList<ArrayList<Integer>> initVal2;
+    
+    private boolean all0 = false; // 标记是否初始值全部为0
+
+    public void setAll0(boolean all0) {
+        this.all0 = all0;
+    }
+    
+    public boolean getAll0() {
+        return this.all0;
+    }
 
     public SymbolVar(int lineNum, String name, SymbolType symbolType) {
         super(lineNum, name, symbolType);

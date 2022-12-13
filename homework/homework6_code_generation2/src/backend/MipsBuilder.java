@@ -61,12 +61,14 @@ public class MipsBuilder {
                 globalVariable.put(symbol.getName(), symbol);
                 /* 将初值装载到内存中 */
                 for (int i = 0; i < dimension1; i++) {
-                    int num = inits.get(i);
-                    if (num != 0) {
-                        Li li = new Li(24, num);
-                        mipsModule.addGlobal(li);
-                        Sw sw = new Sw(24, 28, gpOffset);
-                        mipsModule.addGlobal(sw);
+                    if (i < inits.size()) {
+                        int num = inits.get(i);
+                        if (num != 0) {
+                            Li li = new Li(24, num);
+                            mipsModule.addGlobal(li);
+                            Sw sw = new Sw(24, 28, gpOffset);
+                            mipsModule.addGlobal(sw);
+                        }
                     }
                     gpOffset += 4;
                 }
@@ -85,12 +87,14 @@ public class MipsBuilder {
                 globalVariable.put(symbol.getName(), symbol);
                 for (int i = 0; i < dimension1; i++) {
                     for (int j = 0; j < dimension2; j++) {
-                        int num = inits.get(i).get(j);
-                        if (num != 0) {
-                            Li li = new Li(24, num);
-                            mipsModule.addGlobal(li);
-                            Sw sw = new Sw(24, 28, gpOffset);
-                            mipsModule.addGlobal(sw);
+                        if (i < inits.size()) {
+                            int num = inits.get(i).get(j);
+                            if (num != 0) {
+                                Li li = new Li(24, num);
+                                mipsModule.addGlobal(li);
+                                Sw sw = new Sw(24, 28, gpOffset);
+                                mipsModule.addGlobal(sw);
+                            }
                         }
                         gpOffset += 4;
                     }

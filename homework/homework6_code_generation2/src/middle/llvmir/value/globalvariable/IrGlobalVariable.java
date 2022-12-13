@@ -120,6 +120,9 @@ public class IrGlobalVariable extends IrUser implements IrNode {
         int dimension1 = constantArray.getDimension1();
         ArrayList<Integer> ret = new ArrayList<>();
         for (int i = 0; i < dimension1; i++) {
+            if (i >= constantArray.getConstants1().size()) {
+                break;
+            }
             ret.add(Integer.valueOf(constantArray.getConstants1().get(i).irOutput().get(0)));
         }
         return ret;
@@ -131,6 +134,9 @@ public class IrGlobalVariable extends IrUser implements IrNode {
         int dimension2 = constantArray.getDimension2();
         ArrayList<ArrayList<Integer>> ret = new ArrayList<>();
         for (int i = 0; i < dimension1; i++) {
+            if (i >= constantArray.getConstants2().size()) {
+                break;
+            }
             ArrayList<Integer> temp = new ArrayList<>();
             for (int j = 0; j < dimension2; j++) {
                 temp.add(Integer.valueOf(constantArray.

@@ -183,10 +183,16 @@ public class IrGlobalVariableBuilder {
             ArrayList<Integer> initval1 = ((SymbolVar)symbol).getInitVal1();
             ArrayList<IrConstantInt> constantInts = new ArrayList<>();
             int len = initval1.size();
-            for (int i = 0; i < len; i++) {
-                IrConstantInt irConstantInt = new IrConstantInt(type, initval1.get(i));
-                constantInts.add(irConstantInt);
+            boolean all0 = ((SymbolVar) symbol).getAll0();
+            if (all0) {
+                /* 什么都不做 */
+            } else {
+                for (int i = 0; i < len; i++) {
+                    IrConstantInt irConstantInt = new IrConstantInt(type, initval1.get(i));
+                    constantInts.add(irConstantInt);
+                }
             }
+            
             IrConstantArray constantArray = new IrConstantArray(type, 1, len, constantInts);
             globalVariable = new IrGlobalVariable(name, type, isConst, constantArray);
             /* 设置父类对象的dimension */
@@ -198,13 +204,19 @@ public class IrGlobalVariableBuilder {
             ArrayList<ArrayList<IrConstantInt>> constantInts = new ArrayList<>();
             int dimension1 = initval2.size();
             int dimension2 = initval2.get(0).size();
-            for (int i = 0; i < dimension1; i++) {
-                ArrayList<IrConstantInt> temp = new ArrayList<>();
-                for (int j = 0; j < dimension2; j++) {
-                    IrConstantInt irConstantInt = new IrConstantInt(type, initval2.get(i).get(j));
-                    temp.add(irConstantInt);
+            boolean all0 = ((SymbolVar) symbol).getAll0();
+            if (all0) {
+                /* 什么都不做 */
+            } else {
+                for (int i = 0; i < dimension1; i++) {
+                    ArrayList<IrConstantInt> temp = new ArrayList<>();
+                    for (int j = 0; j < dimension2; j++) {
+                        IrConstantInt irConstantInt = new IrConstantInt(type, 
+                                initval2.get(i).get(j));
+                        temp.add(irConstantInt);
+                    }
+                    constantInts.add(temp);
                 }
-                constantInts.add(temp);
             }
             IrConstantArray constantArray = new IrConstantArray(type,
                     2, dimension1, dimension2, constantInts);
@@ -313,6 +325,7 @@ public class IrGlobalVariableBuilder {
                     inits.add(0);
                 }
                 var.setInitVal1(inits);
+                var.setAll0(true);
             } else if (dimension == 2) {
                 // 2维数组
                 int dimension1 = defNull.getConstExps().get(0).calcNode(this.symbolTable);
@@ -326,6 +339,7 @@ public class IrGlobalVariableBuilder {
                     inits.add(temp);
                 }
                 var.setInitVal2(inits);
+                var.setAll0(true);
             } else {
                 System.out.println("ERROR in IrGlobalVariableBuilder : should not reach here");
             }

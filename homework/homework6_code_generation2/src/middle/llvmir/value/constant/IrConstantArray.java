@@ -47,6 +47,9 @@ public class IrConstantArray extends IrConstant {
         this.dimension2 = dimension2;
         int cnt = 0;
         for (int i = 0; i < dimension1; i++) {
+            if (i >= arr.size()) {
+                break;
+            }
             for (int j = 0; j < dimension2; j++) {
                 this.setOperand(arr.get(i).get(j), cnt);
                 cnt += 1;
@@ -62,6 +65,9 @@ public class IrConstantArray extends IrConstant {
         if (this.dimension == 1) {
             /* 1维数组 */
             for (int i = 0; i < this.dimension1; i++) {
+                if (i >= this.constants1.size()) {
+                    break;
+                }
                 sb.append(this.constants1.get(i).irOutput().get(0));
                 if (i != this.dimension1 - 1) {
                     sb.append(", ");
@@ -69,6 +75,9 @@ public class IrConstantArray extends IrConstant {
             }
         } else if (this.dimension == 2) {
             for (int i = 0; i < this.dimension1; i++) {
+                if (i >= this.constants2.size()) {
+                    break;
+                }
                 sb.append("[");
                 for (int j = 0; j < this.dimension2; j++) {
                     sb.append(this.constants2.get(i).get(j).irOutput().get(0));
