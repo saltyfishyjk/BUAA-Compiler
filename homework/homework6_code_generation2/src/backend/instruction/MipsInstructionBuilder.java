@@ -993,7 +993,7 @@ public class MipsInstructionBuilder {
                     ArrayList<MipsInstruction> temp = this.registerFile.writeBackPublic(
                             leftReg, rightSymbol, 
                             Integer.valueOf(dimension1PointerValueName) * 4, this.father);
-                    rightSymbol.setInReg(false);
+                    // rightSymbol.setInReg(false);
                     rightSymbol.setUsed(true);
                     if (temp != null && temp.size() > 0) {
                         ret.addAll(temp);
@@ -1018,7 +1018,7 @@ public class MipsInstructionBuilder {
                 /* 说明维度数值是常数，在编译时已知 */
                 ArrayList<MipsInstruction> temp = this.registerFile.writeBackPublic(leftReg,
                         rightSymbol, store.getDimension1Pointer() * 4, this.father);
-                rightSymbol.setInReg(false);
+                // rightSymbol.setInReg(false);
                 rightSymbol.setUsed(true);
                 if (temp != null && temp.size() > 0) {
                     ret.addAll(temp);
@@ -1084,7 +1084,7 @@ public class MipsInstructionBuilder {
                 ArrayList<MipsInstruction> temp = this.registerFile.writeBackPublic(
                         leftReg, rightSymbol, offset, this.father);
                 rightSymbol.setUsed(true);
-                rightSymbol.setInReg(false);
+                // rightSymbol.setInReg(false);
                 if (temp != null && temp.size() > 0) {
                     ret.addAll(temp);
                 }
