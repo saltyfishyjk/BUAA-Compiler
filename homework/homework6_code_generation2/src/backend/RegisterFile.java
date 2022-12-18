@@ -175,6 +175,9 @@ public class RegisterFile {
             if (symbol.hasRam()) {
                 readBack(freeReg, symbol, basicBlock);
             }
+            if (freeReg == this.tempPtr) {
+                this.tempPtr = (this.tempPtr + 1 + 32) % 32;
+            }
             return freeReg;
         } else {
             /* 没有找到空闲寄存器，说明需要将某个寄存器写入内存或做其他操作 */
@@ -223,6 +226,9 @@ public class RegisterFile {
                 /* 如果新加入符号在内存有数据，则应读回 */
                 if (symbol.hasRam()) {
                     readBack(oldReg, symbol, basicBlock);
+                }
+                if (oldReg == this.tempPtr) {
+                    this.tempPtr = (this.tempPtr + 1 + 32) % 32;
                 }
                 return oldReg;
             }

@@ -8,7 +8,7 @@ public class Addi extends MipsInstruction {
     private int immediate;
 
     public Addi(int target, int source, int immediate) {
-        super("addi");
+        super("addiu");
         this.target = target;
         this.source = source;
         this.immediate = immediate;

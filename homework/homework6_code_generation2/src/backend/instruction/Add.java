@@ -8,7 +8,7 @@ public class Add extends MipsInstruction {
     private int right;
 
     public Add(int target, int left, int right) {
-        super("add");
+        super("addu");
         this.target = target;
         this.left = left;
         this.right = right;

@@ -8,7 +8,7 @@ public class Sub extends MipsInstruction {
     private int right;
 
     public Sub(int target, int left, int right) {
-        super("sub");
+        super("subu");
         this.target = target;
         this.left = left;
         this.right = right;

@@ -970,6 +970,10 @@ public class MipsInstructionBuilder {
             rightReg = this.table.getRegIndex(rightName, this.father, true);
             Move move = new Move(leftReg, rightReg);
             ret.add(move);
+            if (ret != null && ret.size() > 0) {
+                this.father.addInstruction(ret);
+                ret = new ArrayList<>();
+            }
         } else if (rightDimension == 1) {
             /* 说明从1维变量中load */
             /* 1维变量 */
@@ -984,6 +988,10 @@ public class MipsInstructionBuilder {
                 reg1 = this.registerFile.getReg(true, dimension1Symbol, this.father);
                 Li li = new Li(reg1, Integer.valueOf(dimension1Name));
                 ret.add(li);
+                if (ret != null && ret.size() > 0) {
+                    this.father.addInstruction(ret);
+                    ret = new ArrayList<>();
+                }
             } else {
                 /* 是变量 */
                 reg1 = this.table.getRegIndex(dimension1Name, this.father, true);
@@ -993,6 +1001,10 @@ public class MipsInstructionBuilder {
                     -1, 1, this.father);
             if (instructions != null && instructions.size() > 0) {
                 ret.addAll(instructions);
+                if (ret != null && ret.size() > 0) {
+                    this.father.addInstruction(ret);
+                    ret = new ArrayList<>();
+                }
             }
             if (dimension1Symbol != null) {
                 dimension1Symbol.setUsed(true);
@@ -1010,6 +1022,10 @@ public class MipsInstructionBuilder {
                 /* 将该常数加载入该寄存器 */
                 Li li = new Li(reg1, Integer.valueOf(dimension1Name));
                 ret.add(li);
+                if (ret != null && ret.size() > 0) {
+                    this.father.addInstruction(ret);
+                    ret = new ArrayList<>();
+                }
             } else {
                 reg1 = this.table.getRegIndex(dimension1Name, this.father, true);
             }
@@ -1024,6 +1040,10 @@ public class MipsInstructionBuilder {
                 /* 将该常数加载入该寄存器 */
                 Li li = new Li(reg2, Integer.valueOf(dimension2Name));
                 ret.add(li);
+                if (ret != null && ret.size() > 0) {
+                    this.father.addInstruction(ret);
+                    ret = new ArrayList<>();
+                }
             } else {
                 reg2 = this.table.getRegIndex(dimension2Name, this.father, true);
             }
@@ -1032,6 +1052,10 @@ public class MipsInstructionBuilder {
                     reg2, 2, this.father);
             if (instructions != null && instructions.size() > 0) {
                 ret.addAll(instructions);
+                if (ret != null && ret.size() > 0) {
+                    this.father.addInstruction(ret);
+                    ret = new ArrayList<>();
+                }
             } else {
                 System.out.println("ERROR IN MipsInstructionBuilder : should not reach here");
             }
@@ -1051,6 +1075,10 @@ public class MipsInstructionBuilder {
         if (rightName.contains("Global")) {
             /* 将全局变量标记为不在寄存器中 */
             rightSymbol.setInReg(false);
+        }
+        if (ret != null && ret.size() > 0) {
+            this.father.addInstruction(ret);
+            ret = new ArrayList<>();
         }
         return ret;
     }
@@ -1084,6 +1112,11 @@ public class MipsInstructionBuilder {
             if (!this.father.getFather().getIsMain()) {
                 Jr jr = new Jr(31);
                 ans.add(jr);
+            } else {
+                Li li = new Li(2, 0xa);
+                ans.add(li);
+                Syscall syscall = new Syscall();
+                ans.add(syscall);
             }
         } else {
             Jr jr = new Jr(31);
