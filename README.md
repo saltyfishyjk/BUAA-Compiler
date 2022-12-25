@@ -6,13 +6,1610 @@
 
 
 
-## Part 0 前言
-
-
-
 ## 一、参考编译器介绍
 
+本编译器主要参考的编译器为Pascal编译器，具体如下。
 
+### 总体结构
+
+该编译器总体结构为经典的词法分析、语法分析、错误处理、语义分析、代码生成和代码优化六个部分。
+
+### 接口设计
+
+#### `nextch`读取下一个字符
+
+```pascal
+procedure nextch;  { read next character; process line end }
+  begin
+    if cc = ll {* 如果读到了当前行行尾 *}
+    then begin
+           if eof( psin ) {* 要读入的文件已经读完 *}
+           then begin
+                  writeln( psout ); {* 输出空行 *}
+                  writeln( psout, 'program incomplete' ); {* 输出'program incomplete' *}
+                  errormsg; {* 输出错误信息 *}
+                  exit;
+                end;
+           if errpos <> 0 {* errpos不等于0，有错误出现 *}
+           then begin
+                  if skipflag then endskip; {* 调用endskip过程加下划线 *}
+                  writeln( psout );
+                  errpos := 0
+                end;
+           write( psout, lc: 5, ' '); {* 没有错误执行的操作，在list文件中输出当前PCODE的行号以及一个空格，不换。lc:5表示输出长度大于等于5,不足5前面用空格补齐*}
+           ll := 0; {* 将行长度和字符指针置零 *}
+           cc := 0;
+           while not eoln( psin ) do {* 因为在读字符之前当前行已经读完了，所以psin的指针指向的是下一行代码,于是进行循环将psin所在行的代码装入line中。循环读字符直到读到行末，能进入此循环说明之前处理了错误或进入新行 *}
+             begin
+               ll := ll + 1; {* 统计当前行长度 *}
+               read( psin, ch ); {* 读入一个字符 *}
+               write( psout, ch ); {* 输出该字符 *}
+               line[ll] := ch {* 将ch保存到line中,循环结束line保存到当前行末的所有字符 *}
+             end;
+           ll := ll + 1;
+           readln( psin ); {* 从psin读一行空行，让psin指向下一行代码 *}
+           line[ll] := ' '; {* 将行末置为空格 *}
+           writeln( psout );
+         end;
+    cc := cc + 1; {* 字符指针后移 *}
+    ch := line[cc]; {* 读取下一个字符，ch = 取出来的字符 *}
+  end { nextch };
+```
+
+#### `error`打印错误信息
+
+```pascal
+{* 打印出错位置和错误编号，并将错误编号加入errs中 *}
+procedure error( n: integer ); {* n为错误号 *}
+begin
+  if errpos = 0
+  then write ( psout, '****' );
+  if cc > errpos {* 确认字符计数指针在当前errpos之后，避免重复报错 *}
+  then begin
+         write( psout, ' ': cc-errpos, '^', n:2);
+         errpos := cc + 3;
+         errs := errs +[n] {* 将错误号加入errs集合 *}
+       end
+end { error };
+```
+
+#### `adjustscale`处理实数
+
+```pascal
+{* 根据小数位数和指数大小求出实数尾部值的大小，并附在rnum后面得到最后的实数 *}
+  procedure adjustscale;
+    var s : integer;
+        d, t : real;
+    begin
+      if k + e > emax {* 当前位数加上指数超过指数上限则报错 *}
+      then error(21)
+      else if k + e < emin {* 低于最小值则直接将实数设置为0 *}
+      then rnum := 0
+      else begin
+        s := abs(e); {* 将指数转为正数方便处理 *}
+        t := 1.0; {* 指数部分转换后的结果 *}
+        d := 10.0; {* 底数 *}
+        repeat {* 将实数的指数部分变为普通数字 *}
+          while not odd(s) do {* 循环处理偶次幂直到指数为奇数 *}
+            begin
+              s := s div 2; {* 指数除以二 *}
+              d := sqr(d) {* 把平方直接转到d上，d = d的平方 *}
+            end;
+          s := s - 1;
+          t := d * t
+        until s = 0;
+        if e >= 0 {* 判断指数正负，决定是该除以t还是乘以t。把指数e转换成2N+1或者2N的形式, t此时为10的e次方*}
+        then rnum := rnum * t
+        else rnum := rnum / t
+      end
+    end { adjustscale };
+```
+
+#### `enter`登记符号表
+
+```pascal
+{* 把标准类型、过程、函数名登到符号表(tab)中。
+x0为标识符名，x1为标识符种类，x2为标识符类型，x3为地址或大小（大小只针对类型） *}
+procedure enter(x0:alfa; x1:objecttyp; x2:types; x3:integer );
+  begin
+    t := t + 1;    { enter standard identifier }
+    with tab[t] do
+      begin
+        name := x0;
+        link := t - 1;
+        obj := x1;
+        typ := x2;
+        ref := 0;
+        normal := true;
+        lev := 0; {*主程序开始之前就登录了一些自带的,所以级别最高*}
+        adr := x3;
+      end
+  end; { enter }
+```
+
+#### `enterarray`登记数组符号表
+
+```pascal
+{* 将数组下标信息录入数组表atab，
+tp为数组下标类型，可为ints,bools或者chars
+l,h分别为数组下上界 *}
+procedure enterarray( tp: types; l,h: integer );
+  begin
+    if l > h {* 界限出错 *}
+    then error(27);
+    if( abs(l) > xmax ) or ( abs(h) > xmax ) {* 超范围下标，报错 *}
+    then begin
+           error(27);
+           l := 0;
+           h := 0;
+         end;
+    if a = amax {* 数组表已满，报错 *}
+    then fatal(4)
+    else begin
+           a := a + 1;
+           with atab[a] do {* 正常设置数组的三个域 *}
+             begin
+               inxtyp := tp;
+               low := l;
+               high := h
+             end
+         end
+  end { enterarray };
+```
+
+#### `enterreal`登记实常量表
+
+```pascal
+{* 录入实常量表rconst *}
+procedure enterreal( x: real );
+  begin
+    if c2 = c2max - 1
+    then fatal(3)
+    else begin
+           rconst[c2+1] := x;
+           c1 := 1; {*循环用的局部变量*}
+           while rconst[c1] <> x do
+             c1 := c1 + 1;
+           if c1 > c2
+           then  c2 := c1 {*如果在c2之前就有该常量,则c1<=c2,于是c2不更新,否则c2更新*}
+         end
+  end { enterreal };
+```
+
+
+
+#### `enterblock`登记分程序信息入分程序表
+
+```pascal
+{* 将分程序信息录入分程序表btab *}
+procedure enterblock;
+  begin
+    if b = bmax {* 分程序表满了 *}
+    then fatal(2)
+    else begin
+           b := b + 1;
+           btab[b].last := 0; {* 指向过程或函数最后一个符号在表中的位置,建表用 *}
+           btab[b].lastpar := 0; {* 指向过程或者函数的最后一个'参数'符号在tab中的位置,退栈用 *}
+         end
+  end { enterblock };
+```
+
+#### `emit`生成中间代码PCODE
+
+```pascal
+{* emit和下面两个过程都是用来生成PCODE的，后个过程接的参数是操作数
+fct为操作码 *}
+procedure emit( fct: integer ); {*这几个emit是用来生成pcode的,fct为操作码,这里为无操作数*}
+  begin
+    if lc = cmax   {*lc为code表的索引变量*}
+    then fatal(6);
+    code[lc].f := fct;
+    lc := lc + 1
+  end { emit };
+
+procedure emit1( fct, b: integer );  {*一个操作数*}
+  begin
+    if lc = cmax
+    then fatal(6);
+    with code[lc] do
+      begin
+        f := fct;
+        y := b;
+      end;
+    lc := lc + 1
+  end { emit1 };
+
+procedure emit2( fct, a, b: integer );  {*两个操作数*}
+  begin
+    if lc = cmax then fatal(6);
+    with code[lc] do
+      begin
+        f := fct;
+        x := a;
+        y := b
+      end;
+    lc := lc + 1;
+  end { emit2 };
+```
+
+#### `test`检查符号合法性
+
+```pascal
+  {* 检查当前sym是否合法,若不合法,打印出错标志并进行跳读 *}
+  procedure test( s1,s2: symset; n:integer );
+    begin
+      if not( sy in s1 )
+      then skip( s1 + s2, n )
+    end { test };
+  {* 检查分号是否合法 *}
+  procedure testsemicolon;
+    begin
+      if sy = semicolon
+      then insymbol
+      else begin
+             error(14);
+             if sy in [comma, colon]
+             then insymbol
+           end;
+      test( [ident] + blockbegsys, fsys, 6 )
+    end { testsemicolon };
+```
+
+#### `enter`登记符号表
+
+```pascal
+  {* 在分程序中将标识符id填入tab,k为标识符种类 *}
+  procedure enter( id: alfa; k:objecttyp );
+    var j,l : integer;
+    begin
+      if t = tmax {* tab已满，报错 *}
+      then fatal(1)
+      else begin
+             tab[0].name := id;
+             j := btab[display[level]].last; {* 得到对应level的分程序的最后一个标识符位置 *}
+             l := j;
+             while tab[j].name <> id do {* 从分程序尾部一直向前遍历，看是否存在与id重名的标识符 *}
+               j := tab[j].link;
+             if j <> 0 {* 有重名则报错。已经在符号表中有记载了,重复定义 *}
+             then error(1)
+             else begin {* 不重名则正常入栈 。在tab中登记信息*}
+                    t := t + 1;
+                    with tab[t] do
+                      begin
+                        name := id;
+                        link := l;
+                        obj := k;
+                        typ := notyp;
+                        ref := 0;
+                        lev := level;
+                        adr := 0;
+                        normal := false { initial value }
+                      end;
+                    btab[display[level]].last := t{*更新当前分程序层最后一个标识符在tab表中的位置*}
+                  end
+           end
+    end { enter };
+
+  {* 查找分程序中标识符id在符号表中位置并返回 *}
+  function loc( id: alfa ):integer;
+    var i,j : integer;        { locate if in table }
+    begin
+      i := level; {*i为当前分程序层*}
+      tab[0].name := id;  { sentinel }
+      repeat
+        j := btab[display[i]].last;
+        while tab[j].name <> id do
+        j := tab[j].link;
+        i := i - 1;
+      until ( i < 0 ) or ( j <> 0 );{*当前层没有则往前再找一层,直到找到(j<>0)或者没有(i<0)*}
+      if j = 0
+      then error(0);{*没找到,报错*}
+      loc := j
+    end { loc } ;
+
+  {* 将变量加入到tab，若sy不是标识符则报错 *}
+  procedure entervariable;
+    begin
+      if sy = ident
+      then begin
+             enter( id, vvariable );
+             insymbol
+           end
+      else error(2)
+    end { entervariable };
+```
+
+#### `constant`处理常量
+
+```pascal
+{* 处理分程序中常量，由c返回常量的类型与值 *}
+  procedure constant( fsys: symset; var c: conrec );
+    var x, sign : integer;
+    begin
+      c.tp := notyp;
+      c.i := 0;
+      test( constbegsys, fsys, 50 );
+      if sy in constbegsys {* 如果sy是常量开始的符号,才往下继续分析 *}
+      then begin
+             if sy = charcon
+             then begin {* sy是字符常量 *}
+                    c.tp := chars;
+                    c.i := inum; {* inum存储该字符的ascii码值 *}
+                    insymbol
+                  end
+             else begin
+                  sign := 1; {* sy不是字符常量,默认符号为正 *}
+                  if sy in [plus, minus] {* sy是正负号 *}
+                  then begin
+                         if sy = minus {*是负号*}
+                         then sign := -1;
+                         insymbol
+                       end;
+                  if sy = ident {* sy是标识符常量 *}
+                  then begin
+                         x := loc(id); {* 找到id在表中位置 *}
+                         if x <> 0
+                         then
+                           if tab[x].obj <> konstant {* id对应符号种类不是常量，报错 *}
+                           then error(25)
+                           else begin {* 得到的tab[x]为标识符常量，对c进行相应处理 *}
+                                  c.tp := tab[x].typ; {* 得到类型 *}
+                                  if c.tp = reals {* 根据类型是整数还是实数进行处理 *}
+                                  then c.r := sign*rconst[tab[x].adr]
+                                  else c.i := sign*tab[x].adr
+                                end;
+                         insymbol
+                       end
+                  else if sy = intcon {* sy是整数常量 *}
+                       then begin
+                              c.tp := ints;
+                              c.i := sign*inum; {* 在i域中存入带符号的整数值 *}
+                              insymbol
+                            end
+                 else if sy = realcon {* sy是实数常量 *}
+                      then begin
+                             c.tp := reals;
+                             c.r := sign*rnum; {* 在r域中存入带符号的整数值 *}
+                             insymbol
+                           end
+                 else skip(fsys,50) {* sy不是任何类型常量，报错并跳过部分代码 *}
+                end;
+                test(fsys,[],6)
+           end
+    end { constant };
+```
+
+#### `typ`处理类型
+
+```pascal
+  {* 处理类型说明,返回当前关键词的类型tp,在符号表中的位置rf,以及需要占用存储空间的大小sz *}
+  procedure typ( fsys: symset; var tp: types; var rf,sz:integer );
+    var eltp : types;
+        elrf, x : integer;
+        elsz, offset, t0, t1 : integer;
+
+    {* 数组类型的处理比较特殊，做单独处理.登录数组类型到atab并返回数组的登录位置和数组大小 *}
+    procedure arraytyp( var aref, arsz: integer );
+      var eltp : types; {* 数组元素类型 *}
+          low, high : conrec; {* 上下界 *}
+          elrf, elsz: integer; {* 记录ref和size方便返回 *}
+      begin
+        constant( [colon, rbrack, rparent, ofsy] + fsys, low ); {* 获得数组编号下界 *}
+        if low.tp = reals {* 下标类型不是整数，报错并切换为整数，数值为0}
+        then begin
+               error(27);
+               low.tp := ints;
+               low.i := 0
+             end;
+        if sy = colon {* 下一个符号是..或者:都可继续执行 *}
+        then insymbol
+        else error(13);
+        constant( [rbrack, comma, rparent, ofsy ] + fsys, high ); {* 获得数组编号上界 *}
+        if high.tp <> low.tp {* 上下界需保持类型一致，否则报错，并将上界大小调为与下界一致 *}
+        then begin
+               error(27);
+               high.i := low.i
+             end;
+        enterarray( low.tp, low.i, high.i ); {* 将数组下标信息录入atab *}
+        aref := a; {* 将数组在atab中的位置存在aref中 *}
+        if sy = comma
+        then begin {* 若读到逗号，说明需要建立多维数组 *}
+               insymbol;
+               eltp := arrays; {* 数组元素类型为arrays *}
+               arraytyp( elrf, elsz ) {* 递归处理数组内的数组 *}
+             end
+        else begin {* 不是逗号的情况（右方括号或非法） *}
+               if sy = rbrack {* 读到右方括号，说明数组下标部分声明完毕 *}
+               then insymbol
+               else begin {* 非法 *}
+                      error(12);
+                      if sy = rparent {* 若为右大括号则容错 *}
+                      then insymbol
+                    end;
+               if sy = ofsy {* 读到of关键字则继续，否则报错 *}
+               then insymbol
+               else error(8);
+               typ( fsys, eltp, elrf, elsz ) {* 处理数组元素的类型 *}
+             end;
+        with atab[aref] do {* 处理完多维数组或数组元素信息则将这些信息存入atab[aref]中}
+          begin
+            arsz := (high-low+1) * elsz;
+            size := arsz;
+            eltyp := eltp;
+            elref := elrf;
+            elsize := elsz
+          end
+      end { arraytyp };
+    begin { typ  }
+      tp := notyp;
+      rf := 0;
+      sz := 0;
+      test( typebegsys, fsys, 10 ); {* 检查当前符号是否为类型声明的开始符 *}
+      if sy in typebegsys {* 如果是类型声明的开始符 *}
+      then begin
+              if sy = ident {* 当前符号为标识符 *}
+              then begin
+                    x := loc(id); {* 查找id在符号表中的位置 *}
+                    if x <> 0
+                    then with tab[x] do
+                           if obj <> typel {* 符号表中标识符种类不是类型标识符(typel)（非用户定义或编译器自带），报错 *}
+                           then error(29)
+                           else begin {* 正常获取符号类型 *}
+                                  tp := typ;
+                                  rf := ref;
+                                  sz := adr;{*获得其在运行栈中分配的存储空间*}
+                                  if tp = notyp {* 未定义类型，报错 *}
+                                  then error(30)
+                                end;
+                    insymbol
+                  end
+              else if sy = arraysy {* 当前符号为array关键字 *}
+              then begin
+                    insymbol;
+                    if sy = lbrack {* 当前符号为[，则处理下一符号}
+                    then insymbol
+                    else begin {* 否则报错并容错( *}
+                          error(11);
+                          if sy = lparent 
+                          then insymbol
+                         end;
+                    tp := arrays; {*类型为数组类型*}
+                    arraytyp(rf,sz) {*登录数组类型*}
+                   end
+             else begin { records } {* 不是标识符也不是数组类型，则只可能为记录 *}
+                    insymbol;
+                    enterblock; {* 记录被看做一个分程序，故需在btab中记录它的信息 *}
+                    tp := records;
+                    rf := b; {* rf指向btab中记录的位置 *}
+                    if level = lmax
+                    then fatal(5);{* 当前嵌套层次已经是最大层次了,即不能产生更深的嵌套，报错并终止程序 *}
+                    level := level + 1;
+                    display[level] := b; {* 建立分层次索引 *}
+                    offset := 0;
+                    while not ( sy in fsys - [semicolon,comma,ident]+ [endsy] ) do
+                      {* end之前都是记录类型变量内的变量声明 *}
+                      begin { field section } {* 处理记录内部成员变量 *}
+                        if sy = ident
+                        then begin {* 当前符号为标识符 *}
+                                t0 := t; {* 将当前tab指针存入t0 *}
+                                entervariable; {* 变量表 *}
+                                while sy = comma do {* 同类型变量同时申明，
+                                通过逗号分隔,未遇到冒号则继续读入并入表 *}
+                                  begin
+                                    insymbol;
+                                    entervariable
+                                  end;
+                                if sy = colon
+                                then insymbol{* 遇到了冒号,说明这类的变量声明结束了,冒号后面跟变量的类型 *}
+                                else error(5);
+                                t1 := t; {* 将当前tab指针存入t1 *}
+                                typ( fsys + [semicolon, endsy, comma,ident], eltp, elrf, elsz );
+                                {* 递归调用typ来处理记录类型的成员变量,确定各成员的类型,ref和adr *}
+                                while t0 < t1 do {* 填写t0到t1中信息缺失的部分,
+                                由于t0~t1都是同一类型的变量,因此size大小是相同 *}
+                                begin
+                                  t0 := t0 + 1;
+                                  with tab[t0] do {* 用获取到的成员变量信息补充表项内容 *}
+                                    begin
+                                      typ := eltp;{*eltp来自上面的typ递归调用*}
+                                      ref := elrf; {* 此处ref为记录在btab中的位置 *}
+                                      normal := true;{*所有normal的初值都为false*}
+                                      adr := offset; {* 变量地址位移 *}
+                                      offset := offset + elsz {* 下一变量真实位置 *}
+                                    end
+                                end
+                             end; { sy = ident }
+                        if sy <> endsy
+                        then begin {* 当前符号不是end *}
+                               if sy = semicolon
+                               then insymbol {* 若为分号，则正常读取后续符号 *}
+                               else begin {* 否则报错并容错，容逗号 *}
+                                      error(14);
+                                      if sy = comma
+                                      then insymbol
+                                    end;
+                                    test( [ident,endsy, semicolon],fsys,6 )
+                                    {* 检测当前符号是否合法。开启下一行处理时检验当前符号是否合法*}
+                             end
+                      end; { field section }
+                    btab[rf].vsize := offset; {* vsize为记录所需存储单元数目 *}
+                    sz := offset;
+                    btab[rf].psize := 0; {* 记录存储单元不需要psize。该程序块的参数占用空间为0,因为record类型并不是真正的过程,没有参数 *}
+                    insymbol;
+                    level := level - 1{*record处理结束后level降一层*}
+                  end; { record }
+             test( fsys, [],6 ) {*检查当前sym是否合法*}
+           end;
+      end { typ };
+```
+
+#### `parameterlist`处理形参
+
+```pascal
+  {* 处理过程或函数说明中的形参，将形参信息填入符号表 *}
+  procedure parameterlist; { formal parameter list  }
+    var tp : types;
+        valpar : boolean; {* value parameter *}
+        rf, sz, x, t0 : integer;
+    begin
+      insymbol;
+      tp := notyp;
+      rf := 0;{*初始化符号表的位置*}
+      sz := 0; {*初始化元素的大小*}
+      test( [ident, varsy], fsys+[rparent], 7 );
+      while sy in [ident, varsy] do {* 处理所有是标识符或var关键字的形参 *}
+        begin
+          if sy <> varsy {* 不是var（指针）参数，将valpar设置为true *}
+          then valpar := true {*值形参*}
+          else begin {* 是指针参数，将valpar设置为false *}
+                 insymbol;
+                 valpar := false
+               end;
+          t0 := t; {* 存第一个参数在tab中地址到t0 *}
+          entervariable;
+          while sy = comma do {* 循环给多个同类型参数入表 *}
+            begin
+              insymbol;
+              entervariable;
+            end;
+
+          {* 以下代码与typ处理记录同类成员变量的代码近似，只做不同部分的分析 *}
+          if sy = colon{*等于冒号则开始处理类型*}
+          then begin
+                  insymbol;
+                  if sy <> ident {* 非标识符一定不是数据类型，报错 *}
+                  then error(2)
+                  else begin
+                         x := loc(id);
+                         insymbol;
+                         if x <> 0 
+                         then with tab[x] do
+                           if obj <> typel {*是标识符中的类型*}
+                           then error(29)
+                           else begin
+                                  tp := typ;
+                                  rf := ref;
+                                  if valpar {* 值形参。针对指针参数与值参数对sz做不同处理 *}
+                                    then sz := adr {*获得当前形参在符号表的位置*}
+                                    else sz := 1 {*不是值形参则将其置为1(在这篇代码中,变量形参的大小都设置为了1)*}
+                                end;
+                       end;
+                  test( [semicolon, rparent], [comma,ident]+fsys, 14 )
+                 end
+          else error(5); {* 不是冒号则报错（不支持数据类型的自动解释） *}
+          while t0 < t do
+            begin
+              t0 := t0 + 1;
+              with tab[t0] do
+                begin
+                  typ := tp;
+                  ref := rf; {* ref = 0 *}
+                  adr := dx; {* adr = 运行栈中存储分配单元的相对地址dx *}
+                  lev := level;
+                  normal := valpar;
+                  dx := dx + sz{*block中的变量存储索引更新*}
+                end
+            end;
+            if sy <> rparent {* 不是右括号代表还有参数或出错 *}
+            then begin
+                   if sy = semicolon
+                   then insymbol
+                   else begin
+                          error(14);
+                          if sy = comma
+                          then insymbol
+                        end;
+                        test( [ident, varsy],[rparent]+fsys,6)
+                 end
+        end { while };
+      if sy = rparent {* 参数声明结束后应当用右括号结尾 *}
+      then begin
+             insymbol;
+             test( [semicolon, colon],fsys,6 )
+           end
+      else error(4)
+    end { parameterlist };
+```
+
+#### `typedeclaration`处理自定义类型
+
+```pascal
+  {* 处理类型自定义，将自定义的类型信息填入tab，与constdec过程几乎一样 *}
+  procedure typedeclaration;
+    var tp: types;
+        rf, sz, t1 : integer;
+    begin
+      insymbol;
+      test([ident], blockbegsys,2 );{*检查获取到的是不是标识符*}
+      while sy = ident do
+        begin
+          enter(id, typel);
+          t1 := t;
+          insymbol;
+          if sy = eql {*赋值符号识别与容错*}
+          then insymbol
+          else begin
+                 error(16);
+                 if sy = becomes
+                 then insymbol
+               end;
+          typ( [semicolon,comma,ident]+fsys, tp,rf,sz ); {* 通过调用typ过程获取类型填表所需域 *}
+          with tab[t1] do {*将typ的返回值填表*}
+            begin
+              typ := tp;
+              ref := rf;
+              adr := sz {* 类型的adr存的是类型所需大小 *}
+            end;
+          testsemicolon
+        end
+    end { typedeclaration };
+```
+
+#### `variabledeclaration`处理普通变量
+
+```pascal
+  {* 处理普通变量申明，将变量填入tab，与parameterlist的值形参处理过程几乎一样 *}
+{*处理变量类型,并将变量名及其相应信息填入符号表*}
+  procedure variabledeclaration;
+    var tp : types;
+        t0, t1, rf, sz : integer;
+    begin
+      insymbol;
+      while sy = ident do {*是标识符*}
+        begin
+          t0 := t;
+          entervariable; {*将变量名登录到符号表中*}
+          while sy = comma do {*多个变量名逗号分隔*}
+            begin
+              insymbol;
+              entervariable;
+            end;
+          if sy = colon {*冒号*}
+          then insymbol
+          else error(5);
+          t1 := t;
+          typ([semicolon,comma,ident]+fsys, tp,rf,sz );{*获得类型地址和大小*}
+          while t0 < t1 do {*对一行的变量循环填表*}
+            begin
+              t0 := t0 + 1;
+              with tab[t0] do
+                begin
+                  typ := tp;
+                  ref := rf;
+                  lev := level;
+                  adr := dx;
+                  normal := true;
+                  dx := dx + sz
+                end
+            end;
+          testsemicolon
+        end
+    end { variabledeclaration };
+```
+
+#### `procdeclaration`处理过程和函数
+
+```pascal
+  {* 处理过程与函数声明，将函数名或过程名填入tab *}
+  procedure procdeclaration;
+    var isfun : boolean;  {*是否是function*}
+    begin
+      isfun := sy = funcsy; {* sy是function就是方法，否则是过程 *}
+      insymbol; 
+      if sy <> ident {* sy不是标识符则报错，用十个空格代替 *}
+      then begin
+             error(2);
+             id :='          '
+           end;
+      if isfun {* 函数或过程入tab *}
+      then enter(id,funktion)
+      else enter(id,prozedure);
+      tab[t].normal := true;
+      insymbol;
+      block([semicolon]+fsys, isfun, level+1 ); {* 递归调用block处理分程序 *}
+      if sy = semicolon {* 读到分号才算过程正常结束，否则报错 *}
+      then insymbol
+      else error(14);
+      emit(32+ord(isfun)) {exit} {* 生成退出分程序的PCODE *}
+    end { proceduredeclaration };
+```
+
+#### `statement`处理各种语句
+
+```pascal
+  {* 分析处理各种语句 *}
+  procedure statement( fsys:symset );
+    var i : integer;
+
+    {* 处理表达式子程序，提前声明供selector调用，避免蛋生鸡问题。由参数(x)返回求值结果的类型 *}
+    procedure expression(fsys:symset; var x:item); forward;
+
+    {* 处理结构变量v（数组下标或记录的成员变量）的使用 *}
+    procedure selector(fsys:symset; var v:item);
+      var x : item;
+          a,j : integer;
+      begin { sy in [lparent, lbrack, period] } {* 只要sy是(或者[或者.，就一直处理 *}
+        repeat 
+          if sy = period {* sy是.，后续内容作为成员变量处理 *}
+          then begin
+                 insymbol; { field selector }
+                 if sy <> ident {* 域的类型必为标识符，否则报错 *}
+                 then error(2)
+                 else begin
+                        if v.typ <> records {* v不是records类型，报错 *}
+                        then error(31)
+                        else begin { search field identifier }
+                               j := btab[v.ref].last; {* 获得该记录在tab中最后一个标识符的位置 *}
+                               tab[0].name := id; {* 暂存id *}
+                               while tab[j].name <> id do {* 在tab中，
+                               从j的位置（记录最后一项）向前查找id *}
+                                 j := tab[j].link;
+                               if j = 0 {* 未找到该标识符，说明该域在记录中不存在，报错 *}
+                               then error(0);
+                               v.typ := tab[j].typ;
+                               v.ref := tab[j].ref;  {*记录其在btab中的指针值*}
+                               a := tab[j].adr;  {*记录该变量对record变量起始地址的相对位移*}
+                               if a <> 0 {*如果相对位移不为0则生成一条指令来计算此位移*}
+                               then emit1(9,a) {* 输出PCODE:INT a，将a放在栈顶 *}
+                             end;
+                        insymbol
+                      end
+               end
+          else begin { array selector } {*处理数组下标。sy是[或(或其他，后续内容作为数组下标处理或报错 *}
+                 if sy <> lbrack {* 只认[作为取数组操作符，对{做隐式容错处理 *}
+                 then error(11);
+                 repeat {* 循环读取方括号中所有内容， 此处循环是为了满足处理多维数组的需要*}
+                   insymbol;
+                   expression( fsys+[comma,rbrack],x); {* 递归调用expression处理下标 *}{*处理表达式,例如array[6+i]*}
+                   if v.typ <> arrays
+                   then error(28)
+                   else begin
+                          a := v.ref; {*从v中获得该数组在atab中的位置*}
+                          if atab[a].inxtyp <> x.typ {*如果传入的下标类型和atab中记录的数组下标类型不符则报错*}
+                          then error(26)
+                          else if atab[a].elsize = 1 {* 输出PCODE去取下标变量地址，如果是变量形参(指针)*}
+                               then emit1(20,a)  {*IDX,取下标变量地址,长度为1*}
+                               else emit1(21,a);  {*IXX,取下标变量地址*}
+                          v.typ := atab[a].eltyp;
+                          v.ref := atab[a].elref
+                        end
+                 until sy <> comma; {*直到没有遇到逗号终止循环*}
+                 if sy = rbrack {* 遇到右括号，正常结束，否则报错 *}
+                 then insymbol
+                 else begin
+                        error(12);
+                        if sy = rparent   {*对右括号容错处理*}
+                        then insymbol
+                      end
+               end
+        until not( sy in[lbrack, lparent, period]);
+        test( fsys,[],6)
+      end { selector };
+
+    {* 处理非标准的过程或函数调用
+       i表示需要调用的过程或函数名在符号表中的位置 *}
+    procedure call( fsys: symset; i:integer );
+      var x : item; {*代表传进来的参数结构体*}
+      lastp,cp,k : integer;
+      begin
+        emit1(18,i); { mark stack } {* 生成标记栈指令,传入被调用过程或函数在tab表中的位置,建立新的内务信息区 *}
+        lastp := btab[tab[i].ref].lastpar; {* 记录当前过程或函数最后一个参数在符号表中的位置 *}
+        cp := i; {*记录当前被调用函数或者过程在符号表中的位置*}    {*cp 到 lastp 之间是tab表中形参列表,若是在循环中cp > lastp则表示实参与形参个数不一致*}
+        if sy = lparent  {*如果识别到左括号则开始进行被调用过程的参数处理*}
+        then begin { actual parameter list }
+               repeat
+                 insymbol;
+                 if cp >= lastp {* 如果当前符号的位置小于最后一个符号的位置，说明还有参数没有处理,反之报错 *}
+                 then error(39)
+                 else begin {* 开始处理参数 *}
+                        cp := cp + 1;
+                        if tab[cp].normal {* 如果normal的值为真，即如果传入的是值形参或者其他参数 *}
+                        then begin { value parameter } 
+                               expression( fsys+[comma, colon,rparent],x);
+                               {* 调用expression处理参数 *}
+                               if x.typ = tab[cp].typ {*表达式的类型和分程序要求输入的类型一致*}
+                               then begin
+                                      if x.ref <> tab[cp].ref {* btab中地址不同，报错 *}
+                                      then error(36)
+                                      else if x.typ = arrays {* x为数组类型，生成装入块指令，将实参表达式的值或地址放到预留的参数单元中 *}
+                                      then emit1(22,atab[x.ref].size)
+                                      else if x.typ = records {* x为记录类型，同样生成装入块指令完成操作，只是细节有所不同 *}
+                                       then emit1(22,btab[x.ref].vsize)
+                                    end
+                               else if ( x.typ = ints ) and ( tab[cp].typ = reals )
+                                  {* 如果表达式的类型是整型，但是分程序要求输入的是实数型参数 *}
+                                then emit1(26,0) {* 生成强制转换指令 *}
+                              else if x.typ <> notyp
+                                         then error(36);
+                             end
+                        else begin { variable parameter }
+                               if sy <> ident {*如果传进来的不是标识符则报错*}
+                               then error(2)
+                               else begin
+                                      k := loc(id);{*找到其在tab中的位置*}
+                                      insymbol;
+                                      if k <> 0
+                                      then begin
+                                             if tab[k].obj <> vvariable {* 获取到的形参种类不是变量，报错 *}
+                                             then error(37);
+                                             x.typ := tab[k].typ;
+                                             x.ref := tab[k].ref;
+                                             if tab[k].normal {* tab[k]是值形参，将变量地址装入栈顶 *}
+                                             then emit2(0,tab[k].lev,tab[k].adr)
+                                             else emit2(1,tab[k].lev,tab[k].adr);
+                                               {* 是变量形参，将变量的值装入栈顶 *}
+                                             if sy in [lbrack, lparent, period]{*后面跟的可以是左中括号(数组下标),左括号(容错)或.(对应记录)。若有则调用分析子结构的过程来处理 *}
+                                             then selector(fsys+[comma,colon,rparent],x);
+                                             if ( x.typ <> tab[cp].typ ) or ( x.ref <> tab[cp].ref )
+                                             then error(36)
+                                           end
+                                    end
+                             end {variable parameter }
+                      end;
+                 test( [comma, rparent],fsys,6)
+               until sy <> comma; {*循环直到处理完逗号*}
+               if sy = rparent {* 以括号结束 *}
+               then insymbol
+               else error(4)
+             end;
+        if cp < lastp {* 实参数量不够，报错 *}
+        then error(39); { too few actual parameters }
+        emit1(19,btab[tab[i].ref].psize-1 ); {* 生成CAL指令，正式开始过程或函数调用 *}
+        if tab[i].lev < level
+        then emit2(3,tab[i].lev, level ) {* 生成DIS指令，更新display区 *}
+      end { call };
+
+    {* 处理整型或实数型两个操作数运算时的类型转换。(a + b = c, 根据a 和 b 判断c的类型)*}
+    function resulttype( a, b : types) :types;
+      begin
+        if ( a > reals ) or ( b > reals ) {* 操作数不是整型也不是实数型，报错，返回notyp *}
+        then begin
+               error(33);
+               resulttype := notyp
+             end
+        else if ( a = notyp ) or ( b = notyp ) {* 操作数都是notyp，返回notyp *}
+             then resulttype := notyp
+        else if a = ints {* 操作数a是整型 *}
+             then if b = ints {* b是整型则不转换，b是实型则转实型 *}
+                  then resulttype := ints
+                  else begin
+                         resulttype := reals;
+                         emit1(26,1) {* 生成指令FLT进行类型转化 *}
+                       end
+        else begin {* a不是整型，返回结果必是实型 *}
+             resulttype := reals;
+             if b = ints {* b是整型，生成FLT进行类型转化 *}
+             then emit1(26,0)
+             end
+      end { resulttype } ;
+
+    procedure expression( fsys: symset; var x: item );  {*处理表达式,由x返回求值结果的类型*}
+      var y : item;
+          op : symbol;
+
+      procedure simpleexpression( fsys: symset; var x: item );  {*处理简单表达式(+、-、or),由参数x返回求值结果的类型*}
+        var y : item;
+            op : symbol;
+
+        procedure term( fsys: symset; var x: item );  {*处理项,由参数返回结果类型*}
+          var y : item;
+              op : symbol;
+
+          procedure factor( fsys: symset; var x: item );  {*处理因子,由参数返回结果类型*}
+            var i,f : integer;
+
+            procedure standfct( n: integer ); {*处理标准函数调用,传入标准函数的编号n,执行不同的操作*}
+              var ts : typset;  {*类型集合*}
+              begin  { standard function no. n }
+                if sy = lparent {*如果当前符号不是左括号则报错*}
+                then insymbol
+                else error(9);
+                if n < 17 {*如果标准函数编号小于17*}
+                then begin
+                       expression( fsys+[rparent], x );   {*递归调用处理表达式的过程来处理参数*}
+                       case n of
+                       { abs, sqr } 0,2: begin
+                                           ts := [ints, reals];
+                                           tab[i].typ := x.typ;
+                                           if x.typ = reals   {*如果参数类型为实数则对应的函数标号+1*}
+                                           then n := n + 1
+                                         end;
+
+                       { odd, chr } 4,5: ts := [ints]; {* 判定奇偶与ascii码转字符串只涉及整型 *}
+                       { odr }        6: ts := [ints,bools,chars]; {* 6号操作涉及整型,布尔型或者字符型 *}
+                       { succ,pred } 7,8 : begin {* 得到前、后一个元素涉及整型、布尔型或者字符型 *}
+                                             ts := [ints, bools,chars];
+                                             tab[i].typ := x.typ
+                                           end;
+                       { round,trunc } 9,10,11,12,13,14,15,16: {* 其他17以前数学运算涉及ints与reals *}
+                       { sin,cos,... }     begin
+                                             ts := [ints,reals];
+                                             if x.typ = ints {* 若为整型，则转为实型并生成PCODE *}
+                                             then emit1(26,0)
+                                           end;
+                     end; { case }
+                     if x.typ in ts
+                     then emit1(8,n) {* x满足涉及类型，生成FCT n，表示生成n号标准函数 *}
+                     else if x.typ <> notyp
+                          then error(48);  {*该标准函数的参数类型不正确*}
+                   end
+                else begin { n in [17,18] }  {*17、18号，eof 和 eoln 函数*}
+                       if sy <> ident {*不是标识符*}
+                       then error(2)
+                       else if id <> 'input    ' {* 只有‘input  ’合法。报0号错误,未知id*}
+                            then error(0)
+                            else insymbol;
+                       emit1(8,n); {* 生成对应标准函数 *}
+                     end;
+                x.typ := tab[i].typ;
+                if sy = rparent {* 右括号 标准函数调用结束*}
+                then insymbol
+                else error(4)
+              end { standfct } ;
+            begin { factor } {* 因子分析程序开始 *}
+              x.typ := notyp;
+              x.ref := 0;
+              test( facbegsys, fsys,58 );
+              while sy in facbegsys do {* 从所有合法因子开始符号开始循环处理因子 *}
+                begin
+                  if sy = ident {* sy是普通标识符 *}
+                  then begin
+                         i := loc(id);
+                         insymbol;
+                         with tab[i] do
+                           case obj of
+                             konstant: begin {* 处理常量标识符并生成PCODE *}
+                                         x.typ := typ;
+                                         x.ref := 0;
+                                         if x.typ = reals {* x是否实常数 *}
+                                         then emit1(25,adr)	{* LDR adr：将实数装入数据栈,
+                                         注意实数常量的adr对应着其在rconst实常量表中的位置 *}
+                                         else emit1(24,adr) {* LDC adr：装入字面常量，
+                                          如果是整型直接存入栈顶即可 *}
+                                       end;
+                             vvariable:begin {* 处理变量标识符并生成PCODE *}
+                                         x.typ := typ;
+                                         x.ref := ref;
+                                         if sy in [lbrack, lparent,period] {* x是数组或记录 *} {*如果该标识符变量后面紧跟'('、']'、'.'则说明该变量存在子结构*}
+                                         then begin
+                                                if normal
+                                                then f := 0 {*值形参标准名或其他变量*}
+                                                else f := 1; {*变量形参*}
+                                                emit2(f,lev,adr); {*变量形参装载地址而值形参装载值*}
+                                                selector(fsys,x); {*处理子结构得到真正的变量*}
+                                                if x.typ in stantyps
+                                                then emit(34)
+                                              end
+                                         else begin {* x是普通变量 *}
+                                                if x.typ in stantyps 
+                                                then if normal 
+                                                     then f := 1 {*标准类型的值形参进行取值操作*}
+                                                     else f := 2 {*标准类型的变量形参进行间接取值操作*}
+                                                else if normal
+                                                     then f := 0 {*非标准类型的值形参取地址*}
+                                                     else f := 1; {*非标准类型的变量形参取值  ？？？？*}
+                                                emit2(f,lev,adr)
+                                              end
+                                       end;
+                             typel,prozedure: error(44); {* 因子不能为类型名或过程。表达式中不能出现的类型或者过程标识符*}
+                             funktion: begin  {*如果是函数符号 处理函数并生成PCODE *}
+                                         x.typ := typ;
+                                         if lev <> 0 {* 通过lev是否为0判断处理的是
+                                           标准函数还是非标准函数。层次为0则是标准函数,层次不为零则不是标准函数*}
+                                         then call(fsys,i)
+                                         else standfct(adr)
+                                       end
+                           end { case,with }
+                       end
+                  else if sy in [ charcon,intcon,realcon ] {* sy是常量 *}
+                       then begin
+                              if sy = realcon {* 处理实常量 *}
+                              then begin
+                                     x.typ := reals;
+                                     enterreal(rnum); {*将该元素放入实常量表*}
+                                     emit1(25,c1) {* LDR c1，
+                                     将实常量表中第c1个(也就是刚刚放进去的)元素放入栈顶 *}
+                                   end
+                              else begin  {*整数和字符型常量*}
+                                     if sy = charcon
+                                     then x.typ := chars
+                                     else x.typ := ints;
+                                     emit1(24,inum) {* LDC inum：装入字面常量inum *}
+                                   end;
+                              x.ref := 0;
+                              insymbol
+                            end
+                  else if sy = lparent {* sy是左括号，处理括号中表达式 *}
+                       then begin
+                              insymbol;
+                              expression(fsys + [rparent],x); {* expression递归处理括号中表达式 *}
+                              if sy = rparent
+                              then insymbol
+                              else error(4)
+                            end
+                  else if sy = notsy {* sy是逻辑非关键字 *}
+                       then begin
+                              insymbol;
+                              factor(fsys,x); {* 递归调用factor *}
+                              if x.typ = bools {* x的type为布尔型，生成NOT:逻辑非指令 *}
+                              then emit(35)
+                              else if x.typ <> notyp {* x是其他type，报错 *}
+                                   then error(32)
+                            end;
+                  test(fsys,facbegsys,6)
+                end { while }
+            end { factor };
+          begin { term   } {*项*}
+            factor( fsys + [times,rdiv,idiv,imod,andsy],x); {* 利用factor分析[]中因子 *}
+            while sy in [times,rdiv,idiv,imod,andsy] do{*因子和因子之间用* /  DIV MOD AND*}
+              begin
+                op := sy;
+                insymbol;
+                factor(fsys+[times,rdiv,idiv,imod,andsy],y ); {* 处理二元操作的第二个操作数 *}
+                if op = times {* 操作符为乘号 *}
+                then begin
+                       x.typ := resulttype(x.typ, y.typ);
+                       case x.typ of
+                         notyp: ;
+                         ints : emit(57); {* MUL：整形乘 *}
+                         reals: emit(60); {* MUR：实型乘 *}
+                       end
+                     end
+                else if op = rdiv {* 操作符为实型除 *}
+                     then begin
+                            if x.typ = ints {* x强制转换为实型 *}
+                            then begin
+                                   emit1(26,1);
+                                   x.typ := reals;
+                                 end;
+                            if y.typ = ints {* y强制转换为实型 *}
+                            then begin
+                                   emit1(26,0);
+                                   y.typ := reals;
+                                 end;
+                            if (x.typ = reals) and (y.typ = reals)
+                            then emit(61) {* DIR: 实型除 *}
+                            else begin {* x或y为notyp或出错 *}
+                                   if( x.typ <> notyp ) and (y.typ <> notyp)
+                                   then error(33);
+                                   x.typ := notyp
+                                 end
+                          end
+                else if op = andsy {* 操作符为与操作 *}
+                     then begin
+                            if( x.typ = bools )and(y.typ = bools) {* x与y必须为bools *}
+                            then emit(56) {* AND：逻辑与 *}
+                            else begin {* x或y为notyp或出错 *}
+                                   if( x.typ <> notyp ) and (y.typ <> notyp)
+                                   then error(32);
+                                   x.typ := notyp
+                                 end
+                          end
+                else begin { op in [idiv,imod] } {* 操作符为整型除或整型取模 *}
+                       if (x.typ = ints) and (y.typ = ints)
+                       then if op = idiv
+                            then emit(58) {* DIV：整数除 *}
+                            else emit(59) {* MOD: 取模 *}
+                       else begin {* x或y为notyp或出错 *}
+                              if ( x.typ <> notyp ) and (y.typ <> notyp)
+                              then error(34);
+                              x.typ := notyp
+                            end
+                     end
+              end { while }
+          end { term };
+        begin { simpleexpression } {* 开始处理简单表达式 *}
+          if sy in [plus,minus] {* sy是正负号 *}
+          then begin
+                 op := sy;
+                 insymbol;
+                 term( fsys+[plus,minus],x); {* 处理项 *}
+                 if x.typ > reals
+                 then error(33)
+                 else if op = minus {* 减号取相反数，MUS：求负 *}
+                      then emit(36)
+               end
+          else term(fsys+[plus,minus,orsy],x);
+          while sy in [plus,minus,orsy] do {* 循环处理出现的+，-，or *}
+            begin
+              op := sy;
+              insymbol;
+              term(fsys+[plus,minus,orsy],y);
+              if op = orsy {* 处理or *}
+              then begin
+                     if ( x.typ = bools )and(y.typ = bools)
+                     then emit(51) {* ORR：逻辑或 *}
+                     else begin
+                            if( x.typ <> notyp) and (y.typ <> notyp)
+                            then error(32);
+                            x.typ := notyp
+                          end
+                   end
+              else begin {* 处理算术运算符+- *}
+                     x.typ := resulttype(x.typ,y.typ); {* 得到类型转换后的值 *}
+                     case x.typ of
+                       notyp: ;
+                       ints: if op = plus
+                             then emit(52) {* ADD *}
+                             else emit(53); {* SUB *}
+                       reals:if op = plus
+                             then emit(54) {* ADR *}
+                             else emit(55) {* SUR *}
+                     end { case }
+                   end
+            end { while }
+          end { simpleexpression };
+        begin { expression  }
+        simpleexpression(fsys+[eql,neq,lss,leq,gtr,geq],x);
+        if sy in [ eql,neq,lss,leq,gtr,geq] {* sy是数值比较符 *}
+        then begin
+               op := sy;
+               insymbol;
+               simpleexpression(fsys,y);
+               if(x.typ in [notyp,ints,bools,chars]) and (x.typ = y.typ)
+               then case op of {* 操作数类型一致且不为实型才开始比较，
+               以下所有PCODE都只针对整型 *}
+                      eql: emit(45); {* EQL *}
+                      neq: emit(46); {* NEQ *}
+                      lss: emit(47); {* LSS *}
+                      leq: emit(48); {* LEQ *}
+                      gtr: emit(49); {* GRT *}
+                      geq: emit(50); {* GEQ *}
+                    end
+                else begin {* 操作数类型不一致则做转换 *}
+                       if x.typ = ints {* 转换x为reals *}
+                       then begin
+                              x.typ := reals;
+                              emit1(26,1)
+                            end
+                       else if y.typ = ints {* 转换y为reals *}
+                            then begin
+                                   y.typ := reals;
+                                   emit1(26,0)
+                                 end;
+                       if ( x.typ = reals)and(y.typ=reals)
+                       then case op of {* 针对实型数值比较运算的PCODE *}
+                              eql: emit(39); {* EQR *}
+                              neq: emit(40); {* NER *}
+                              lss: emit(41); {* LSR *}
+                              leq: emit(42); {* LER *}
+                              gtr: emit(43); {* GTR *}
+                              geq: emit(44); {* GER *}
+                            end
+                       else error(35)
+                     end;
+               x.typ := bools {* 将返回的x值变成bools}
+             end
+        end { expression };
+
+    {* 处理赋值语句 *}
+    procedure assignment( lv, ad: integer );
+      var x,y: item;
+          f  : integer;
+      begin   { tab[i].obj in [variable,prozedure] } {*当且仅当当前符号表的目标类型为变量或者过程型时*}
+        x.typ := tab[i].typ;
+        x.ref := tab[i].ref;
+        if tab[i].normal
+        then f := 0
+        else f := 1;
+        emit2(f,lv,ad);
+        if sy in [lbrack,lparent,period] {* 出现左括号和.，变量为数组或记录 *}
+        then selector([becomes,eql]+fsys,x);
+        if sy = becomes {* 读到赋值符号，之后开始赋值 *}{*赋值符号并容错*}
+        then insymbol 
+        else begin
+               error(51);
+               if sy = eql {* 等号容错 *}
+               then insymbol
+             end;
+        expression(fsys,y); {* 获得赋值符号右侧值 *}
+        if x.typ = y.typ {* 左右类型相等的处理 *}
+        then if x.typ in stantyps {* x不是数组变量也不是记录变量，就是普通的变量 *}
+             then emit(38) {* STO：栈顶赋值到次栈顶 *}
+             else if x.ref <> y.ref {* x，y是记录变量但ref与y不等，说明不是同一个记录类型 *}
+                  then error(46)
+             else if x.typ = arrays {* x是数组 *}
+                  then emit1(23,atab[x.ref].size) {* CPB atab[x.ref].size：拷贝atab中的项 *}
+             else emit1(23,btab[x.ref].vsize) {* x是记录且记录类型与y一样 CPB atab[x.ref].size：拷贝btab中的项 *}
+        else if(x.typ = reals )and (y.typ = ints) 
+        then begin
+               emit1(26,0); {* FLT 0 *}{* y类型需转换为reals *}
+               emit(38) {* STO *} {*赋值*}
+             end
+        else if ( x.typ <> notyp ) and ( y.typ <> notyp ) 
+             then error(46)
+      end { assignment };
+
+    {* 处理带begin end的混合语句 *}
+    procedure compoundstatement;
+      begin
+        insymbol;
+        statement([semicolon,endsy]+fsys); {* 处理一句语句 *}
+        while sy in [semicolon]+statbegsys do {* sy是分号或者statbegsys就循环处理混合语句 *}
+          begin
+            if sy = semicolon
+            then insymbol
+            else error(14);
+            statement([semicolon,endsy]+fsys) {* 处理一句语句 *}
+          end;
+        if sy = endsy {* 遇到end，说明当前层正常结束 *}
+        then insymbol
+        else error(57)
+      end { compoundstatement };
+
+    {* 处理if语句 *}
+    procedure ifstatement;
+      var x : item;
+          lc1,lc2: integer;
+      begin
+        insymbol;
+        expression( fsys+[thensy,dosy],x); {* 将if到then或到do之前的内容丢进expression处理 *}
+        if not ( x.typ in [bools,notyp]) {* 得到的应该是布尔值，否则报错 *}
+        then error(17);
+        lc1 := lc;
+        emit(11);  { jmpc } {* JPC:若x为假，跳转到y域对应地址 *}
+        if sy = thensy {* 处理then之后内容 *}
+        then insymbol
+        else begin {* 没加then，报错，对do进行容错 *}
+               error(52);
+               if sy = dosy
+               then insymbol
+             end;
+        statement( fsys+[elsesy]); {* 处理到else之前ifthen的代码 *}
+        if sy = elsesy {* 处理else内代码 *}
+        then begin
+               insymbol;
+               lc2 := lc;
+               emit(10); {* JMP:无条件跳转到y域对应地址 *}
+               code[lc1].y := lc; {*设置if指令跳转的位置*}
+               statement(fsys); {*处理else条件下的分析语句*}
+               code[lc2].y := lc  {*设置else指令跳转的位置*}
+             end
+        else code[lc1].y := lc {*设置if指令跳转的位置*}
+      end { ifstatement };{*设置if指令跳转的位置*}
+
+    {* 处理case语句 *}
+    procedure casestatement;
+      var x : item;
+          i,j,k,lc1 : integer;
+          casetab : array[1..csmax]of {* 限制case表个数为csmax *}
+                     packed record
+                       val,lc : index
+                     end;
+          exittab : array[1..csmax] of integer;
+
+      {* 处理case语句中的标号，将各标号对应的目标代码入口地址填入casetab中，并检查标号有无重复定义 *}
+      procedure caselabel;
+        var lab : conrec;
+            k : integer;
+        begin
+          constant( fsys+[comma,colon],lab );{*处理常量(因为标签都是常量)*}
+          if lab.tp <> x.typ {*如果获得的标签类型和变量的类型不符*}
+          then error(47){*case语句中标号必须是与case子句表达式类型相同的常量*}
+          else if i = csmax {*如果可以声明的case达到了最大限度。爆栈报错并终止程序 *}
+               then fatal(6)
+          else begin
+                 i := i+1; {casestatement的变量i为case总数。得到新case，移动case指针 *}
+                 k := 0; {* 用来检查标号是否重复定义的变量 *}
+                 casetab[i].val := lab.i; {* 保存新case值（即i指针） *}
+                 casetab[i].lc := lc; {* 记录新case生成代码的位置 *}
+                 repeat
+                   k := k+1
+                 until casetab[k].val = lab.i; {* 扫一遍已经声明的label,看有没有重复声明 *}
+                 if k < i {* 出现重复声明，报错 *}
+                 then error(1); { multiple definition }
+               end
+        end { caselabel };
+
+      {* 处理case语句的一个分支 *}
+      procedure onecase;
+        begin
+          if sy in constbegsys {* case之后必须是常量 *}
+          then begin
+                 caselabel; {* 获取一个标签 *}
+                 while sy = comma do {* 如果有逗号说明是一个case对应多个标签的情况，则继续处理下个标签 *}
+                   begin
+                     insymbol;
+                     caselabel
+                   end;
+                 if sy = colon {* 读到冒号说明label声明结束，读到其他符号，报错 *}
+                 then insymbol
+                 else error(5);
+                 statement([semicolon,endsy]+fsys); {* 处理冒号到分号间内容 *}
+                 j := j+1; {* 用来记录当前case对应exittab的位置 *}
+                 exittab[j] := lc; {* 记录当前case分支结束的代码位置,即下面将要生成的跳转指令的位置 *}
+                 emit(10) {* JMP: 生成一条跳转指令来结束这一case分支 *}
+               end
+          end { onecase };
+
+      begin  { casestatement  }
+        insymbol;
+        i := 0;
+        j := 0;
+        expression( fsys + [ofsy,comma,colon],x ); {* 处理到of *}
+        if not( x.typ in [ints,bools,chars,notyp ]) {* 若结果不是以上四种类型则报错 *}
+        then error(23);
+        lc1 := lc; {* 记录当前PCODE代码的位置指针 *}
+        emit(12); {jmpx} {* SWT:查找情况表,注意这里暂时没有给定跳转的地址 *}
+        if sy = ofsy
+        then insymbol
+        else error(8);
+        onecase; {* 处理一个分支 *}
+        while sy = semicolon do {* 循环处理之后所有分支 *}
+          begin
+            insymbol;
+            onecase
+          end;
+        code[lc1].y := lc;
+        for k := 1 to i do {* 遍历所有分支，建立情况表 *}
+          begin
+            emit1( 13,casetab[k].val); {* CAS：设置查找的值 *}
+            emit1( 13,casetab[k].lc); {* CAS：给出对应的跳转地址 *}
+          end;
+        emit1(10,0); {* JMP：说明情况表结束 *}
+        for k := 1 to j do {* 给定每个case分支退出之后的跳转地址 *}
+          code[exittab[k]].y := lc; {* 现在的lc指向情况表结束之后的位置，
+          将各分支的结束跳转地址指向这里 *}
+        if sy = endsy {* endsy以示结束 *}
+        then insymbol
+        else error(57)
+      end { casestatement };
+
+    {* 处理repeat语句 *}
+    procedure repeatstatement;
+      var x : item;
+          lc1: integer; {* 用来记录repeat的开始位置 *}
+      begin
+        lc1 := lc; {* 保存repeat当开始时的代码地址 *}
+        insymbol;
+        statement( [semicolon,untilsy]+fsys); {* 调用statement递归子程序来处理循环体中的语句 *}
+        while sy in [semicolon]+statbegsys do
+        {* 如果遇到了分号或者statement的开始符号,则说明循环体中还有语句没有处理完 *}
+          begin
+            if sy = semicolon
+            then insymbol
+            else error(14);
+            statement([semicolon,untilsy]+fsys) {* 处理循环体下一条语句 *}
+          end;
+        if sy = untilsy {* 遇到until，处理until内内容 *}
+        then begin
+               insymbol;
+               expression(fsys,x);
+               if not(x.typ in [bools,notyp] ) {* until内内容必须为bools，否则报错 *}
+               then error(17);
+               emit1(11,lc1);
+             end
+        else error(53)
+      end { repeatstatement };
+
+    {* 处理while语句 *}
+    procedure whilestatement;
+      var x : item;
+          lc1,lc2 : integer;
+      begin
+        insymbol;
+        lc1 := lc;
+        expression( fsys+[dosy],x); {* 处理do之前内容 *}
+        if not( x.typ in [bools, notyp] ) {* 内容必须为bools *}
+        then error(17);
+        lc2 := lc;
+        emit(11); {* JPC *}
+        if sy = dosy {* do之后正常处理 *}
+        then insymbol
+        else error(54);
+        statement(fsys); {* 正常处理 *}
+        emit1(10,lc1); {* JMP lc1：往回跳转 *}
+        code[lc2].y := lc
+      end { whilestatement };
+
+    {* 处理for语句 *}
+    procedure forstatement;
+      var cvt : types; {*循环变量的类型*}
+          x :  item;
+          i,f,lc1,lc2 : integer;
+      begin
+        insymbol;
+        if sy = ident {* for语句开头是标识符 *}
+        then begin
+               i := loc(id);  {* 从tabs中获得计数变量标识符 *}
+               insymbol;
+               if i = 0 {* 找不到标识符则计数变量，将计数变量类型默认处理为整形 *}
+               then cvt := ints
+               else if tab[i].obj = vvariable {* 对应的这个标识符对应符号是变量类型，正常处理 *}
+                    then begin
+                           cvt := tab[i].typ;
+                           if not tab[i].normal {* 如果是变量形参，则报错 *}
+                           then error(37)
+                           else emit2(0,tab[i].lev, tab[i].adr ); {* 如果不是变量形参，
+                              获取该符号的地址 *}
+                           if not ( cvt in [notyp, ints, bools, chars])
+                           then error(18)
+                         end
+              else begin {* 符号的类型也不是变量，报错并将计数变量类型设置为整型 *}
+                     error(37);  {*应该是变量类型*}
+                     cvt := ints
+                     end
+             end
+        else skip([becomes,tosy,downtosy,dosy]+fsys,2); {* for语句开头不是标识符或什么也没有，
+          跳过出错内容 *}
+        if sy = becomes {* 读到赋值符号，给计数器赋初值 *}
+        then begin
+               insymbol;
+               expression( [tosy, downtosy,dosy]+fsys,x); {*for a:= 6 + 1 to 10 do ... 此处处理6+1并将结果的类型返回*}
+               if x.typ <> cvt {*如果和a 的类型不符,则报错*}
+               then error(19);
+             end
+        else skip([tosy, downtosy,dosy]+fsys,51); {* 没出现赋值符号，跳过出错内容 *}
+        f := 14; {* F1U *}
+        if sy in [tosy,downtosy] {* 读到to或downto，加步伐大小 *}
+        then begin
+               if sy = downtosy {* downto就 F1D：减步伐大小 *}
+               then f := 16;
+               insymbol;
+               expression([dosy]+fsys,x); {* 处理到do之前 *}
+               if x.typ a<> cat
+               then error(19)
+             end
+        else skip([dosy]+fsys,55); {* 没出现to或downto，跳过出错内容 *}
+        lc1 := lc; {* 记录下句F1U指令的位置 *}
+        emit(f); {* 生成f对应PCODE *}
+        if sy = dosy {* 找到do *}
+        then insymbol
+        else error(54);
+        lc2 := lc; {* 获取循环体开始代码的位置 *}
+        statement(fsys); {* 处理循环体语句 *}
+        emit1(f+1,lc2); {* 结束时生成F2U或F2D指令 *}
+        code[lc1].y := lc {* 将之前产生的F1U的跳转地址回传回去 *}
+      end { forstatement };
+
+    {* 处理标准过程（输入、输出） *}
+    procedure standproc( n: integer );
+      var i,f : integer;
+          x,y : item;
+      begin
+        case n of
+          1,2 : begin { read }
+                  if not iflag {* input flag为true才开始读入 *}
+                  then begin
+                         error(20); {*程序头部未包含参数“output”或“input”*}
+                         iflag := true
+                       end;
+                  if sy = lparent {* 左括号后为读入内容 *}
+                  then begin
+                         repeat
+                           insymbol;
+                           if sy <> ident {* 读入参数应该为标识符 *}
+                           then error(2)
+                           else begin
+                                  i := loc(id);
+                                  insymbol;
+                                  if i <> 0
+                                  then if tab[i].obj <> vvariable
+                                       then error(37)
+                                       else begin
+                                              x.typ := tab[i].typ;
+                                              x.ref := tab[i].ref;
+                                              if tab[i].normal {*指令处理过程中其操作的都是地址,装载值则直接将地址赋值,加载地址则根据地址再去找值*}
+                                                then f := 0 {*对值形参加载地址,根据地址索引到S中的值,所以为加载地址*}
+                                              else f := 1; {*对变量形参加载值,即 a=adr,所以加载的地址直接赋值就好了,即指令为加载值*}
+                                              emit2(f,tab[i].lev,tab[i].adr);
+                                              if sy in [lbrack,lparent,period]
+                                              then selector( fsys+[comma,rparent],x);
+                                              if x.typ in [ints,reals,chars,notyp]
+                                                then emit1(27,ord(x.typ)) {* 若n = 1，读入1个字符 *}
+                                                else error(41) {*read或write的参数类型不正确*}
+                                            end
+                                end;
+                           test([comma,rparent],fsys,6);
+                         until sy <> comma;
+                         if sy = rparent {* 右括号表示结束 *}
+                         then insymbol
+                         else error(4)
+                       end;
+                  if n = 2
+                  then emit(62) {* 读入一行 *}
+                end;
+          3,4 : begin { write }
+                  if sy = lparent {* 左括号后为写入内容 *}
+                  then begin
+                         repeat {* 循环读字符串，可用逗号分割 *}
+                           insymbol;
+                           if sy = stringcon  {*如果是字符串类型*}
+                           then begin
+                                  emit1(24,sleng); {* LDC sleng：装入sleng字面常量 *}
+                                  emit1(28,inum); {* WRS inum：写字符 *}
+                                  insymbol
+                                end
+                           else begin {* 写入内容带表达式 *}
+                                  expression(fsys+[comma,colon,rparent],x); {* 处理到逗号、冒号或右括号 *}
+                                  if not( x.typ in stantyps ) {* x不可为数组或记录 *}
+                                  then error(41);
+                                  if sy = colon {*如果出现冒号继续处理,每一个输出参数后面有冒号的话,说明有格式化操作*}
+                                  then begin
+                                         insymbol;
+                                         expression( fsys+[comma,colon,rparent],y);
+                                         if y.typ <> ints  {*一个冒号后面代表输出几个字符*}
+                                         then error(43); {*write语句的域宽应该是整型*}
+
+                                         if sy = colon
+                                         then begin
+                                                if x.typ <> reals {*该表达式应该是实型*}
+                                                then error(42);
+                                                insymbol;
+                                                expression(fsys+[comma,rparent],y);
+                                                if y.typ <> ints
+                                                then error(43);
+                                                emit(37) {* 写实数，给定位宽 *}
+                                              end
+                                         else emit1(30,ord(x.typ)) {* 写，给定位宽 *}
+                                       end
+                                  else emit1(29,ord(x.typ)) {* 写，隐含位宽 *}
+                           end
+                         until sy <> comma;
+                         if sy = rparent {* 右括号代表结束 *}
+                         then insymbol
+                         else error(4)
+                       end;
+                  if n = 4
+                  then emit(63) {* 写一行 *}
+                end; { write }
+        end { case };
+      end { standproc } ;
+{*处理分析语句*}
+    begin { statement }
+      if sy in statbegsys+[ident]
+      then case sy of {* 根据不同sy类型决定使用哪种statement子过程处理 *}
+             ident : begin
+                       i := loc(id);
+                       insymbol;
+                       if i <> 0
+                       then case tab[i].obj of
+                              konstant,typel : error(45);  {*无法对常量进行赋值操作*}
+                              vvariable:     assignment( tab[i].lev,tab[i].adr); {*对变量则处理赋值语句*}
+                              prozedure:       if tab[i].lev <> 0
+                                               then call(fsys,i)
+                                               else standproc(tab[i].adr);
+                              funktion:        if tab[i].ref = display[level]
+                                               then assignment(tab[i].lev+1,0)
+                                               else error(45) {*对函数标识符也进行赋值操作？？？？*}
+                            end { case }
+                     end;
+             beginsy : compoundstatement;
+             ifsy    : ifstatement;
+             casesy  : casestatement;
+             whilesy : whilestatement;
+             repeatsy: repeatstatement;
+             forsy   : forstatement;
+           end;  { case }
+      test( fsys, [],14);
+    end { statement };
+```
+
+
+
+### 文件组织
+
+课程组所给Pascal编译器代码均处在同一个word文件中，文件组织上较为耦合。事实上，可以为每一个过程/函数置入新的文件，以更清晰地了解编译器的结构和组织。大体来说，该编译器遵循文法分析、语法分析、错误处理、语义分析、代码生成和代码优化的模块化设计理念。
 
 ## 二、编译器总体设计
 
