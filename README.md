@@ -10,13 +10,13 @@
 
 本编译器主要参考的编译器为Pascal编译器，具体如下。
 
-### 总体结构
+### 1. 总体结构
 
 该编译器总体结构为经典的词法分析、语法分析、错误处理、语义分析、代码生成和代码优化六个部分。
 
-### 接口设计
+### 2. 接口设计
 
-#### `nextch`读取下一个字符
+#### 2.1 `nextch`读取下一个字符
 
 ```pascal
 procedure nextch;  { read next character; process line end }
@@ -56,7 +56,7 @@ procedure nextch;  { read next character; process line end }
   end { nextch };
 ```
 
-#### `error`打印错误信息
+#### 2.2 `error`打印错误信息
 
 ```pascal
 {* 打印出错位置和错误编号，并将错误编号加入errs中 *}
@@ -73,7 +73,7 @@ begin
 end { error };
 ```
 
-#### `adjustscale`处理实数
+#### 2.3 `adjustscale`处理实数
 
 ```pascal
 {* 根据小数位数和指数大小求出实数尾部值的大小，并附在rnum后面得到最后的实数 *}
@@ -105,7 +105,7 @@ end { error };
     end { adjustscale };
 ```
 
-#### `enter`登记符号表
+#### 2.4 `enter`登记符号表
 
 ```pascal
 {* 把标准类型、过程、函数名登到符号表(tab)中。
@@ -127,7 +127,7 @@ procedure enter(x0:alfa; x1:objecttyp; x2:types; x3:integer );
   end; { enter }
 ```
 
-#### `enterarray`登记数组符号表
+#### 2.5 `enterarray`登记数组符号表
 
 ```pascal
 {* 将数组下标信息录入数组表atab，
@@ -157,7 +157,7 @@ procedure enterarray( tp: types; l,h: integer );
   end { enterarray };
 ```
 
-#### `enterreal`登记实常量表
+#### 2.6 `enterreal`登记实常量表
 
 ```pascal
 {* 录入实常量表rconst *}
@@ -178,7 +178,7 @@ procedure enterreal( x: real );
 
 
 
-#### `enterblock`登记分程序信息入分程序表
+#### 2.7 `enterblock`登记分程序信息入分程序表
 
 ```pascal
 {* 将分程序信息录入分程序表btab *}
@@ -194,7 +194,7 @@ procedure enterblock;
   end { enterblock };
 ```
 
-#### `emit`生成中间代码PCODE
+#### 2.8 `emit`生成中间代码PCODE
 
 ```pascal
 {* emit和下面两个过程都是用来生成PCODE的，后个过程接的参数是操作数
@@ -232,7 +232,7 @@ procedure emit2( fct, a, b: integer );  {*两个操作数*}
   end { emit2 };
 ```
 
-#### `test`检查符号合法性
+#### 2.9 `test`检查符号合法性
 
 ```pascal
   {* 检查当前sym是否合法,若不合法,打印出错标志并进行跳读 *}
@@ -255,7 +255,7 @@ procedure emit2( fct, a, b: integer );  {*两个操作数*}
     end { testsemicolon };
 ```
 
-#### `enter`登记符号表
+#### 2.10 `enter`登记符号表
 
 ```pascal
   {* 在分程序中将标识符id填入tab,k为标识符种类 *}
@@ -319,7 +319,7 @@ procedure emit2( fct, a, b: integer );  {*两个操作数*}
     end { entervariable };
 ```
 
-#### `constant`处理常量
+#### 2.11 `constant`处理常量
 
 ```pascal
 {* 处理分程序中常量，由c返回常量的类型与值 *}
@@ -379,7 +379,7 @@ procedure emit2( fct, a, b: integer );  {*两个操作数*}
     end { constant };
 ```
 
-#### `typ`处理类型
+#### 2.12 `typ`处理类型
 
 ```pascal
   {* 处理类型说明,返回当前关键词的类型tp,在符号表中的位置rf,以及需要占用存储空间的大小sz *}
@@ -543,7 +543,7 @@ procedure emit2( fct, a, b: integer );  {*两个操作数*}
       end { typ };
 ```
 
-#### `parameterlist`处理形参
+#### 2.13 `parameterlist`处理形参
 
 ```pascal
   {* 处理过程或函数说明中的形参，将形参信息填入符号表 *}
@@ -631,7 +631,7 @@ procedure emit2( fct, a, b: integer );  {*两个操作数*}
     end { parameterlist };
 ```
 
-#### `typedeclaration`处理自定义类型
+#### 2.14 `typedeclaration`处理自定义类型
 
 ```pascal
   {* 处理类型自定义，将自定义的类型信息填入tab，与constdec过程几乎一样 *}
@@ -665,7 +665,7 @@ procedure emit2( fct, a, b: integer );  {*两个操作数*}
     end { typedeclaration };
 ```
 
-#### `variabledeclaration`处理普通变量
+#### 2.15 `variabledeclaration`处理普通变量
 
 ```pascal
   {* 处理普通变量申明，将变量填入tab，与parameterlist的值形参处理过程几乎一样 *}
@@ -707,7 +707,7 @@ procedure emit2( fct, a, b: integer );  {*两个操作数*}
     end { variabledeclaration };
 ```
 
-#### `procdeclaration`处理过程和函数
+#### 2.16 `procdeclaration`处理过程和函数
 
 ```pascal
   {* 处理过程与函数声明，将函数名或过程名填入tab *}
@@ -734,7 +734,7 @@ procedure emit2( fct, a, b: integer );  {*两个操作数*}
     end { proceduredeclaration };
 ```
 
-#### `statement`处理各种语句
+#### 2.17 `statement`处理各种语句
 
 ```pascal
   {* 分析处理各种语句 *}
@@ -1607,13 +1607,100 @@ procedure emit2( fct, a, b: integer );  {*两个操作数*}
 
 
 
-### 文件组织
+### 3. 文件组织
 
 课程组所给Pascal编译器代码均处在同一个word文件中，文件组织上较为耦合。事实上，可以为每一个过程/函数置入新的文件，以更清晰地了解编译器的结构和组织。大体来说，该编译器遵循文法分析、语法分析、错误处理、语义分析、代码生成和代码优化的模块化设计理念。
 
 ## 二、编译器总体设计
 
+### 1. 总体结构
 
+本编译器的总贴结构分为前端(frontend)，中端(middle)和后端(backend)三个部分。
+
+其中，前端负责词法分析和语法分析，并在语法分析时进行错误处理以及部分语义分析；
+
+中端负责符号表生成、中间代码生成、语义分析和部分代码优化；
+
+后端负责最终代码（mips）生成以及部分代码优化。
+
+### 2. 接口设计
+
+#### 2.1 前端
+
+- `TokenList`：经词法分析后得到的源码单词串
+- `TokenListIterator`：单词迭代器，对`TokenList`的迭代器，用于语法分析
+- `%Parser`：各种`parser`如`ConseDeclParser`等，负责各个语法成分的解析。
+- 各种为了词法分析和语法分析处理方便而设计的类，主要是对文法成分进行模拟
+
+#### 2.2 中端
+
+- `ErrorTable`：错误表
+- `Symbol`：符号
+- `SymbolTable`：符号表，用于语义分析
+- `IrBuilder`：中间代码生成器，用于对词法分析和语法分析处理后利用语法树生成中间代码
+- `Ir%Builder`：各种`builder`，如`IrFunctionBuilder`，用于生成中间代码的各种组成部分
+- `IrUse`：用于进行数据流分析
+- 各种为了填表/错误处理/中间代码生成而设计的类，主要是对中间代码的结构的模拟
+
+#### 2.3 后端
+
+- `MipsBuilder`：Mips代码生成器，用于将中间代码翻译为Mips代码
+- `RegisterFile`：寄存器表，用于保存编译时的寄存器分配情况
+- `MipsSymbolTable`：Mips符号表，用于保存中间代码和mips的映射关系
+- `Add`等各种Mips指令
+- `MipsFunctionBuilder`等各种`builder`，用于按照树状结构翻译中间代码
+- `MipsBasicBlock`：Mips基本块，用于进行数据流分析和代码优化
+
+### 3. 文件组织
+
+#### 3.1 `frontend`前端
+
+```
+├─lexer 词法分析
+└─parser 语法分析
+    ├─declaration 声明
+    │  ├─constant 常量
+    │  │  └─constinitval 常量初值
+    │  └─variable 变量
+    │      ├─initval 变量初值
+    │      └─vardef 变量声明
+    ├─expression 表达式
+    │  ├─multiexp 多项式表达式
+    │  ├─primaryexp 基本表达式
+    │  └─unaryexp 一元表达式
+    ├─function 函数
+    │  └─functype 函数类型
+    ├─statement 语句
+    │  ├─blockitem 基本块元素
+    │  └─stmt 语句
+    └─terminal 终结符
+```
+
+#### 3.2 `middle`中端
+
+```
+├─error 错误处理
+├─llvmir LLVM IR中间代码
+│  ├─type 中间代码类型
+│  └─value 中间代码类
+│      ├─basicblock 基本块
+│      ├─constant 常量
+│      ├─function 函数
+│      ├─globalvariable 全局常变量
+│      └─instructions 中间代码指令
+│          ├─memory 内存指令
+│          └─terminator 终结指令
+└─symbol 符号
+```
+
+#### 3.3 `backend`后端
+
+```
+├─basicblock 基本块
+├─function 函数
+├─instruction Mips命令
+└─symbol Mips符号
+```
 
 ## 三、词法分析设计
 
@@ -1627,7 +1714,7 @@ procedure emit2( fct, a, b: integer );  {*两个操作数*}
 
 ### 2. 编码实现
 
-#### 2. 1 `SourceFileLexer`源文件词法分析器
+#### 2.1 `SourceFileLexer`源文件词法分析器
 
 ##### 设计思路
 
