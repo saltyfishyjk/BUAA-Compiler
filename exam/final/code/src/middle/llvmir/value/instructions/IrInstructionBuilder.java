@@ -675,6 +675,8 @@ public class IrInstructionBuilder {
                     mulInst = new IrBinaryInst(valueType, IrInstructionType.Div, left, right);
                 } else if (operator.getType().equals(TokenType.MOD)) {
                     mulInst = new IrBinaryInst(valueType, IrInstructionType.Mod, left, right);
+                } else if (operator.getType().equals(TokenType.BITANDTK)) {
+                    mulInst = new IrBinaryInst(valueType, IrInstructionType.Bitand, left, right);
                 } else {
                     System.out.println("ERROR in IrInstructionBuilder : should not reach here");
                     mulInst = null;

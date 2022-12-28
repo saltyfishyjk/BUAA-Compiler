@@ -68,7 +68,9 @@ public class IrBinaryInst extends IrInstruction {
                 break;
             case Mod:
                 sb.append("srem ");
-                break;
+                break; 
+            case Bitand:
+                sb.append("and ");
             case Lt:
                 sb.append("Lt ");
                 break;

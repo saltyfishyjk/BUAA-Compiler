@@ -2,6 +2,7 @@ package frontend.lexer;
 
 import frontend.SourceFileLexer;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /**
@@ -70,14 +71,52 @@ public class TokenLexer {
             if (tokenStr == null) {
                 continue;
             } else {
-                Token token = new Token(tokenType, sourceFileLexer.getLineNum(), tokenStr);
+                if (tokenType.equals(TokenType.PLUSPLUS)) {
+                    // ++
+                    ArrayList<Token> tokens = this.tokenList.getTokens();
+                    int len = tokens.size();
+                    Token token = tokens.get(len - 1);
+                    int lineNum = sourceFileLexer.getLineNum();
+                    // 添加=
+                    Token assign = new Token(TokenType.ASSIGN, lineNum, "=");
+                    this.tokenList.addToken(assign);
+                    // 添加一个新的token
+                    Token newToken = new Token(token.getType(), lineNum, token.getContent());
+                    this.tokenList.addToken(newToken);
+                    // 添加+
+                    Token plus = new Token(TokenType.PLUS, lineNum, "+");
+                    this.tokenList.addToken(plus);
+                    // 添加1
+                    Token one = new Token(TokenType.INTCON, lineNum, "1");
+                    this.tokenList.addToken(one);
+                } else if (tokenType.equals(TokenType.MINUMINU)) {
+                    // --
+                    ArrayList<Token> tokens = this.tokenList.getTokens();
+                    int len = tokens.size();
+                    Token token = tokens.get(len - 1);
+                    int lineNum = sourceFileLexer.getLineNum();
+                    // 添加=
+                    Token assign = new Token(TokenType.ASSIGN, lineNum, "=");
+                    this.tokenList.addToken(assign);
+                    // 添加一个新的token
+                    Token newToken = new Token(token.getType(), lineNum, token.getContent());
+                    this.tokenList.addToken(newToken);
+                    // 添加-
+                    Token minus = new Token(TokenType.MINU, lineNum, "-");
+                    this.tokenList.addToken(minus);
+                    // 添加1
+                    Token one = new Token(TokenType.INTCON, lineNum, "1");
+                    this.tokenList.addToken(one);
+                } else {
+                    Token token = new Token(tokenType, sourceFileLexer.getLineNum(), tokenStr);
+                    this.tokenList.addToken(token);
+                }
                 this.sourceFileLexer.moveForward(tokenStr.length());
-                this.tokenList.addToken(token);
                 break;
             }
         }
     }
-
+    
     public TokenList getTokenList() {
         return tokenList;
     }

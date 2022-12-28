@@ -89,7 +89,7 @@ public class StmtParser {
     private void caseIdenfr(Token first) {
         /* need to distinguish LVal = Exp, LVal = getint and [Exp] */
         int cnt = 1;
-        int mode = 0; // 0:assign 1:input
+        int mode = 0; // 0:assign 1:input 2: ++ 3: --
         boolean flag = false; // LVal = Exp; || LVal = getint();
         Token token = first;
         while (!token.getType().equals(TokenType.SEMICN)) {

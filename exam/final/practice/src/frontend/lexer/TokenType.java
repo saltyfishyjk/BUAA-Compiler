@@ -35,6 +35,10 @@ public enum TokenType {
     EQL(false, "=="),
     NEQ(false, "!="),
     /* ---------- comparison operation end ---------- */
+    /* ---------- auto increment operation begin ---------- */
+    PLUSPLUS(false, "\\+\\+"),
+    MINUMINU(false, "--"),
+    /* ---------- auto increment operation end ---------- */
     /* ---------- arithmetic operation begin ---------- */
     PLUS(false, "\\+"),
     MINU(false, "-"),

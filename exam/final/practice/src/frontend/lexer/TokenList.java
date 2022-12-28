@@ -16,7 +16,7 @@ public class TokenList {
     public ArrayList<Token> getTokens() {
         return tokens;
     }
-
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

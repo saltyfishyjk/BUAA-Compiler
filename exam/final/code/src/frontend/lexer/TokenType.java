@@ -21,6 +21,7 @@ public enum TokenType {
     PRINTFTK(true, "printf"),
     RETURNTK(true, "return"),
     VOIDTK(true, "void"),
+    BITANDTK(true, "bitand"),
     /* ---------- specific elements end ---------- */
     /* ----------- begin ---------- */
     IDENFR(false, "[_A-Za-z][_A-Za-z0-9]*"),

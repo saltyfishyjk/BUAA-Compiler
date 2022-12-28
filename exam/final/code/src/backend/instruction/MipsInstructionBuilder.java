@@ -183,7 +183,12 @@ public class MipsInstructionBuilder {
             ret.add(div);
             Mfhi mfhi = new Mfhi(ansReg);
             ret.add(mfhi);
-        } else if (inst.getInstructionType().equals(IrInstructionType.Lt)) {
+        } else if (inst.getInstructionType().equals(IrInstructionType.Bitand)) {
+            And and = new And(ansReg, leftReg, rightReg);
+            ret.add(and);
+        }
+        
+        else if (inst.getInstructionType().equals(IrInstructionType.Lt)) {
             /* < */
             Slt slt = new Slt(ansReg, leftReg, rightReg);
             ret.add(slt);

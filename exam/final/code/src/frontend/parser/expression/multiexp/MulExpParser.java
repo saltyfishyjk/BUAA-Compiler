@@ -39,7 +39,8 @@ public class MulExpParser {
         Token token = this.iterator.readNextToken();
         while (token.getType().equals(TokenType.MULT) ||
                 token.getType().equals(TokenType.DIV) ||
-                token.getType().equals(TokenType.MOD)) {
+                token.getType().equals(TokenType.MOD) ||
+                token.getType().equals(TokenType.BITANDTK)) {
             /* token -> * / % */
             this.operators.add(token);
             this.operands.add(unaryExpParser.parseUnaryExp());
