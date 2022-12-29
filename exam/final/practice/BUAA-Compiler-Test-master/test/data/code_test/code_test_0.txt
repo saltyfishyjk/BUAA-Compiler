@@ -1,0 +1,11 @@
+int main() {
+	printf("output test\n");
+	printf("hello ");
+	printf("world!\n");
+	printf("abcdefg\n1234567\n");
+	printf("one is %d\n",1);
+	printf("two is %d and negative five is %d\n", 2, -5);
+	printf("good!");
+	printf(" test end\n");
+	return 0;	
+}

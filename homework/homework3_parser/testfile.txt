@@ -1,0 +1,124 @@
+/*cover all*/
+//Decl
+//ConstDecl
+const int g_const_1 = 1;
+const int g_const_2 = 1, g_const_3 = 1, g_const_4 = 1;
+const int g_const_5[2] = {1, 2};
+const int g_const_6[2][2] = {{1, 2}, {}};
+const int g_const_7[2][2] = {{g_const_6[0][0], g_const_6[0][0]}, {1, 2}};
+//VarDecl
+int g_var_1 = 1;
+int g_var_2 = 1, g_var_3 = 1, g_var_4 = 1;
+int g_var_5[2] = {1, 2};
+int g_var_6[2][2] = {{1, 1}, {1, 1}};
+int g_var_7[2][2];
+int g_var_8[2][2] = {{g_const_6[0][0], g_const_6[0][0]}, {1, 1}};
+//FuncDef
+int fun_int_1(){return 1;}
+int fun_int_2(int a){return 1;}
+int fun_int_3(int a[]){return 1;}
+int fun_int_4(int a, int b){return 1;}
+int fun_int_5(int a[], int b[][2] ) {return 1;}
+int fun_int_6(int a[], int b[][2], int c){return 1;}
+int fun_int_7(int a[]){return 1;}
+void fun_void_1(){return;}
+void fun_void_2(int a){return;}
+void fun_void_3(int a[]){return;}
+void fun_void_4(int a, int b){}
+void fun_void_5(int a[], int b[][2] ) {}
+void fun_void_6(int a[], int b[][2], int c){return;}
+void fun_void_7(int a[]){return;}
+//MainFuncDef
+int main() {
+	printf("19373135\n");
+	printf("global g_var_6[1][0]:%d, g_var_6[1][1]:%d\n", g_var_6[1][0], g_var_6[1][1]);
+	//BlockItem
+	//Decl
+	const int l_const_1 = 1;
+	const int l_const_2 = l_const_1;
+	const int l_const_3 = (1);
+	const int l_const_4 = 1, l_const_5 = 1,l_const_6 = 1;
+	int l_var_1 = 1;
+	int l_var_2[2] = {1, 1};
+	int l_var_3[2] = {1, 2};
+	int l_var_4 = 1, l_var_5 = 1, l_var_6 = 1;
+	int l_var_7 = 10;
+	int l_var_8 = 100;
+	int l_var_9;
+	printf("local l_var_4:%d, l_var_5:%d, l_var_6:%d, l_var_7:%d, l_var_8:%d\n", l_var_4, l_var_5, l_var_6, l_var_7, l_var_8);
+	//Stmt
+	//Exp
+	l_var_4 = 1 + 1 - 1;
+	l_var_5 = l_var_4 + l_var_4 - l_var_4;
+	l_var_6 = (1 + 1) - 1;
+	l_var_4 = 1 * 1 % 1 / 1;
+	l_var_4 = 1;
+	l_var_5 = l_var_4 * l_var_4 % l_var_4 / l_var_4;
+	l_var_6 = 1 * (1 % 1 / 1);
+	printf("exp l_var_4:%d\n", l_var_4);
+	printf("exp l_var_5:%d\n", l_var_5);
+	printf("exp l_var_6:%d\n", l_var_6);
+	l_var_7 = fun_int_1();
+	l_var_7 = fun_int_2(l_var_8);
+	l_var_7 = fun_int_3(l_var_2);
+	l_var_7 = fun_int_4(l_var_8, l_var_8);
+	l_var_7 = fun_int_5(l_var_2, g_var_6);
+	l_var_7 = fun_int_6(l_var_2, g_var_6, l_var_8);
+	l_var_7 = fun_int_7(g_var_6[1]);
+	fun_void_1();
+	fun_void_2(l_var_8);
+	fun_void_3(l_var_2);
+	fun_void_4(l_var_8, l_var_8);
+	fun_void_5(l_var_2, g_var_6);
+	fun_void_6(l_var_2, g_var_6, l_var_8);
+	fun_void_7(g_var_6[1]);
+	;
+	//Block
+	{}
+	{l_var_1 = 1; l_var_1 = (l_var_1 + 1) * 2;}
+	//if
+	if (l_var_4 != 1) l_var_4 = 1;
+	if (l_var_4 == 1) l_var_4 = 2;
+	if (l_var_4 == 2) l_var_4 = 3; 
+	else l_var_4 = 4;
+	printf("if l_var_4:%d\n", l_var_4);
+	//while
+	while(l_var_5 < 4) {
+		l_var_5 = l_var_5 -+- 1;
+	}
+	while(l_var_5 > 2) {
+		l_var_5 = l_var_5 +-+ 1;
+	}
+	while(l_var_5 <= 3) {
+		l_var_5 = l_var_5 -+- 1;
+	}
+	while(l_var_5 >= 1){
+		l_var_5 = l_var_5 +-+ 1;
+	}
+	printf("while l_var_5:%d\n", l_var_5);
+	//break continue
+	while(l_var_5 != 1){
+		l_var_5 = 1;
+		break;
+		l_var_5 = 2;
+	}
+	while(l_var_5){
+		l_var_5 = 0;
+		continue;
+		l_var_5 = 1;
+	}
+	printf("while l_var_5:%d\n", l_var_5);
+	while(!l_var_5){
+		l_var_5 = 1;
+	}
+	if (l_var_5 && l_var_5){}
+	if (l_var_5 != 1 && l_var_5){}
+	if (l_var_5 != 1 && l_var_5 == l_var_5){}
+	if (l_var_5 != 1 || l_var_5 == 1){}
+	if (l_var_5 == 1 || l_var_5 != 1 && l_var_5 != 2){}
+	//getint
+	l_var_6 = getint();
+	//printf
+	printf("getint l_var_6:%d", l_var_6);
+	return 0;
+}

@@ -1,0 +1,17 @@
+int a=1;
+int b=2;
+int c=0;
+int d=0;
+int e=0;
+int f=0;
+int main(){
+if (a<1 || b&&c>d || d || e&&f){
+
+    printf("hhh");
+
+}
+else {
+printf("nnn");
+}
+return 0;
+}

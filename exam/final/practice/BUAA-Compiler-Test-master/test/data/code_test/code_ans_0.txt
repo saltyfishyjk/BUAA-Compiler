@@ -1,0 +1,7 @@
+output test
+hello world!
+abcdefg
+1234567
+one is 1
+two is 2 and negative five is -5
+good! test end

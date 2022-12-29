@@ -1,0 +1,46 @@
+// 函数互相调用测试
+int ga = 0;
+int gb = 0, gc = 0;
+
+int add(int a, int b) {
+	return a+b;
+}
+
+int sub(int a, int b) {
+	b = a-b;
+	return b;
+}
+
+int mult(int a, int b) {
+	int r = a*b;
+	return r;
+}
+
+void addGaGb(int n) {
+	ga = add(ga,n);
+	gb = sub(gb,-n);
+}
+
+void addGaGbGc(int n) {
+	addGaGb(sub(n,n) + mult(n,add(0,1)));
+	gc = add(gc, mult(1, n) + add(n,n) + sub(0, 2*n));
+}
+
+void publish(int id) {
+	printf("%d: %d %d %d\n",id, ga, gb, gc);
+}
+
+int main() {
+	printf("global init: %d %d %d\n",ga,gb,gc);
+	int a = 13;
+	int t = a + 7;
+	addGaGb(t);
+	publish(1);
+	addGaGbGc((t-20) + (t-10)*3);
+	publish(2);
+	addGaGbGc(mult(10,t));
+	publish(3);
+	addGaGbGc(-sub(t, add(t, 50)) * mult(-1,t) % mult(add(t,3),2));
+	publish(4);
+	return 0;	
+}

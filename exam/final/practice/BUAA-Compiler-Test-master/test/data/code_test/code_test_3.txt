@@ -1,0 +1,28 @@
+// 测试基本运算 单目+- 双目+-*/% 
+int ga = 10;
+int gb = -1024;
+const int gc = 10 + -1024;
+const int gd = (+-+-+-gc * 10 + 3) % 1023;
+
+int main() {
+	printf("global: %d %d %d %d\n",ga,gb,gc,gd);
+	int a = -gb;
+	int b = ga + -gc;
+	int c = -b;
+	printf("1: %d %d %d\n",a,b,c);
+	a = 1048 + a - 248;
+	b = a * 2 * 20 / 5;
+	c = b % 29;
+	printf("2: %d %d %d\n",a,b,c);
+	a = +-gb + 1824 % (a-gc);
+	b = a + -gc + -+-gd;
+	c = -+-+-gd * (+-+5 + ga) % (ga % 130);
+	printf("3: %d %d %d\n",a,b,c);
+	a = -0;
+	a = (a * b + -+284 + -ga % 59) * -20 / (gb + 1024 / 3);
+	b = +1924 - -482;
+	b = 29 * b % (gb + gd + -+-1000) + 425 - c * 19;
+	c = -+-+-+c;
+	printf("4: %d %d %d\n",a,b,c); 
+	return 0;	
+}

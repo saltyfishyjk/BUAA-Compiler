@@ -1,0 +1,57 @@
+// 测试简单函数 
+int ga = 10;
+int gb = -1024;
+const int gc = 10 + -1024;
+
+void publish() {
+	printf("call publish and do nothing\n");
+} 
+
+void readGa() {
+	ga = getint();
+	printf("read %d into ga\n",ga);
+}
+
+int add(int a, int b) {
+	int r = a + b;
+	return r;
+}
+
+int sub(int a, int b) {
+	a = a - b;
+	return a;
+}
+
+void addGaGb(int n) {
+	ga = ga + n;
+	gb = gb + n;
+}
+
+int sum(int a, int b, int c, int d, int e, int f, int g) {
+	int r = a + b + c + d + e + f + g;
+	return r;
+}
+
+int main() {
+	printf("global: %d %d %d\n",ga,gb,gc);
+	publish();
+	readGa();
+	addGaGb(100);
+	printf("1: %d %d %d\n",ga,gb,gc);
+	int a = 200;
+	addGaGb(a);
+	printf("2: %d %d %d\n",ga,gb,gc);
+	int b = 300;
+	addGaGb((a+b)/2*(b-a)/100);
+	printf("3: %d %d %d\n",ga,gb,gc);
+	ga = sub(ga, gb);
+	gb = sub(gc, ga+29);
+	printf("4: %d %d %d\n",ga,gb,gc);
+	a = add(add(10,20), sub(100,10));
+	b = sub(add(ga,gc) + add(10,5) / 3, sub(100,add(a,30)));
+	printf("5: %d %d\n",a,b);
+	int t_1 = 928;
+	int t1 = sum(294, -+-+-t_1, sub(a, 10), ga+gb, add(gc, 10), add(10,sub(t_1, 800)), sum(1,1,1,1,1,1,-1));
+	printf("6: %d\n",t1);
+	return 0;	
+}

@@ -1,0 +1,18 @@
+// 主要测试i类错误 分号缺失 在变量声明时
+int a,b=3,c    // 2
+const int ca=2,cb=24    // 3
+const int car[2]={1,2}    // 4
+
+int func() {
+	int a,b   // 7
+	int r = a+b    // 8
+	return r;
+}
+
+int main() {
+	const int a=3,b=5    // 13
+	int c,e    // 14
+	int r = func()    // 15
+	int arr[5]    // 16
+	return 0;
+}

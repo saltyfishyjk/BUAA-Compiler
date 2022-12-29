@@ -1,0 +1,11 @@
+// 主要测试L类错误 printf参数个数不对
+int main() {
+	int a=10,b=1,c=22;
+	printf("aaaaaaaaaaaaa");
+	printf("ohhhhhh %d %d %d %d", a, b, a+2, c);
+	int arr[3] = {1,2,3};
+	printf("dudududu %d %d", arr[0]);	// 7
+	printf("booom %d", a, arr[2]+c*4);	// 8
+	printf("emm this is easy right?", a, b+(c*arr[2])%6);	// 9
+	return 0;
+}

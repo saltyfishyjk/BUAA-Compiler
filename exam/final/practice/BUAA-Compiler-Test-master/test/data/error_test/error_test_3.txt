@@ -1,0 +1,30 @@
+// 测试j类错误 ) 缺失
+int ga=10,gb=10;
+
+int func1(int a, int b {    // 4
+	return a+b;
+}
+
+int func2({    // 8
+	return 100;
+}
+
+int main() {
+	int a=10;
+	int r;
+	r = func1(ga,gb ;    // 15
+	a = func2( ;    // 16
+	if(a == 100 {    // 17
+		a = a + 100;
+		while(a > 0 {    // 19
+			a = a - 10;
+		}
+	}
+	else {
+		a = getint(;    //  24
+		printf("hahahaha" ;    //  25
+	}
+	printf("%d %d %d %d", ga, gb, a, r ;    //  27
+	return 0;
+}
+	

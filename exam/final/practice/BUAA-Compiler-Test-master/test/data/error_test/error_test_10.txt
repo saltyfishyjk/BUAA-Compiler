@@ -1,0 +1,30 @@
+// 主要测试H类错误 改变常量值
+const int ca=1,cb=2,cc=3,cd=4;
+const int carr1[2] = {1,2};
+const int carr2[2][2] = {{1,2},{3,4}};
+
+void func1(int a) {
+	ca = cb + a;	// 7
+	carr1[0] = carr1[1] + 2;	// 8
+	cc = getint();	// 9
+}
+
+void func2(int a, int b) {
+	const int caa = 100;
+	a = caa + b;
+	caa = 12;		// 15
+	return;
+}
+
+int main() {
+	ca = carr2[0][0];	// 20
+	carr2[0][1] = getint();	// 21
+	cd = (ca+(cd/cb)%carr1[0] - ca);	// 22
+	while (cd > 1) {
+		cd = cd - 1;	// 24
+		ca = getint();	// 25
+		if(ca == 0) break;
+	}
+	return 0;
+}
+	

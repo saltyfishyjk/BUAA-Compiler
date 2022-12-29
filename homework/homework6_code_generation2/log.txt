@@ -1,0 +1,104 @@
+2022/11/03
+
+ 	status	statistics
+testfile1	Wrong Answer	得分比例为 9.9%
+testfile10	Runtime Error	Error occurs while executing your compiler
+testfile11	Wrong Answer	得分比例为 50%
+testfile12	Runtime Error	Error occurs while executing your compiler
+testfile13	Runtime Error	Error occurs while executing your compiler
+testfile14	Wrong Answer	得分比例为 29.9%
+testfile15	Runtime Error	Error occurs while executing your compiler
+testfile16	Runtime Error	Error occurs while executing your compiler
+testfile17	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input17.txt | /home/jovyan/a.out
+testfile18	Runtime Error	Error occurs while executing your compiler
+testfile19	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input19.txt | /home/jovyan/a.out
+testfile2	Accepted	
+testfile20	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input20.txt | /home/jovyan/a.out
+testfile21	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input21.txt | /home/jovyan/a.out
+testfile22	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input22.txt | /home/jovyan/a.out
+testfile23	Runtime Error	Error occurs while executing your compiler
+testfile24	Runtime Error	Error occurs while executing your compiler
+testfile25	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input25.txt | /home/jovyan/a.out
+testfile26	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input26.txt | /home/jovyan/a.out
+testfile27	Runtime Error	Error occurs while executing your compiler
+testfile28	Runtime Error	Error occurs while executing your compiler
+testfile29	Runtime Error	Error occurs while executing your compiler
+testfile3	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input3.txt | /home/jovyan/a.out
+testfile4	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input4.txt | /home/jovyan/a.out
+testfile5	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input5.txt | /home/jovyan/a.out
+testfile6	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input6.txt | /home/jovyan/a.out
+testfile7	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input7.txt | /home/jovyan/a.out
+testfile8	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input8.txt | /home/jovyan/a.out
+testfile9	Wrong Answer	得分比例为 0%
+
+
+2022/11/03/1820
+
+
+ 	status	statistics
+testfile1	Wrong Answer	得分比例为 9.9%
+testfile10	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input10.txt | /home/jovyan/a.out
+testfile11	Wrong Answer	得分比例为 50%
+testfile12	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input12.txt | /home/jovyan/a.out
+testfile13	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input13.txt | /home/jovyan/a.out
+testfile14	Wrong Answer	得分比例为 29.9%
+testfile15	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input15.txt | /home/jovyan/a.out
+testfile16	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input16.txt | /home/jovyan/a.out
+testfile17	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input17.txt | /home/jovyan/a.out
+testfile18	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input18.txt | /home/jovyan/a.out
+testfile19	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input19.txt | /home/jovyan/a.out
+testfile2	Accepted	
+testfile20	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input20.txt | /home/jovyan/a.out
+testfile21	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input21.txt | /home/jovyan/a.out
+testfile22	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input22.txt | /home/jovyan/a.out
+testfile23	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input23.txt | /home/jovyan/a.out
+testfile24	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input24.txt | /home/jovyan/a.out
+testfile25	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input25.txt | /home/jovyan/a.out
+testfile26	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input26.txt | /home/jovyan/a.out
+testfile27	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input27.txt | /home/jovyan/a.out
+testfile28	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input28.txt | /home/jovyan/a.out
+testfile29	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input29.txt | /home/jovyan/a.out
+testfile3	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input3.txt | /home/jovyan/a.out
+testfile4	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input4.txt | /home/jovyan/a.out
+testfile5	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input5.txt | /home/jovyan/a.out
+testfile6	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input6.txt | /home/jovyan/a.out
+testfile7	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input7.txt | /home/jovyan/a.out
+testfile8	Runtime Error	There is something wrong when running cmd:
+llc-6.0 /home/jovyan/llvm_ir.txt ; clang /home/jovyan/llvm_ir.txt.s /coursegrader/testdata/include.c ; cat /coursegrader/testdata/input8.txt | /home/jovyan/a.out
+testfile9	Wrong Answer	得分比例为 0%

@@ -1,0 +1,3 @@
+D:/GitHub_WorkSpace/BUAA-Compile/YJK-BUAA-Complier/homework/homework1_grammar_interpretation/testfile1/cmake-build-debug/CMakeFiles/testfile1.dir
+D:/GitHub_WorkSpace/BUAA-Compile/YJK-BUAA-Complier/homework/homework1_grammar_interpretation/testfile1/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/GitHub_WorkSpace/BUAA-Compile/YJK-BUAA-Complier/homework/homework1_grammar_interpretation/testfile1/cmake-build-debug/CMakeFiles/rebuild_cache.dir

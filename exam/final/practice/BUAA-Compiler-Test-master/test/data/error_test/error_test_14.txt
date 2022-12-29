@@ -1,0 +1,47 @@
+// 主要测试e 类错误 函数参数类型不匹配
+int ga=10;
+int arr1[4] = {1,2,3,4};
+int arr2[2][2] = {{1,2},{3,4}};
+
+int func1(int a, int arr[]) {
+	int r;
+	if(a > 0) r = func1(a-1, arr[0]);		// 8
+	else r = 10;
+	r = r + func1(arr[0], arr); 
+	return r;
+}
+
+int func2(int arr1[], int arr2[][2]) {
+	int r = func1(arr2[0][0], arr2[1]);
+	if(r == 0) {
+		r = func2(arr2[1], arr1);	//17
+	}
+	else {
+		r = func2(ga,arr2[1]);	//20
+	}
+	r = r + func1(arr1[1], arr1);
+	return r;
+}
+
+void func3() {
+	int r = 10;
+	r = func1(func3(), arr1);	// 28
+	if(r > 0) {
+		r = func2(arr2[1], func3());	// 30
+	}
+	return;
+}
+
+int main() {
+	int a = 10;
+	int r;
+	int arr3[2] = {1,2};
+	r = func1(arr3[1], arr2[1]);
+	while(r > 0) {
+		int arr1[2][2] = {{1,2},{3,4}};
+		r = func2(arr1[0], arr1);
+		r = r + func2(arr1, arr1);	// 43
+		r = r + func1(arr1[0][0], arr1);		// 44
+	}
+	return 0;
+}

@@ -1,0 +1,43 @@
+var int a"0"=1
+
+var int b"0"=2
+
+var int c"0"=0
+
+var int d"0"=0
+
+var int e"0"=0
+
+var int f"0"=0
+
+int main()
+
+
+bne a"0", 0, begin1
+
+beq b"0", 0, next1_1
+beq c"0", 0, next1_1
+goto begin1
+
+next1_1:
+bne d"0", 0, begin1
+
+beq e"0", 0, next1_2
+beq f"0", 0, next1_2
+goto begin1
+
+next1_2:
+goto end1
+
+begin1:
+print hhh
+goto else_end1
+
+end1:
+print nnn
+
+else_end1:
+
+
+RET 0
+

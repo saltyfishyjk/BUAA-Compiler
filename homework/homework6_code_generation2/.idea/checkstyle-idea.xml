@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CheckStyle-IDEA" serialisationVersion="2">
+    <checkstyleVersion>8.33</checkstyleVersion>
+    <scanScope>JavaOnly</scanScope>
+    <copyLibs>true</copyLibs>
+    <option name="thirdPartyClasspath" />
+    <option name="activeLocationIds">
+      <option value="89726708-6fe1-4e69-a10f-f9635c1cbdee" />
+    </option>
+    <option name="locations">
+      <list>
+        <ConfigurationLocation id="bundled-sun-checks" type="BUNDLED" scope="All" description="Sun Checks">(bundled)</ConfigurationLocation>
+        <ConfigurationLocation id="bundled-google-checks" type="BUNDLED" scope="All" description="Google Checks">(bundled)</ConfigurationLocation>
+        <ConfigurationLocation id="89726708-6fe1-4e69-a10f-f9635c1cbdee" type="LOCAL_FILE" scope="All" description="OO">$PROJECT_DIR$/../../../../../GitLab_WorkSpace/OO2023/2022cpp课程公共发布区/checkstyle_config/config.xml</ConfigurationLocation>
+      </list>
+    </option>
+  </component>
+</project>

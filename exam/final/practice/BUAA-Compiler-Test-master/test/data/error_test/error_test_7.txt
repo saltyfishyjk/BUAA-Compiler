@@ -1,0 +1,59 @@
+// 测试c类错误未定义
+int ga,gb=10;
+int garr[2] = {1,2};
+
+int func1(int a, int b) {
+	int r = ga + a + b;
+	return r+c;	// 7
+}
+
+int func2(int a) {
+	int b = a + garr[1] + func1(ga,gb);
+	if(b > 0) b = b + func2(b-1);
+	return b;
+}
+
+int func3(int a, int b) {
+	int c = a+b;
+	d = c;			// 18
+	c = c + func4(a,b);		// 19
+	a = b + func1(a,z);		// 20
+	b = b + func2(z);	// 21
+	return 0;
+}
+
+int main() {
+	int a = 100;
+	{
+		int b = a+100;
+		printf("aaa");
+	}
+	b = a + 200;	// 31
+	if(a == 100) {
+		int b = ga+gb;
+		{
+			int c = ga+b;
+			c = func2(c);
+		}
+		b = b + c;		// 38
+		int d = b+a;
+	}
+	else {
+		printf("%d", d+3*4);	// 42
+		int a[2] = {1,2};
+		int d = a[0]+ga;
+		printf("i am back %d", d+3*4);
+		{
+			int e = func5();	// 47
+			d = func3(d, func2(z));	// 48
+			d = func6(2442) + e;	// 49
+		}
+		d = d + a[0];
+		e+3/2;	// 52
+	}
+	while (e+4 > 0 && a > 100) {	// 54
+		printf("who is e");
+	}
+	return 0;
+}
+	

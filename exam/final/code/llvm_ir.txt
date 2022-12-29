@@ -1,0 +1,14 @@
+declare i32 @getint()
+declare void @putint(i32)
+declare void @putch(i32)
+
+
+define dso_local i32 @main() #0 {
+    %_LocalVariable0 = alloca i32
+    %_LocalVariable1 = alloca i32
+    %_LocalVariable2 = call i32 @getint()
+    store i32 %_LocalVariable2, i32* %_LocalVariable0
+    %_LocalVariable3 = call i32 @getint()
+    store i32 %_LocalVariable3, i32* %_LocalVariable1
+    ret i32 0
+}

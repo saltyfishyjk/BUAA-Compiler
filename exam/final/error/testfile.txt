@@ -1,0 +1,6 @@
+int main()
+{    
+	int x[2] = {1};
+	int n = getint();
+    return 0;
+}

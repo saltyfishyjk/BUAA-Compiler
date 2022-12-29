@@ -1,0 +1,576 @@
+# 字符串常量段
+.data
+str_0: .asciiz "glo_i = "
+str_1: .asciiz "\n"
+str_2: .asciiz "sum = "
+str_3: .asciiz "\n"
+str_4: .asciiz "main_i = "
+str_5: .asciiz "\n"
+str_6: .asciiz "\n"
+
+# text代码段
+.text
+
+# 写入函数运行栈基地址
+li $fp, 0x10040000
+
+# 写入全局变量
+
+# 跳转到main函数
+j main
+nop
+
+# ---------- func0函数开始 ----------
+func0:
+    
+# New Basic Block
+    move $t0, $a0
+    move $t1, $a1
+    
+    
+# New Basic Block
+    li $t2, 0x0
+    move $s0, $t2
+    li $t2, 0x80
+    move $s1, $t2
+    addu $t2, $t0, $t1
+    move $t3, $s1
+    div $t2, $t3
+    mfhi $t4
+    move $v0, $t4
+    jr $ra
+    
+    jr $ra
+# ********** func0函数结束 **********
+
+# ---------- func1函数开始 ----------
+func1:
+    
+# New Basic Block
+    move $t0, $a0
+    
+    
+# New Basic Block
+    lw $s0, 20($gp)
+    lw $s0, 20($gp)
+    move $t1, $s0
+    li $t2, 0x1
+    addu $t3, $t1, $t2
+    lw $s0, 20($gp)
+    move $s0, $t3
+    sw $s0, 20($gp)
+    lw $s0, 20($gp)
+    lw $s0, 20($gp)
+    move $t1, $s0
+    move $v0, $t1
+    jr $ra
+    
+    jr $ra
+# ********** func1函数结束 **********
+
+# ---------- func2函数开始 ----------
+func2:
+    
+# New Basic Block
+    move $t0, $a0
+    move $t1, $a1
+    
+    
+# New Basic Block
+    div $t0, $t1
+    mfhi $t2
+    
+    
+# New Basic Block
+    
+    
+# New Basic Block
+    li $t3, 0x0
+    sw $t0, 4($fp)
+    sw $t1, 12($fp)
+    beq $t2, $t3, Label_1
+    
+    
+# New Basic Block
+    j Label_2
+    
+    
+# New Basic Block
+Label_1:
+    
+    
+# New Basic Block
+    li $t0, 0x1
+    move $v0, $t0
+    jr $ra
+    
+    
+# New Basic Block
+    sw $t0, 20($fp)
+    j Label_2
+    
+    
+# New Basic Block
+Label_2:
+    
+    
+# New Basic Block
+    li $t0, 0x0
+    move $v0, $t0
+    jr $ra
+    
+    jr $ra
+# ********** func2函数结束 **********
+
+# ---------- func3函数开始 ----------
+func3:
+    
+# New Basic Block
+    
+    
+# New Basic Block
+    lw $s0, 20($gp)
+    lw $s0, 20($gp)
+    move $t0, $s0
+    move $v1, $a0
+    li $v0, 0x4
+    la $a0, str_0
+    syscall
+    move $a0, $v1
+    move $v1, $a0
+    li $v0, 0x1
+    move $a0, $t0
+    syscall
+    move $a0, $v1
+    move $v1, $a0
+    li $v0, 0x4
+    la $a0, str_1
+    syscall
+    move $a0, $v1
+    li $t0, 0x772
+    move $s0, $t0
+    
+    
+# New Basic Block
+    sw $s0, 4($fp)
+Label_3:
+    
+    
+# New Basic Block
+    lw $s0, 20($gp)
+    lw $s0, 20($gp)
+    move $t0, $s0
+    li $t1, 0x2710
+    slt $t2, $t0, $t1
+    
+    
+# New Basic Block
+    li $t0, 0x0
+    bne $t2, $t0, Label_4
+    
+    
+# New Basic Block
+    j Label_5
+    
+    
+# New Basic Block
+Label_4:
+    
+    
+# New Basic Block
+    lw $s0, 0($gp)
+    lw $s0, 0($gp)
+    move $t0, $s0
+    li $t1, 0x4
+    mul $t2, $t0, $t1
+    li $t0, 0x20
+    mul $t1, $t2, $t0
+    lw $s0, 0($gp)
+    lw $s0, 0($gp)
+    move $t0, $s0
+    mul $t2, $t1, $t0
+    lw $s0, 0($gp)
+    lw $s0, 0($gp)
+    move $t0, $s0
+    div $t1, $t2, $t0
+    li $t0, 0x20
+    div $t2, $t1, $t0
+    move $s0, $t2
+    lw $s1, 4($gp)
+    lw $s1, 4($gp)
+    move $t0, $s1
+    move $s1, $t0
+    move $t0, $s0
+    move $s2, $t0
+    sw $s0, 12($fp)
+    sw $s1, 20($fp)
+    sw $s2, 28($fp)
+    sw $ra, 0($sp)
+    addiu $v1, $fp, 160
+    lw $s0, 20($fp)
+    lw $s0, 20($fp)
+    move $a0, $s0
+    lw $s1, 28($fp)
+    lw $s1, 28($fp)
+    move $a1, $s1
+    move $fp, $v1
+    addiu $sp, $sp, -4
+    jal func0
+    addiu $fp, $fp, -160
+    addiu $sp, $sp, 4
+    lw $ra, 0($sp)
+    move $t0, $v0
+    lw $s0, 4($gp)
+    move $s0, $t0
+    sw $s0, 4($gp)
+    lw $s0, 0($gp)
+    lw $s0, 0($gp)
+    move $t0, $s0
+    li $t1, 0x4
+    mul $t2, $t0, $t1
+    lw $s0, 4($gp)
+    lw $s0, 4($gp)
+    move $t0, $s0
+    addu $t1, $t2, $t0
+    lw $s0, 8($gp)
+    lw $s0, 8($gp)
+    move $t0, $s0
+    addu $t2, $t1, $t0
+    move $s0, $t2
+    lw $s1, 0($gp)
+    lw $s1, 0($gp)
+    move $t0, $s1
+    li $t1, 0x4
+    mul $t2, $t0, $t1
+    lw $s1, 4($gp)
+    lw $s1, 4($gp)
+    move $t0, $s1
+    addu $t1, $t2, $t0
+    lw $s1, 8($gp)
+    lw $s1, 8($gp)
+    move $t0, $s1
+    addu $t2, $t1, $t0
+    lw $s1, 12($gp)
+    lw $s1, 12($gp)
+    move $t0, $s1
+    addu $t1, $t2, $t0
+    move $s1, $t1
+    lw $s2, 0($gp)
+    lw $s2, 0($gp)
+    move $t0, $s2
+    li $t1, 0x4
+    mul $t2, $t0, $t1
+    lw $s2, 4($gp)
+    lw $s2, 4($gp)
+    move $t0, $s2
+    addu $t1, $t2, $t0
+    lw $s2, 8($gp)
+    lw $s2, 8($gp)
+    move $t0, $s2
+    addu $t2, $t1, $t0
+    lw $s2, 12($gp)
+    lw $s2, 12($gp)
+    move $t0, $s2
+    addu $t1, $t2, $t0
+    lw $s2, 16($gp)
+    lw $s2, 16($gp)
+    move $t0, $s2
+    addu $t2, $t1, $t0
+    move $s2, $t2
+    lw $s3, 0($gp)
+    lw $s3, 0($gp)
+    move $t0, $s3
+    li $t1, 0x4
+    mul $t2, $t0, $t1
+    lw $s3, 4($gp)
+    lw $s3, 4($gp)
+    move $t0, $s3
+    addu $t1, $t2, $t0
+    lw $s3, 8($gp)
+    lw $s3, 8($gp)
+    move $t0, $s3
+    addu $t2, $t1, $t0
+    lw $s3, 12($gp)
+    lw $s3, 12($gp)
+    move $t0, $s3
+    addu $t1, $t2, $t0
+    lw $s3, 16($gp)
+    lw $s3, 16($gp)
+    move $t0, $s3
+    addu $t2, $t1, $t0
+    move $s3, $t2
+    lw $s4, 0($gp)
+    lw $s4, 0($gp)
+    move $t0, $s4
+    li $t1, 0x4
+    mul $t2, $t0, $t1
+    lw $s4, 4($gp)
+    lw $s4, 4($gp)
+    move $t0, $s4
+    addu $t1, $t2, $t0
+    lw $s4, 8($gp)
+    lw $s4, 8($gp)
+    move $t0, $s4
+    addu $t2, $t1, $t0
+    lw $s4, 12($gp)
+    lw $s4, 12($gp)
+    move $t0, $s4
+    addu $t1, $t2, $t0
+    lw $s4, 16($gp)
+    lw $s4, 16($gp)
+    move $t0, $s4
+    addu $t2, $t1, $t0
+    move $s4, $t2
+    
+    
+# New Basic Block
+    lw $s5, 20($gp)
+    lw $s5, 20($gp)
+    move $t0, $s5
+    move $s5, $t0
+    li $t0, 0x3e8
+    move $s6, $t0
+    sw $s0, 36($fp)
+    sw $s1, 44($fp)
+    sw $s2, 52($fp)
+    sw $s3, 60($fp)
+    sw $s4, 68($fp)
+    sw $s5, 76($fp)
+    sw $s6, 84($fp)
+    sw $ra, 0($sp)
+    addiu $v1, $fp, 216
+    lw $s0, 76($fp)
+    lw $s0, 76($fp)
+    move $a0, $s0
+    lw $s1, 84($fp)
+    lw $s1, 84($fp)
+    move $a1, $s1
+    move $fp, $v1
+    addiu $sp, $sp, -4
+    jal func2
+    addiu $fp, $fp, -216
+    addiu $sp, $sp, 4
+    lw $ra, 0($sp)
+    move $t0, $v0
+    
+    
+# New Basic Block
+    li $t1, 0x0
+    bne $t0, $t1, Label_6
+    
+    
+# New Basic Block
+    j Label_7
+    
+    
+# New Basic Block
+Label_6:
+    
+    
+# New Basic Block
+    lw $s0, 36($fp)
+    lw $s0, 36($fp)
+    move $t0, $s0
+    lw $s1, 44($fp)
+    lw $s1, 44($fp)
+    move $t1, $s1
+    addu $t2, $t0, $t1
+    lw $s2, 52($fp)
+    lw $s2, 52($fp)
+    move $t0, $s2
+    addu $t1, $t2, $t0
+    lw $s3, 60($fp)
+    lw $s3, 60($fp)
+    move $t0, $s3
+    addu $t2, $t1, $t0
+    lw $s4, 68($fp)
+    lw $s4, 68($fp)
+    move $t0, $s4
+    addu $t1, $t2, $t0
+    move $v1, $a0
+    li $v0, 0x4
+    la $a0, str_2
+    syscall
+    move $a0, $v1
+    move $v1, $a0
+    li $v0, 0x1
+    move $a0, $t1
+    syscall
+    move $a0, $v1
+    move $v1, $a0
+    li $v0, 0x4
+    la $a0, str_3
+    syscall
+    move $a0, $v1
+    
+    
+# New Basic Block
+    sw $s0, 36($fp)
+    sw $s1, 44($fp)
+    sw $s2, 52($fp)
+    sw $s3, 60($fp)
+    sw $s4, 68($fp)
+    j Label_7
+    
+    
+# New Basic Block
+Label_7:
+    
+    
+# New Basic Block
+    lw $s0, 20($gp)
+    lw $s0, 20($gp)
+    move $t0, $s0
+    move $s0, $t0
+    sw $s0, 92($fp)
+    sw $ra, 0($sp)
+    addiu $v1, $fp, 224
+    lw $s0, 92($fp)
+    lw $s0, 92($fp)
+    move $a0, $s0
+    move $fp, $v1
+    addiu $sp, $sp, -4
+    jal func1
+    addiu $fp, $fp, -224
+    addiu $sp, $sp, 4
+    lw $ra, 0($sp)
+    move $t0, $v0
+    
+    
+# New Basic Block
+    sw $t0, 100($fp)
+    j Label_3
+    
+    
+# New Basic Block
+Label_5:
+    
+    
+# New Basic Block
+    lw $s0, 36($fp)
+    lw $s0, 36($fp)
+    move $t0, $s0
+    lw $s1, 44($fp)
+    lw $s1, 44($fp)
+    move $t1, $s1
+    addu $t2, $t0, $t1
+    lw $s2, 52($fp)
+    lw $s2, 52($fp)
+    move $t0, $s2
+    addu $t1, $t2, $t0
+    lw $s3, 60($fp)
+    lw $s3, 60($fp)
+    move $t0, $s3
+    addu $t2, $t1, $t0
+    lw $s4, 68($fp)
+    lw $s4, 68($fp)
+    move $t0, $s4
+    addu $t1, $t2, $t0
+    move $v0, $t1
+    jr $ra
+    
+    jr $ra
+# ********** func3函数结束 **********
+
+# ---------- main函数开始 ----------
+main:
+    
+# New Basic Block
+    
+    
+# New Basic Block
+    li $t0, 0x0
+    move $s0, $t0
+    move $v1, $v0
+    li $v0, 0x5
+    syscall
+    move $t0, $v0
+    move $v0, $v1
+    lw $s1, 0($gp)
+    move $s1, $t0
+    sw $s1, 0($gp)
+    move $v1, $v0
+    li $v0, 0x5
+    syscall
+    move $t0, $v0
+    move $v0, $v1
+    lw $s1, 4($gp)
+    move $s1, $t0
+    sw $s1, 4($gp)
+    move $v1, $v0
+    li $v0, 0x5
+    syscall
+    move $t0, $v0
+    move $v0, $v1
+    lw $s1, 8($gp)
+    move $s1, $t0
+    sw $s1, 8($gp)
+    move $v1, $v0
+    li $v0, 0x5
+    syscall
+    move $t0, $v0
+    move $v0, $v1
+    lw $s1, 12($gp)
+    move $s1, $t0
+    sw $s1, 12($gp)
+    move $v1, $v0
+    li $v0, 0x5
+    syscall
+    move $t0, $v0
+    move $v0, $v1
+    lw $s1, 16($gp)
+    move $s1, $t0
+    sw $s1, 16($gp)
+    move $v1, $v0
+    li $v0, 0x5
+    syscall
+    move $t0, $v0
+    move $v0, $v1
+    move $s0, $t0
+    move $t0, $s0
+    move $v1, $a0
+    li $v0, 0x4
+    la $a0, str_4
+    syscall
+    move $a0, $v1
+    move $v1, $a0
+    li $v0, 0x1
+    move $a0, $t0
+    syscall
+    move $a0, $v1
+    move $v1, $a0
+    li $v0, 0x4
+    la $a0, str_5
+    syscall
+    move $a0, $v1
+    sw $s0, 4($fp)
+    sw $s1, 0($sp)
+    sw $ra, -4($sp)
+    addiu $v1, $fp, 136
+    move $fp, $v1
+    addiu $sp, $sp, -8
+    jal func3
+    addiu $fp, $fp, -136
+    addiu $sp, $sp, 8
+    lw $ra, -4($sp)
+    lw $s1, 0($sp)
+    move $t0, $v0
+    move $v1, $a0
+    li $v0, 0x1
+    move $a0, $t0
+    syscall
+    move $a0, $v1
+    move $v1, $a0
+    li $v0, 0x4
+    la $a0, str_6
+    syscall
+    move $a0, $v1
+    li $t0, 0x0
+    move $v0, $t0
+    li $v0, 0xa
+    syscall
+    
+    li $v0, 0xa
+    syscall
+# ********** main函数结束 **********
+

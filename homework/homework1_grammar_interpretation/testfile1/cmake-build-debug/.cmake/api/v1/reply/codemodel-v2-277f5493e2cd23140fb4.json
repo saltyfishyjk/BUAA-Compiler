@@ -1,0 +1,60 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.21"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "testfile1",
+					"targetIndexes" : 
+					[
+						0
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "testfile1::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-testfile1-Debug-4ee68048586460481a38.json",
+					"name" : "testfile1",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "D:/GitHub_WorkSpace/BUAA-Compile/YJK-BUAA-Complier/homework/homework1_grammar_interpretation/testfile1/cmake-build-debug",
+		"source" : "D:/GitHub_WorkSpace/BUAA-Compile/YJK-BUAA-Complier/homework/homework1_grammar_interpretation/testfile1"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 4
+	}
+}

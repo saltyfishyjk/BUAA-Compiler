@@ -1,0 +1,43 @@
+# 字符串常量段
+.data
+
+# text代码段
+.text
+
+# 写入函数运行栈基地址
+li $fp, 0x10040000
+
+# 写入全局变量
+
+# 跳转到main函数
+j main
+nop
+
+# ---------- main函数开始 ----------
+main:
+    
+# New Basic Block
+    
+    
+# New Basic Block
+    move $v1, $v0
+    li $v0, 0x5
+    syscall
+    move $t0, $v0
+    move $v0, $v1
+    move $s0, $t0
+    move $v1, $v0
+    li $v0, 0x5
+    syscall
+    move $t0, $v0
+    move $v0, $v1
+    move $s1, $t0
+    li $t0, 0x0
+    move $v0, $t0
+    li $v0, 0xa
+    syscall
+    
+    li $v0, 0xa
+    syscall
+# ********** main函数结束 **********
+

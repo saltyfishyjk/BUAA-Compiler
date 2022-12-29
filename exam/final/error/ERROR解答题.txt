@@ -1,0 +1,7 @@
+        if (token.getType().equals(TokenType.ASSIGN)) { // '='
+            this.eq = token;
+            // InitValParser initValParser = new InitValParser(this.iterator);
+            InitValParser initValParser = new InitValParser(this.iterator, this.curSymbolTable);
+            this.initVal = initValParser.parseInitVal();
+            this.varDefEle = new VarDefInit(this.ident, this.leftBrackets,
+                    this.constExps, this.rightBrackets, this.eq, this.initVal);

@@ -1,0 +1,41 @@
+// 测试d类错误 函数参数个数不匹配
+int ga=10,gb=20;
+
+void func1() {
+	ga = ga + gb;
+	return;
+}
+
+int func2(int a, int b) {
+	return a+b;
+}
+
+int func3(int arr1[], int arr2[][2]) {
+	return arr1[0]+arr2[0][1];
+}
+
+int func4(int a, int b) {
+	int c = func2(a,b,10);	// 18
+	func1(func2(1,2));		// 19
+	int arr1[2] = {0,1};
+	int arr2[2][2] = {{1,2},{3,4}};
+	c = func3(arr1, arr2, c);	// 22
+	return c;
+}
+
+int func5(int a) {
+	int r;
+	if(a > 0) r = func5(a-1);
+	else r = 10;
+	return r;
+}
+
+int main() {
+	int arr1[2] = {0,1};
+	int arr2[2][2] = {{1,2},{3,4}};
+	func1(ga,gb);		// 36
+	int a = func2(10);		// 37
+	a =a + 4*5*func3(arr1);	// 38
+	a = a + func2();		// 39
+	return 0;
+}

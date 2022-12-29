@@ -1,0 +1,39 @@
+// 测试f类错误 void型return值
+int ga=10,gb=20;
+
+void func1() {
+	return 0;		// 5
+}
+
+int func2(int a) {
+	return a+10;
+}
+
+void func3(int b) {
+	int a = b + func2(ga);
+	if(a == 10) {
+		return a;		// 15
+	}
+	else return gb;		// 17
+	while(a > 0) {
+		if(a == 1) return;
+		a = a - 1;
+		if(a == b) {
+			return a;		// 22
+		}
+	}
+	if(a < b) return;
+}
+
+int main() {
+	int a = func2(10);
+	while(a > 0) {
+		a = a-1;
+		if(a == ga) return 0;
+	}
+	if(gb == 0) {
+		return 0;
+	}
+	printf("hahahaha");
+	return 0;
+}

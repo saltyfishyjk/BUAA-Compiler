@@ -1,0 +1,211 @@
+declare i32 @getint()
+declare void @putint(i32)
+declare void @putch(i32)
+
+@_GlobalVariable0 = dso_local global i32 0
+@_GlobalVariable1 = dso_local global i32 0
+@_GlobalVariable2 = dso_local global i32 0
+@_GlobalVariable3 = dso_local global i32 0
+@_GlobalVariable4 = dso_local global i32 0
+@_GlobalVariable5 = dso_local global i32 0
+
+define dso_local i32 @func0(i32 %_LocalVariable0, i32 %_LocalVariable1 ) #0 {
+    %_LocalVariable2 = alloca i32
+    %_LocalVariable3 = alloca i32
+    store i32 0, i32* %_LocalVariable2
+    store i32 128, i32* %_LocalVariable3
+    %_LocalVariable4 = add i32 %_LocalVariable0, %_LocalVariable1
+    %_LocalVariable5 = load i32, i32* %_LocalVariable3
+    %_LocalVariable6 = srem i32 %_LocalVariable4, %_LocalVariable5
+    ret i32 %_LocalVariable6
+}
+
+define dso_local i32 @func1(i32 %_LocalVariable0 ) #0 {
+    %_LocalVariable1 = load i32, i32* @_GlobalVariable5
+    %_LocalVariable2 = add i32 %_LocalVariable1, 1
+    store i32 %_LocalVariable2, i32* @_GlobalVariable5
+    %_LocalVariable3 = load i32, i32* @_GlobalVariable5
+    ret i32 %_LocalVariable3
+}
+
+define dso_local i32 @func2(i32 %_LocalVariable0, i32 %_LocalVariable1 ) #0 {
+    %_LocalVariable2 = srem i32 %_LocalVariable0, %_LocalVariable1
+    Beq %_LocalVariable2, 0, %Label_1
+    goto %Label_2
+    %Label_1 : 
+    ret i32 1
+    goto %Label_2
+    %Label_2 : 
+    ret i32 0
+}
+
+define dso_local i32 @func3() #0 {
+    %_LocalVariable1 = alloca i32
+    %_LocalVariable2 = alloca i32
+    %_LocalVariable3 = alloca i32
+    %_LocalVariable4 = alloca i32
+    %_LocalVariable5 = alloca i32
+    %_LocalVariable6 = alloca i32
+    %_LocalVariable9 = alloca i32
+    %_LocalVariable19 = alloca i32
+    %_LocalVariable21 = alloca i32
+    %_LocalVariable68 = alloca i32
+    %_LocalVariable69 = alloca i32
+    %_LocalVariable81 = alloca i32
+    %_LocalVariable0 = load i32, i32* @_GlobalVariable5
+    call void @putch(i32 103)
+    call void @putch(i32 108)
+    call void @putch(i32 111)
+    call void @putch(i32 95)
+    call void @putch(i32 105)
+    call void @putch(i32 32)
+    call void @putch(i32 61)
+    call void @putch(i32 32)
+    call void @putint(i32 %_LocalVariable0)
+    call void @putch(i32 10)
+    store i32 1906, i32* %_LocalVariable6
+    %Label_3 : 
+    %_LocalVariable7 = load i32, i32* @_GlobalVariable5
+    %_LocalVariable8 = Lt i32 %_LocalVariable7, 10000
+    Bne %_LocalVariable8, 0, %Label_4
+    goto %Label_5
+    %Label_4 : 
+    %_LocalVariable10 = load i32, i32* @_GlobalVariable0
+    %_LocalVariable11 = mul i32 %_LocalVariable10, 4
+    %_LocalVariable12 = mul i32 %_LocalVariable11, 32
+    %_LocalVariable13 = load i32, i32* @_GlobalVariable0
+    %_LocalVariable14 = mul i32 %_LocalVariable12, %_LocalVariable13
+    %_LocalVariable15 = load i32, i32* @_GlobalVariable0
+    %_LocalVariable16 = sdiv i32 %_LocalVariable14, %_LocalVariable15
+    %_LocalVariable17 = sdiv i32 %_LocalVariable16, 32
+    store i32 %_LocalVariable17, i32* %_LocalVariable9
+    %_LocalVariable18 = load i32, i32* @_GlobalVariable1
+    store i32 %_LocalVariable18, i32* %_LocalVariable19
+    %_LocalVariable20 = load i32, i32* %_LocalVariable9
+    store i32 %_LocalVariable20, i32* %_LocalVariable21
+    %_LocalVariable22 = call i32 @func0(i32 %_LocalVariable19, i32 %_LocalVariable21)
+    store i32 %_LocalVariable22, i32* @_GlobalVariable1
+    %_LocalVariable23 = load i32, i32* @_GlobalVariable0
+    %_LocalVariable24 = mul i32 %_LocalVariable23, 4
+    %_LocalVariable25 = load i32, i32* @_GlobalVariable1
+    %_LocalVariable26 = add i32 %_LocalVariable24, %_LocalVariable25
+    %_LocalVariable27 = load i32, i32* @_GlobalVariable2
+    %_LocalVariable28 = add i32 %_LocalVariable26, %_LocalVariable27
+    store i32 %_LocalVariable28, i32* %_LocalVariable1
+    %_LocalVariable29 = load i32, i32* @_GlobalVariable0
+    %_LocalVariable30 = mul i32 %_LocalVariable29, 4
+    %_LocalVariable31 = load i32, i32* @_GlobalVariable1
+    %_LocalVariable32 = add i32 %_LocalVariable30, %_LocalVariable31
+    %_LocalVariable33 = load i32, i32* @_GlobalVariable2
+    %_LocalVariable34 = add i32 %_LocalVariable32, %_LocalVariable33
+    %_LocalVariable35 = load i32, i32* @_GlobalVariable3
+    %_LocalVariable36 = add i32 %_LocalVariable34, %_LocalVariable35
+    store i32 %_LocalVariable36, i32* %_LocalVariable2
+    %_LocalVariable37 = load i32, i32* @_GlobalVariable0
+    %_LocalVariable38 = mul i32 %_LocalVariable37, 4
+    %_LocalVariable39 = load i32, i32* @_GlobalVariable1
+    %_LocalVariable40 = add i32 %_LocalVariable38, %_LocalVariable39
+    %_LocalVariable41 = load i32, i32* @_GlobalVariable2
+    %_LocalVariable42 = add i32 %_LocalVariable40, %_LocalVariable41
+    %_LocalVariable43 = load i32, i32* @_GlobalVariable3
+    %_LocalVariable44 = add i32 %_LocalVariable42, %_LocalVariable43
+    %_LocalVariable45 = load i32, i32* @_GlobalVariable4
+    %_LocalVariable46 = add i32 %_LocalVariable44, %_LocalVariable45
+    store i32 %_LocalVariable46, i32* %_LocalVariable3
+    %_LocalVariable47 = load i32, i32* @_GlobalVariable0
+    %_LocalVariable48 = mul i32 %_LocalVariable47, 4
+    %_LocalVariable49 = load i32, i32* @_GlobalVariable1
+    %_LocalVariable50 = add i32 %_LocalVariable48, %_LocalVariable49
+    %_LocalVariable51 = load i32, i32* @_GlobalVariable2
+    %_LocalVariable52 = add i32 %_LocalVariable50, %_LocalVariable51
+    %_LocalVariable53 = load i32, i32* @_GlobalVariable3
+    %_LocalVariable54 = add i32 %_LocalVariable52, %_LocalVariable53
+    %_LocalVariable55 = load i32, i32* @_GlobalVariable4
+    %_LocalVariable56 = add i32 %_LocalVariable54, %_LocalVariable55
+    store i32 %_LocalVariable56, i32* %_LocalVariable4
+    %_LocalVariable57 = load i32, i32* @_GlobalVariable0
+    %_LocalVariable58 = mul i32 %_LocalVariable57, 4
+    %_LocalVariable59 = load i32, i32* @_GlobalVariable1
+    %_LocalVariable60 = add i32 %_LocalVariable58, %_LocalVariable59
+    %_LocalVariable61 = load i32, i32* @_GlobalVariable2
+    %_LocalVariable62 = add i32 %_LocalVariable60, %_LocalVariable61
+    %_LocalVariable63 = load i32, i32* @_GlobalVariable3
+    %_LocalVariable64 = add i32 %_LocalVariable62, %_LocalVariable63
+    %_LocalVariable65 = load i32, i32* @_GlobalVariable4
+    %_LocalVariable66 = add i32 %_LocalVariable64, %_LocalVariable65
+    store i32 %_LocalVariable66, i32* %_LocalVariable5
+    %_LocalVariable67 = load i32, i32* @_GlobalVariable5
+    store i32 %_LocalVariable67, i32* %_LocalVariable68
+    store i32 1000, i32* %_LocalVariable69
+    %_LocalVariable70 = call i32 @func2(i32 %_LocalVariable68, i32 %_LocalVariable69)
+    Bne %_LocalVariable70, 0, %Label_6
+    goto %Label_7
+    %Label_6 : 
+    %_LocalVariable71 = load i32, i32* %_LocalVariable1
+    %_LocalVariable72 = load i32, i32* %_LocalVariable2
+    %_LocalVariable73 = add i32 %_LocalVariable71, %_LocalVariable72
+    %_LocalVariable74 = load i32, i32* %_LocalVariable3
+    %_LocalVariable75 = add i32 %_LocalVariable73, %_LocalVariable74
+    %_LocalVariable76 = load i32, i32* %_LocalVariable4
+    %_LocalVariable77 = add i32 %_LocalVariable75, %_LocalVariable76
+    %_LocalVariable78 = load i32, i32* %_LocalVariable5
+    %_LocalVariable79 = add i32 %_LocalVariable77, %_LocalVariable78
+    call void @putch(i32 115)
+    call void @putch(i32 117)
+    call void @putch(i32 109)
+    call void @putch(i32 32)
+    call void @putch(i32 61)
+    call void @putch(i32 32)
+    call void @putint(i32 %_LocalVariable79)
+    call void @putch(i32 10)
+    goto %Label_7
+    %Label_7 : 
+    %_LocalVariable80 = load i32, i32* @_GlobalVariable5
+    store i32 %_LocalVariable80, i32* %_LocalVariable81
+    %_LocalVariable82 = call i32 @func1(i32 %_LocalVariable81)
+    goto %Label_3
+    %Label_5 : 
+    %_LocalVariable83 = load i32, i32* %_LocalVariable1
+    %_LocalVariable84 = load i32, i32* %_LocalVariable2
+    %_LocalVariable85 = add i32 %_LocalVariable83, %_LocalVariable84
+    %_LocalVariable86 = load i32, i32* %_LocalVariable3
+    %_LocalVariable87 = add i32 %_LocalVariable85, %_LocalVariable86
+    %_LocalVariable88 = load i32, i32* %_LocalVariable4
+    %_LocalVariable89 = add i32 %_LocalVariable87, %_LocalVariable88
+    %_LocalVariable90 = load i32, i32* %_LocalVariable5
+    %_LocalVariable91 = add i32 %_LocalVariable89, %_LocalVariable90
+    ret i32 %_LocalVariable91
+}
+
+define dso_local i32 @main() #0 {
+    %_LocalVariable0 = alloca i32
+    store i32 0, i32* %_LocalVariable0
+    %_LocalVariable1 = call i32 @getint()
+    store i32 %_LocalVariable1, i32* @_GlobalVariable0
+    %_LocalVariable2 = call i32 @getint()
+    store i32 %_LocalVariable2, i32* @_GlobalVariable1
+    %_LocalVariable3 = call i32 @getint()
+    store i32 %_LocalVariable3, i32* @_GlobalVariable2
+    %_LocalVariable4 = call i32 @getint()
+    store i32 %_LocalVariable4, i32* @_GlobalVariable3
+    %_LocalVariable5 = call i32 @getint()
+    store i32 %_LocalVariable5, i32* @_GlobalVariable4
+    %_LocalVariable6 = call i32 @getint()
+    store i32 %_LocalVariable6, i32* %_LocalVariable0
+    %_LocalVariable7 = load i32, i32* %_LocalVariable0
+    call void @putch(i32 109)
+    call void @putch(i32 97)
+    call void @putch(i32 105)
+    call void @putch(i32 110)
+    call void @putch(i32 95)
+    call void @putch(i32 105)
+    call void @putch(i32 32)
+    call void @putch(i32 61)
+    call void @putch(i32 32)
+    call void @putint(i32 %_LocalVariable7)
+    call void @putch(i32 10)
+    %_LocalVariable8 = call i32 @func3()
+    call void @putint(i32 %_LocalVariable8)
+    call void @putch(i32 10)
+    ret i32 0
+}

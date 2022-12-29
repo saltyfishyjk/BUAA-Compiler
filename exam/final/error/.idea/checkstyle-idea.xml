@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CheckStyle-IDEA" serialisationVersion="2">
+    <checkstyleVersion>10.3.2</checkstyleVersion>
+    <scanScope>JavaOnly</scanScope>
+    <copyLibs>true</copyLibs>
+    <option name="thirdPartyClasspath" />
+    <option name="activeLocationIds">
+      <option value="111ed6bd-7381-4a7e-ae2d-2557a0a10a21" />
+    </option>
+    <option name="locations">
+      <list>
+        <ConfigurationLocation id="bundled-sun-checks" type="BUNDLED" scope="All" description="Sun Checks">(bundled)</ConfigurationLocation>
+        <ConfigurationLocation id="bundled-google-checks" type="BUNDLED" scope="All" description="Google Checks">(bundled)</ConfigurationLocation>
+        <ConfigurationLocation id="111ed6bd-7381-4a7e-ae2d-2557a0a10a21" type="LOCAL_FILE" scope="All" description="OO">D:/GitLab_WorkSpace/OO2023/oo_course_2023/Documents/tools_tutorial/config.xml</ConfigurationLocation>
+      </list>
+    </option>
+  </component>
+</project>

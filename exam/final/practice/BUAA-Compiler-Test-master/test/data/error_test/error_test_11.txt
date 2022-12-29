@@ -1,0 +1,24 @@
+// 测试g类错误 int函数缺少末尾return
+int ga=10,gb=20;
+
+int func1() {
+}		// 5
+
+int func2(int a, int b) {
+	if(a > 0) {
+		return b;
+	}
+	else {
+		return a;
+	}
+}		// 14
+
+int func3(int a) {
+	while (a > 0) return 0;
+}		// 18
+
+int main() {
+	int a = func1();
+	int b = func3(a);
+	printf("hahaha");
+}			// 24

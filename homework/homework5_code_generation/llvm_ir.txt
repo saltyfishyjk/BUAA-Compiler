@@ -1,0 +1,154 @@
+declare i32 @getint()
+declare void @putint(i32)
+declare void @putch(i32)
+
+
+define dso_local i32 @main() #0 {
+%_LocalVariable0 = alloca i32
+%_LocalVariable1 = alloca i32
+%_LocalVariable3 = alloca i32
+%_LocalVariable7 = alloca i32
+%_LocalVariable12 = alloca i32
+%_LocalVariable13 = alloca i32
+%_LocalVariable14 = alloca i32
+%_LocalVariable15 = alloca i32
+%_LocalVariable16 = alloca i32
+%_LocalVariable17 = alloca i32
+%_LocalVariable18 = alloca i32
+%_LocalVariable19 = alloca i32
+%_LocalVariable20 = alloca i32
+%_LocalVariable21 = alloca i32
+%_LocalVariable22 = alloca i32
+%_LocalVariable23 = alloca i32
+%_LocalVariable24 = alloca i32
+%_LocalVariable25 = alloca i32
+store i32 111, i32* %_LocalVariable0
+%_LocalVariable2 = add i32 123, 234
+store i32 %_LocalVariable2, i32* %_LocalVariable1
+%_LocalVariable4 = add i32 5, 3
+%_LocalVariable5 = mul i32 6, %_LocalVariable4
+%_LocalVariable6 = sub i32 %_LocalVariable5, 10
+store i32 %_LocalVariable6, i32* %_LocalVariable3
+%_LocalVariable8 = load i32, i32* %_LocalVariable0
+%_LocalVariable9 = load i32, i32* %_LocalVariable1
+%_LocalVariable10 = mul i32 %_LocalVariable9, 3
+%_LocalVariable11 = add i32 %_LocalVariable8, %_LocalVariable10
+store i32 %_LocalVariable11, i32* %_LocalVariable7
+%_LocalVariable26 = call i32 @getint()
+store i32 %_LocalVariable26, i32* %_LocalVariable12
+%_LocalVariable27 = call i32 @getint()
+store i32 %_LocalVariable27, i32* %_LocalVariable13
+%_LocalVariable28 = call i32 @getint()
+store i32 %_LocalVariable28, i32* %_LocalVariable14
+%_LocalVariable29 = call i32 @getint()
+store i32 %_LocalVariable29, i32* %_LocalVariable15
+%_LocalVariable30 = call i32 @getint()
+store i32 %_LocalVariable30, i32* %_LocalVariable16
+%_LocalVariable31 = call i32 @getint()
+store i32 %_LocalVariable31, i32* %_LocalVariable17
+call void @putch(i32 50)
+call void @putch(i32 48)
+call void @putch(i32 51)
+call void @putch(i32 55)
+call void @putch(i32 51)
+call void @putch(i32 49)
+call void @putch(i32 56)
+call void @putch(i32 52)
+call void @putch(i32 10)
+call void @putch(i32 87)
+call void @putch(i32 111)
+call void @putch(i32 119)
+call void @putch(i32 44)
+call void @putch(i32 32)
+call void @putch(i32 121)
+call void @putch(i32 111)
+call void @putch(i32 117)
+call void @putch(i32 32)
+call void @putch(i32 119)
+call void @putch(i32 105)
+call void @putch(i32 108)
+call void @putch(i32 108)
+call void @putch(i32 32)
+call void @putch(i32 98)
+call void @putch(i32 101)
+call void @putch(i32 103)
+call void @putch(i32 105)
+call void @putch(i32 110)
+call void @putch(i32 32)
+call void @putch(i32 116)
+call void @putch(i32 101)
+call void @putch(i32 115)
+call void @putch(i32 116)
+call void @putch(i32 32)
+call void @putch(i32 121)
+call void @putch(i32 111)
+call void @putch(i32 117)
+call void @putch(i32 114)
+call void @putch(i32 32)
+call void @putch(i32 112)
+call void @putch(i32 114)
+call void @putch(i32 111)
+call void @putch(i32 103)
+call void @putch(i32 114)
+call void @putch(i32 97)
+call void @putch(i32 109)
+call void @putch(i32 33)
+call void @putch(i32 10)
+%_LocalVariable32 = add i32 1, 2
+call void @putint(i32 %_LocalVariable32)
+call void @putch(i32 10)
+%_LocalVariable33 = mul i32 5, 6
+call void @putint(i32 %_LocalVariable33)
+call void @putch(i32 10)
+%_LocalVariable34 = add i32 1, -2
+%_LocalVariable35 = mul i32 %_LocalVariable34, 3
+store i32 %_LocalVariable35, i32* %_LocalVariable18
+%_LocalVariable36 = load i32, i32* %_LocalVariable1
+%_LocalVariable37 = load i32, i32* %_LocalVariable0
+%_LocalVariable38 = srem i32 %_LocalVariable36, %_LocalVariable37
+%_LocalVariable39 = add i32 %_LocalVariable38, 5
+store i32 %_LocalVariable39, i32* %_LocalVariable19
+%_LocalVariable40 = load i32, i32* %_LocalVariable7
+%_LocalVariable41 = load i32, i32* %_LocalVariable3
+%_LocalVariable42 = mul i32 %_LocalVariable40, %_LocalVariable41
+%_LocalVariable43 = sub i32 %_LocalVariable42, 4
+store i32 %_LocalVariable43, i32* %_LocalVariable20
+%_LocalVariable44 = load i32, i32* %_LocalVariable12
+%_LocalVariable45 = sdiv i32 %_LocalVariable44, 2
+%_LocalVariable46 = mul i32 %_LocalVariable45, 6
+store i32 %_LocalVariable46, i32* %_LocalVariable21
+%_LocalVariable47 = load i32, i32* %_LocalVariable13
+%_LocalVariable48 = load i32, i32* %_LocalVariable14
+%_LocalVariable49 = add i32 1, %_LocalVariable48
+%_LocalVariable50 = mul i32 %_LocalVariable47, %_LocalVariable49
+%_LocalVariable51 = srem i32 %_LocalVariable50, 3
+store i32 %_LocalVariable51, i32* %_LocalVariable22
+%_LocalVariable52 = load i32, i32* %_LocalVariable15
+%_LocalVariable53 = mul i32 -1, %_LocalVariable52
+store i32 %_LocalVariable53, i32* %_LocalVariable23
+%_LocalVariable54 = load i32, i32* %_LocalVariable16
+%_LocalVariable55 = add i32 6, %_LocalVariable54
+store i32 %_LocalVariable55, i32* %_LocalVariable24
+%_LocalVariable56 = load i32, i32* %_LocalVariable18
+call void @putint(i32 %_LocalVariable56)
+call void @putch(i32 10)
+%_LocalVariable57 = load i32, i32* %_LocalVariable19
+call void @putint(i32 %_LocalVariable57)
+call void @putch(i32 10)
+%_LocalVariable58 = load i32, i32* %_LocalVariable20
+call void @putint(i32 %_LocalVariable58)
+call void @putch(i32 10)
+%_LocalVariable59 = load i32, i32* %_LocalVariable21
+call void @putint(i32 %_LocalVariable59)
+call void @putch(i32 10)
+%_LocalVariable60 = load i32, i32* %_LocalVariable22
+call void @putint(i32 %_LocalVariable60)
+call void @putch(i32 10)
+%_LocalVariable61 = load i32, i32* %_LocalVariable23
+call void @putint(i32 %_LocalVariable61)
+call void @putch(i32 45)
+%_LocalVariable62 = load i32, i32* %_LocalVariable24
+call void @putint(i32 %_LocalVariable62)
+call void @putch(i32 10)
+ret i32 0
+}

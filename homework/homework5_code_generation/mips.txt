@@ -1,0 +1,279 @@
+# 字符串常量段
+.data
+str_0: .asciiz "20373184\nWow, you will begin test your program!\n"
+str_1: .asciiz "\n"
+str_2: .asciiz "\n"
+str_3: .asciiz "\n"
+str_4: .asciiz "\n"
+str_5: .asciiz "\n"
+str_6: .asciiz "\n"
+str_7: .asciiz "\n"
+str_8: .asciiz "-"
+str_9: .asciiz "\n"
+
+# text代码段
+.text
+
+# 写入函数运行栈基地址
+li $fp, 0x10040000
+
+# 写入全局变量
+
+# 跳转到main函数
+j main
+nop
+
+# ---------- main函数开始 ----------
+main:
+
+# New Basic Block
+li $t0, 0x6f
+move $s0, $t0
+li $t0, 0x7b
+li $t1, 0xea
+add $t2, $t0, $t1
+move $s1, $t2
+li $t0, 0x5
+li $t1, 0x3
+add $t2, $t0, $t1
+li $t0, 0x6
+mul $t1, $t0, $t2
+li $t0, 0xa
+sub $t2, $t1, $t0
+move $s2, $t2
+move $t0, $s0
+move $t1, $s1
+li $t2, 0x3
+mul $t3, $t1, $t2
+add $t1, $t0, $t3
+move $s3, $t1
+move $v1, $v0
+li $v0, 0x5
+syscall
+move $s4, $v0
+move $v0, $v1
+move $s5, $s4
+move $v1, $v0
+li $v0, 0x5
+syscall
+move $s6, $v0
+move $v0, $v1
+move $s7, $s6
+sw $s7, 4($fp)
+move $v1, $v0
+li $v0, 0x5
+syscall
+move $s7, $v0
+move $v0, $v1
+sw $s7, 8($fp)
+move $s7, $s7
+sw $s7, 12($fp)
+move $v1, $v0
+li $v0, 0x5
+syscall
+move $s7, $v0
+move $v0, $v1
+sw $s7, 16($fp)
+move $s7, $s7
+sw $s7, 20($fp)
+move $v1, $v0
+li $v0, 0x5
+syscall
+move $s7, $v0
+move $v0, $v1
+sw $s7, 24($fp)
+move $s7, $s7
+sw $s7, 28($fp)
+move $v1, $v0
+li $v0, 0x5
+syscall
+move $s7, $v0
+move $v0, $v1
+sw $s7, 32($fp)
+move $s7, $s7
+move $v1, $a0
+li $v0, 0x4
+la $a0, str_0
+syscall
+move $a0, $v1
+li $t0, 0x1
+li $t1, 0x2
+add $t2, $t0, $t1
+move $v1, $a0
+li $v0, 0x1
+move $a0, $t2
+syscall
+move $a0, $v1
+move $v1, $a0
+li $v0, 0x4
+la $a0, str_1
+syscall
+move $a0, $v1
+li $t0, 0x5
+li $t1, 0x6
+mul $t3, $t0, $t1
+move $v1, $a0
+li $v0, 0x1
+move $a0, $t3
+syscall
+move $a0, $v1
+move $v1, $a0
+li $v0, 0x4
+la $a0, str_2
+syscall
+move $a0, $v1
+li $t0, 0x1
+li $t1, -2
+add $t4, $t0, $t1
+li $t0, 0x3
+mul $t1, $t4, $t0
+sw $s7, 36($fp)
+move $s7, $t1
+move $t0, $s1
+move $t1, $s0
+div $t0, $t1
+mfhi $t4
+li $t0, 0x5
+add $t1, $t4, $t0
+sw $s7, 40($fp)
+move $s7, $t1
+move $t0, $s3
+move $t1, $s2
+mul $t4, $t0, $t1
+li $t0, 0x4
+sub $t1, $t4, $t0
+sw $s7, 44($fp)
+move $s7, $t1
+move $t0, $s5
+li $t1, 0x2
+div $t4, $t0, $t1
+li $t0, 0x6
+mul $t1, $t4, $t0
+sw $s7, 48($fp)
+move $s7, $t1
+sw $s7, 52($fp)
+lw $s7, 4($fp)
+move $t0, $s7
+sw $s7, 4($fp)
+lw $s7, 12($fp)
+move $t1, $s7
+li $t4, 0x1
+add $t5, $t4, $t1
+mul $t1, $t0, $t5
+li $t0, 0x3
+div $t1, $t0
+mfhi $t4
+sw $s7, 12($fp)
+move $s7, $t4
+sw $s7, 56($fp)
+lw $s7, 20($fp)
+move $t0, $s7
+li $t1, -1
+mul $t4, $t1, $t0
+sw $s7, 20($fp)
+move $s7, $t4
+sw $s7, 60($fp)
+lw $s7, 28($fp)
+move $t0, $s7
+li $t1, 0x6
+add $t4, $t1, $t0
+sw $s7, 28($fp)
+move $s7, $t4
+sw $s7, 64($fp)
+lw $s7, 40($fp)
+move $t0, $s7
+move $v1, $a0
+li $v0, 0x1
+move $a0, $t0
+syscall
+move $a0, $v1
+move $v1, $a0
+li $v0, 0x4
+la $a0, str_3
+syscall
+move $a0, $v1
+sw $s7, 40($fp)
+lw $s7, 44($fp)
+move $t1, $s7
+move $v1, $a0
+li $v0, 0x1
+move $a0, $t1
+syscall
+move $a0, $v1
+move $v1, $a0
+li $v0, 0x4
+la $a0, str_4
+syscall
+move $a0, $v1
+sw $s7, 44($fp)
+lw $s7, 48($fp)
+move $t4, $s7
+move $v1, $a0
+li $v0, 0x1
+move $a0, $t4
+syscall
+move $a0, $v1
+move $v1, $a0
+li $v0, 0x4
+la $a0, str_5
+syscall
+move $a0, $v1
+sw $s7, 48($fp)
+lw $s7, 52($fp)
+move $t5, $s7
+move $v1, $a0
+li $v0, 0x1
+move $a0, $t5
+syscall
+move $a0, $v1
+move $v1, $a0
+li $v0, 0x4
+la $a0, str_6
+syscall
+move $a0, $v1
+sw $s7, 52($fp)
+lw $s7, 56($fp)
+move $t6, $s7
+move $v1, $a0
+li $v0, 0x1
+move $a0, $t6
+syscall
+move $a0, $v1
+move $v1, $a0
+li $v0, 0x4
+la $a0, str_7
+syscall
+move $a0, $v1
+sw $s7, 56($fp)
+lw $s7, 60($fp)
+move $t7, $s7
+move $v1, $a0
+li $v0, 0x1
+move $a0, $t7
+syscall
+move $a0, $v1
+move $v1, $a0
+li $v0, 0x4
+la $a0, str_8
+syscall
+move $a0, $v1
+sw $s7, 60($fp)
+lw $s7, 64($fp)
+move $t8, $s7
+move $v1, $a0
+li $v0, 0x1
+move $a0, $t8
+syscall
+move $a0, $v1
+move $v1, $a0
+li $v0, 0x4
+la $a0, str_9
+syscall
+move $a0, $v1
+li $t9, 0x0
+move $v0, $t9
+
+li $v0, 0xa
+syscall
+# ********** main函数结束 **********
+

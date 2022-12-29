@@ -1,0 +1,42 @@
+// i 类错误（分号缺失） Stmt测试
+
+int func1() {
+	int a=199;
+	if(a == 100) return 100    // 5
+	if(a == 200) return 200    // 6
+	if(a == 300) {
+		a = getint();
+		return ((a+3)*6-5)    // 9
+	}
+	return 199    // 11
+}
+
+void func2() {
+	int a = 200;
+	a = getint()     // 16
+	if(a != 200) return    // 17
+	while (a > 0) a = a - 1    // 18
+	if(a == 0) {
+		a = 10;
+		return     // 21
+	}
+	return     // 23
+}
+
+int main() {
+	int a,b;
+	a = getint()     // 28
+	printf("%d",a)     // 29
+	while(a == 1) {
+		a = b + 1;
+		break     // 32
+	}
+	while(b == 0) {
+		if(b == 1) {
+			continue     // 36
+		}
+	}
+	b = a+3-2     // 39
+	a+3*2     // 40
+	return 0    // 41
+}

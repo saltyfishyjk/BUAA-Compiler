@@ -1,0 +1,53 @@
+// 主要测试M类错误 非循环break continue
+int a=10,b=10;
+
+int func1(int a, int b) {
+	break;	// 5
+	if(a == 1) {
+		continue;		// 7
+	}
+	while(a > 0) {
+		a = a + 1;
+		if(a == 10) break;
+		else continue;
+	}
+	return 0;
+}
+
+int main() {
+	while(a > 0) {
+		a = func1(a,b);
+		while(b > 0) {
+			b = b - a;
+			if (b < a) break;
+		}
+		int i = 0;
+		while(i < 10) {
+			if(a % 2 == 0) {
+				while(a + b < 10) {
+					a = a + b;
+					{
+						int c;
+						c = getint();
+						if(c == 0) break;
+					}
+				}
+				break;
+			}
+			if(a % 2 == 1) continue;
+		}
+		if(a +b == 100) break;
+	}
+	{
+		if(a == 10) continue;				// 42
+		else {
+			while(a > 0) {
+				b = getint();
+				if(b == 10) break;
+			}
+			break;				// 48
+		}
+	}
+	break;					// 51
+	return 0;
+}

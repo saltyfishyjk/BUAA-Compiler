@@ -1,0 +1,14 @@
+int a=1;
+int b=2;
+int c=0;
+int d=0;
+int e=0;
+int f=0;
+int main(){
+if (a || b&&c || d || e&&f){
+
+    printf("hhh");
+
+}
+return 0;
+}

@@ -1,0 +1,17 @@
+// 测试普通变量定义 输入输出
+const int ga = 10;
+const int gb = -1024;
+int gc = ga + gb;
+
+int main() {
+	printf("global init: %d %d %d\n",ga,gb,gc);
+	int a = 100;
+	const int b = -9 + gb;
+	int c = 2942-b;
+	printf("local init: %d %d %d\n",a,b,c);
+	a = getint();
+	gc = getint();
+	c = getint();
+	printf("input: %d %d %d\n",a,gc,c);
+	return 0;	
+}
